@@ -24,6 +24,7 @@ int main()
 	TRTCContext::launch_kernel(kernel_f, { 1,1,1 }, { 128,1,1 }, args_f);
 	dvec_out_f.ToHost(test_f);
 	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);	
+	TRTCContext::destroy_kernel(kernel_f);
 
 	TRTCContext::Kernel* kernel_i = ktempl.instantiate(ctx, { { "T", "int" } });
 	int test_i[5] = { 6, 7, 8, 9, 10 };
@@ -34,6 +35,7 @@ int main()
 	TRTCContext::launch_kernel(kernel_i, { 1,1,1 }, { 128,1,1 }, args_i);
 	dvec_out_i.ToHost(test_i);
 	printf("%d %d %d %d %d\n", test_i[0], test_i[1], test_i[2], test_i[3], test_i[4]);
+	TRTCContext::destroy_kernel(kernel_i);
 
 	return 0;
 }

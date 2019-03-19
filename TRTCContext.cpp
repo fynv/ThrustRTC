@@ -193,6 +193,7 @@ size_t TRTCContext::size_of(const char* cls)
 		cuModuleLoadDataEx(&module, ptx.data(), 0, 0, 0);
 		CUdeviceptr dptr;
 		cuModuleGetGlobal(&dptr, &size, module, "_test");
+		cuModuleUnload(module);
 
 		if (s_ptx_cache_path != nullptr)
 		{
