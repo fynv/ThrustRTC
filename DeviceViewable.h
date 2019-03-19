@@ -10,6 +10,8 @@ typedef std::vector<char> ViewBuf;
 class DeviceViewable
 {
 public:
+	DeviceViewable(){}
+	virtual ~DeviceViewable(){}
 	virtual std::string name_view_cls() const = 0;
 	virtual ViewBuf view() const = 0;
 };

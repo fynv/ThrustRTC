@@ -38,6 +38,7 @@ public:
 		KernelTemplate(const std::vector<ParamDesc>& params, const char* body, const std::vector<const char*> template_params);
 
 		size_t num_params() const { return m_params.size(); }
+		const ParamDesc* params() const { return m_params.data();  }
 		size_t num_template_params() const { return m_template_params.size(); }
 
 		size_t deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const;
