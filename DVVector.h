@@ -1,10 +1,10 @@
 #ifndef _DVVector_h
 #define _DVVector_h
 
-template<class T>
+template<class _T>
 struct DVVectorView
 {
-	T* data;
+	_T* data;
 	size_t size;
 };
 
