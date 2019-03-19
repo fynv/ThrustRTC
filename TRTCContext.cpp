@@ -244,13 +244,13 @@ size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, 
 			{
 				std::string templ_param;
 				std::string templ_arg;
-				while (
+				while (*p_type_param == '_' ||
 					(*p_type_param >= 'a' && *p_type_param <= 'z') ||
 					(*p_type_param >= 'A' && *p_type_param <= 'Z') ||
 					(*p_type_param >= '0' && *p_type_param <= '9'))
 					templ_param += *(p_type_param++);
 
-				while (
+				while (*p_type_arg == '_' ||
 					(*p_type_arg >= 'a' && *p_type_arg <= 'z') ||
 					(*p_type_arg >= 'A' && *p_type_arg <= 'Z') ||
 					(*p_type_arg >= '0' && *p_type_arg <= '9'))
