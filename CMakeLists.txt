@@ -1,6 +1,5 @@
 cmake_minimum_required (VERSION 3.0)
 
-find_package(PythonLibs 3 REQUIRED)
 find_package(CUDA REQUIRED)
 
 set(LIB_SOURCES
@@ -23,7 +22,6 @@ internal/md5.h
 )
 
 set (INCLUDE_DIR 
-${PYTHON_INCLUDE_DIRS}
 .
 ./internal
 )
@@ -85,3 +83,5 @@ install(TARGETS ThrustRTC
 else()
 install(TARGETS ThrustRTC DESTINATION lib)
 endif()
+
+install(DIRECTORY DESTINATION test/__ptx_cache__)

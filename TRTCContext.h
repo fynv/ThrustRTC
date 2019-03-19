@@ -36,7 +36,12 @@ public:
 	{
 	public:
 		KernelTemplate(const std::vector<ParamDesc>& params, const char* body, const std::vector<const char*> template_params);
-		Kernel* instantiate(const TRTCContext& ctx, const std::unordered_map<std::string, std::string>& template_map) const;
+
+		size_t num_params() const { return m_params.size(); }
+		size_t num_template_params() const { return m_template_params.size(); }
+
+		size_t deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const;
+		Kernel* instantiate(const TRTCContext& ctx, const std::vector<std::string>& template_args) const;
 
 	private:
 		std::vector<ParamDesc> m_params;

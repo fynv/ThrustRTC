@@ -221,7 +221,71 @@ TRTCContext::KernelTemplate::KernelTemplate(const std::vector<ParamDesc>& params
 	m_template_params = template_params;
 }
 
-TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext& ctx, const std::unordered_map<std::string, std::string>& template_map) const
+size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const
+{
+	size_t count = 0;
+	size_t total = m_template_params.size();
+	template_args.resize(total);
+
+	for (size_t i = 0; i < m_params.size(); i++)
+	{
+		std::string type_param = m_params[i].type;
+		std::string type_arg = args[i]->name_view_cls();
+
+		const char* p_type_param = type_param.c_str();
+		const char* p_type_arg = type_arg.c_str();
+
+		while (*p_type_param != 0 && *p_type_arg != 0)
+		{
+			while (*p_type_param == ' ' || *p_type_param == '\t') p_type_param++;
+			while (*p_type_arg == ' ' || *p_type_arg == '\t') p_type_arg++;
+
+			if (*p_type_param != *p_type_arg)
+			{
+				std::string templ_param;
+				std::string templ_arg;
+				while (
+					(*p_type_param >= 'a' && *p_type_param <= 'z') ||
+					(*p_type_param >= 'A' && *p_type_param <= 'Z') ||
+					(*p_type_param >= '0' && *p_type_param <= '9'))
+					templ_param += *(p_type_param++);
+
+				while (
+					(*p_type_arg >= 'a' && *p_type_arg <= 'z') ||
+					(*p_type_arg >= 'A' && *p_type_arg <= 'Z') ||
+					(*p_type_arg >= '0' && *p_type_arg <= '9'))
+					templ_arg += *(p_type_arg++);
+
+				size_t j = 0;
+				for (; j < total; j++)
+				{
+					if (templ_param == m_template_params[j])
+					{
+						if (template_args[j] != "" && template_args[j] != templ_arg)
+						{
+							printf("Conflict during template-arg deduction of %s, assigned %s before assigning %s.\n", templ_param, template_args[j], templ_arg);
+							return count;
+						}						
+						template_args[j] = templ_arg;
+						count++;
+						break;
+					}
+				}
+				if (j == total)
+				{
+					printf("Parameter/argument type mismatch: %s vs. %s\n", type_param.c_str(), type_arg.c_str());
+					return count;
+				}
+			}
+			p_type_param++;
+			p_type_arg++;
+		}
+	}
+	return count;
+}
+
+
+TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext& ctx, const std::vector<std::string>& template_args) const
 {
 	std::string saxpy;
 	for (size_t i = 0; i < ctx.m_preprocesors.size(); i++)
@@ -230,13 +294,9 @@ TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext&
 	}
 	saxpy += "\n";
 
-	std::unordered_map<std::string, std::string>::const_iterator it = template_map.begin();
-	while (it != template_map.end())
-	{
-		saxpy += std::string("#define ") + it->first + " " + it->second + "\n";
-		it++;
-	}
-
+	for (size_t i = 0; i < m_template_params.size(); i++)
+		saxpy += std::string("#define ") + m_template_params[i] + " " + template_args[i] + "\n";
+	
 	saxpy += "\n";
 	saxpy += "extern \"C\" __global__\n";
 	saxpy += "void saxpy(";
