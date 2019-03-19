@@ -7,6 +7,7 @@
 #include "TRTCContext.h"
 #include "Timing.h"
 #include "md5.h"
+#include "cuda_inline_headers.hpp"
 
 static int s_get_compute_capability()
 {
@@ -40,10 +41,22 @@ static void s_get_md5(const char* source_code, char md5[33])
 	sprintf(md5, "%08x%08x%08x%08x", ((unsigned*)digest)[3], ((unsigned*)digest)[2], ((unsigned*)digest)[1], ((unsigned*)digest)[0]);
 }
 
+struct TRTCContext::Kernel
+{
+	size_t num_params;
+	CUmodule module;
+	CUfunction func;
+};
+
 
 TRTCContext::TRTCContext()
 {
 	m_verbose = false;
+	for (int i = 0; i < s_num_headers; i++)
+		this->add_built_in_header(s_name_headers[i], s_content_headers[i]);
+
+	this->add_preprocessor("#define DEVICE_ONLY");
+	this->add_inlcude_filename("DVVector.h");
 }
 
 TRTCContext::~TRTCContext()
@@ -80,7 +93,7 @@ static void print_code(const char* fullCode)
 	puts("");
 }
 
-bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx)
+bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const
 {
 	int compute_cap = s_get_compute_capability();
 
@@ -129,9 +142,8 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx)
 		return false;
 	}
 
-	size_t ptxSize;
-	nvrtcGetPTXSize(prog, &ptxSize);
-	ptx.resize(ptxSize);
+	nvrtcGetPTXSize(prog, &ptx_size);
+	ptx.resize(ptx_size);
 	nvrtcGetPTX(prog, ptx.data());
 	nvrtcDestroyProgram(&prog);
 
@@ -175,7 +187,8 @@ size_t TRTCContext::size_of(const char* cls)
 	if (size == (size_t)(-1))
 	{
 		std::vector<char> ptx;
-		_src_to_ptx(saxpy.data(), ptx);
+		size_t ptx_size;
+		if (!_src_to_ptx(saxpy.data(), ptx, ptx_size)) return 0;
 		CUmodule module;
 		cuModuleLoadDataEx(&module, ptx.data(), 0, 0, 0);
 		CUdeviceptr dptr;
@@ -200,13 +213,162 @@ size_t TRTCContext::size_of(const char* cls)
 	return size;
 }
 
-TRTCContext::KernelTemplate::KernelTemplate(const std::vector<ParamDesc>& params, const char* body, size_t num_reserved_params)
+TRTCContext::KernelTemplate::KernelTemplate(const std::vector<ParamDesc>& params, const char* body, const std::vector<const char*> template_params)
 {
 	m_params = params;
 	m_body = body;
-	m_num_reserved_params = num_reserved_params;
+	m_template_params = template_params;
 }
 
+TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext& ctx, const std::unordered_map<std::string, std::string>& template_map) const
+{
+	std::string saxpy;
+	for (size_t i = 0; i < ctx.m_preprocesors.size(); i++)
+	{
+		saxpy += ctx.m_preprocesors[i] + "\n";
+	}
+	saxpy += "\n";
+
+	std::unordered_map<std::string, std::string>::const_iterator it = template_map.begin();
+	while (it != template_map.end())
+	{
+		saxpy += std::string("#define ") + it->first + " " + it->second + "\n";
+		it++;
+	}
+
+	saxpy += "\n";
+	saxpy += "extern \"C\" __global__\n";
+	saxpy += "void saxpy(";
+
+	if (m_params.size() > 0)
+	{
+		saxpy += m_params[0].type;
+		saxpy += " ";
+		saxpy += m_params[0].name;
+	}
+
+	for (size_t i = 1; i < m_params.size(); i++)
+	{
+		saxpy += ", ";
+		saxpy += m_params[i].type;
+		saxpy += " ";
+		saxpy += m_params[i].name;
+	}
+	saxpy += ")\n{\n";
+	saxpy += m_body;
+	saxpy += "\n}\n";
+
+	if (ctx.m_verbose)
+		print_code(saxpy.c_str());
+
+	std::vector<char> ptx;
+
+	{
+#ifdef TIMING
+		double t1 = GetTime();
+#endif
+		int compute_cap = s_get_compute_capability();
+		char md5[33];
+
+		/// Try finding an existing ptx in cache
+		if (s_ptx_cache_path != nullptr)
+		{
+			s_get_md5(saxpy.c_str(), md5);
+			char fn[2048];
+			sprintf(fn, "%s/%s_%d.ptx", s_ptx_cache_path, md5, compute_cap);
+			FILE* fp = fopen(fn, "rb");
+			if (fp)
+			{
+				fseek(fp, 0, SEEK_END);
+				size_t ptx_size = (size_t)ftell(fp) + 1;
+				fseek(fp, 0, SEEK_SET);
+				ptx.resize(ptx_size);
+				fread(ptx.data(), 1, ptx_size - 1, fp);
+				fclose(fp);
+				ptx[ptx_size - 1] = 0;
+			}
+		}
+
+		if (ptx.size() < 1)
+		{
+			size_t ptx_size;
+			if (!ctx._src_to_ptx(saxpy.c_str(), ptx, ptx_size)) return nullptr;
+			
+			if (s_ptx_cache_path != nullptr)
+			{
+				char fn[2048];
+				sprintf(fn, "%s/%s_%d.ptx", s_ptx_cache_path, md5, compute_cap);
+				FILE* fp = fopen(fn, "wb");
+				if (fp)
+				{
+					fwrite(ptx.data(), 1, ptx_size - 1, fp);
+					fclose(fp);
+				}
+			}
+		}
+
+#ifdef TIMING
+		double t2 = GetTime();
+		printf("Compile Time: %f\n", t2 - t1);
+#endif
+	}
+
+	//puts(ptx.data());
+
+	Kernel* kernel = new TRTCContext::Kernel;
+	kernel->num_params = m_params.size();
+
+	{
+#ifdef TIMING
+		double t1 = GetTime();
+#endif
+		cuModuleLoadDataEx(&kernel->module, ptx.data(), 0, 0, 0);
+		cuModuleGetFunction(&kernel->func, kernel->module, "saxpy");
+#ifdef TIMING
+		double t2 = GetTime();
+		printf("Load Time: %f\n", t2 - t1);
+#endif
+	}
+
+	return kernel;	
+}
+
+TRTCContext::Kernel* TRTCContext::create_kernel(const std::vector<ParamDesc>& params, const char* body) const
+{
+	KernelTemplate templ(params, body, {});
+	return templ.instantiate(*this, {});
+}
+
+size_t TRTCContext::get_num_of_params(const Kernel* kernel)
+{
+	return kernel->num_params;
+}
+
+void TRTCContext::destroy_kernel(Kernel* kernel)
+{
+	if (kernel)
+	{
+		cuModuleUnload(kernel->module);
+		delete kernel;
+	}
+}
+
+void TRTCContext::launch_kernel(const Kernel* kernel, dim_type gridDim, dim_type blockDim, DeviceViewable** args, unsigned sharedMemBytes)
+{
+	if (!kernel) return;
+
+	size_t num_params = kernel->num_params;
+
+	std::vector<ViewBuf> argbufs(num_params);
+	std::vector<void*> converted_args(num_params);
+
+	for (size_t i = 0; i < num_params; i++)
+	{
+		argbufs[i] = args[i]->view();
+		converted_args[i] = argbufs[i].data();
+	}
+	cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
+}
 
 void TRTCContext::add_include_dir(const char* path)
 {

@@ -1,10 +1,12 @@
 #ifndef _TRTCContext_h
 #define _TRTCContext_h
 
-#include "TRTC_api.h"
 #include <vector>
 #include <string>
 #include <unordered_map>
+
+#include "TRTC_api.h"
+#include "DeviceViewable.h"
 
 struct dim_type
 {
@@ -22,44 +24,31 @@ public:
 
 	size_t size_of(const char* cls); // reflect the size of the class in the current context
 
-	class DeviceVector
-	{
-	public:
-		DeviceVector(TRTCContext& ctx, const char* cls, size_t size);
-		~DeviceVector();
-
-		std::string get_class() { return m_cls; }
-		void* get_data() { return m_data; }
-
-	private:
-		std::string m_cls;
-		void *m_data;
-
-	};
-
-
 	struct Kernel;
 
 	struct ParamDesc
 	{
 		const char* type;
 		const char* name;
-		std::vector<const char*> template_params;
 	};
 
-	class KernelTemplate
+	class THRUST_RTC_API KernelTemplate
 	{
 	public:
-		KernelTemplate(const std::vector<ParamDesc>& params, const char* body, size_t num_reserved_params = 0);
-		Kernel* instantiate(const std::unordered_map<std::string, std::string>* template_arg_map) const;
-
+		KernelTemplate(const std::vector<ParamDesc>& params, const char* body, const std::vector<const char*> template_params);
+		Kernel* instantiate(const TRTCContext& ctx, const std::unordered_map<std::string, std::string>& template_map) const;
 
 	private:
 		std::vector<ParamDesc> m_params;
 		std::string m_body;
-		size_t m_num_reserved_params;
-
+		std::vector<const char*> m_template_params;
 	};
+
+	// create non-templated kernel
+	Kernel* create_kernel(const std::vector<ParamDesc>& params, const char* body) const;
+	static size_t get_num_of_params(const Kernel* kernel);
+	static void destroy_kernel(Kernel* kernel);
+	static void launch_kernel(const Kernel* kernel, dim_type gridDim, dim_type blockDim, DeviceViewable** args, unsigned sharedMemBytes = 0);
 
 
 	void add_include_dir(const char* path);
@@ -69,7 +58,7 @@ public:
 
 
 private:
-	bool _src_to_ptx(const char* src, std::vector<char>& ptx);
+	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
 
 	std::unordered_map<std::string, size_t> m_size_of_types;
 
