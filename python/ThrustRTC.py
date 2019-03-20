@@ -151,6 +151,13 @@ def device_vector_from_numpy(ctx, nparr):
 def device_vector_from_dvs(ctx, lst_dv):
 	return DVVector(native.n_dvvector_from_dvs(ctx.m_cptr, [item.m_cptr for item in lst_dv]))
 
+def device_vector_from_list(ctx, lst, elem_cls):
+	devive_viewables = [ native.n_dv_create_basic(elem_cls, item) for item in lst]
+	dvec = DVVector(native.n_dvvector_from_dvs(ctx.m_cptr, devive_viewables))
+	for dv in devive_viewables:
+		native.n_dv_destroy(dv)
+	return dvec
+
 class Kernel:
 	def __init__(self, ctx, param_descs, body):
 		self.m_cptr = native.n_kernel_create(ctx.m_cptr, param_descs, body)

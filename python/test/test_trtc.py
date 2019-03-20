@@ -40,3 +40,5 @@ kernelTempl = trtc.KernelTemplate(ctx,
 kernelTempl.launch(1,128, [darr2, darr_out, trtc.DVDouble(4.0)])
 print (darr_out.to_host())
 
+darr3 = trtc.device_vector_from_list(ctx, [3.0, 5.0, 7.0, 9.0 , 11.0], 'float')
+print(darr3.to_host())
