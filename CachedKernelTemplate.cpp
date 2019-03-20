@@ -54,7 +54,7 @@ void CachedKernelTemplate::launch(dim_type gridDim, dim_type blockDim, DeviceVie
 			printf("%s, ", type_params[i].c_str());
 		puts("\nArgument types:");
 		for (size_t i = 0; i < m_templ.num_params(); i++)
-			printf("%s, ", args[i]->name_view_cls());
+			printf("%s, ", args[i]->name_view_cls().c_str());
 	}
 
 }

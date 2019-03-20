@@ -293,7 +293,7 @@ size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, 
 					{
 						if (template_args[j] != "" && template_args[j] != templ_arg)
 						{
-							printf("Conflict during template-arg deduction of %s, assigned %s before assigning %s.\n", templ_param, template_args[j], templ_arg);
+							printf("Conflict during template-arg deduction of %s, assigned %s before assigning %s.\n", templ_param.c_str(), template_args[j].c_str(), templ_arg.c_str());
 							return count;
 						}						
 						template_args[j] = templ_arg;
