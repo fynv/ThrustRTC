@@ -8,8 +8,9 @@ static std::string cat_templ_args(const std::vector<std::string>& template_args)
 	return ret;
 }
 
-CachedKernelTemplate::CachedKernelTemplate(const TRTCContext* ctx, const std::vector<TRTCContext::ParamDesc>& params,
-	const char* body, const std::vector<const char*> template_params) :m_ctx(ctx), m_templ(params, body, template_params){}
+CachedKernelTemplate::CachedKernelTemplate(const TRTCContext* ctx, 
+	const std::vector<const char*> template_params, const std::vector<TRTCContext::ParamDesc>& params,
+	const char* body) :m_ctx(ctx), m_templ(template_params, params, body){}
 
 CachedKernelTemplate::~CachedKernelTemplate()
 {
@@ -21,7 +22,7 @@ CachedKernelTemplate::~CachedKernelTemplate()
 	}
 }
 
-void CachedKernelTemplate::launch(dim_type gridDim, dim_type blockDim, DeviceViewable** args, const std::vector<std::string>& template_args, unsigned sharedMemBytes)
+void CachedKernelTemplate::launch(dim_type gridDim, dim_type blockDim, const std::vector<std::string>& template_args, DeviceViewable** args, unsigned sharedMemBytes)
 {
 	std::string key = cat_templ_args(template_args);
 	TRTCContext::Kernel* kernel = nullptr;
@@ -41,16 +42,16 @@ void CachedKernelTemplate::launch(dim_type gridDim, dim_type blockDim, DeviceVie
 	std::vector<std::string> template_args;
 	if (m_templ.deduce_template_args(args, template_args) >= m_templ.num_template_params())
 	{
-		launch(gridDim, blockDim, args, template_args, sharedMemBytes);
+		launch(gridDim, blockDim, template_args, args, sharedMemBytes);
 	}
 	else
 	{
-		const TRTCContext::ParamDesc* params = m_templ.params();
+		const std::string* type_params = m_templ.type_params();
 
 		puts("Failed to deduce some of the template arguments.");
 		puts("Parameter types:");
 		for (size_t i = 0; i < m_templ.num_params(); i++)
-			printf("%s, ", params[i].type);
+			printf("%s, ", type_params[i].c_str());
 		puts("\nArgument types:");
 		for (size_t i = 0; i < m_templ.num_params(); i++)
 			printf("%s, ", args[i]->name_view_cls());

@@ -35,19 +35,19 @@ public:
 	class THRUST_RTC_API KernelTemplate
 	{
 	public:
-		KernelTemplate(const std::vector<ParamDesc>& params, const char* body, const std::vector<const char*> template_params);
+		KernelTemplate(const std::vector<const char*> template_params, const std::vector<ParamDesc>& params, const char* body);
 
-		size_t num_params() const { return m_params.size(); }
-		const ParamDesc* params() const { return m_params.data();  }
 		size_t num_template_params() const { return m_template_params.size(); }
+		size_t num_params() const { return m_type_params.size(); }
+		const std::string* type_params() const { return m_type_params.data(); }
 
 		size_t deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const;
 		Kernel* instantiate(const TRTCContext& ctx, const std::vector<std::string>& template_args) const;
 
 	private:
-		std::vector<ParamDesc> m_params;
-		std::string m_body;
-		std::vector<const char*> m_template_params;
+		std::vector<std::string> m_template_params;
+		std::vector<std::string> m_type_params;
+		std::string m_code_buf;
 	};
 
 	// create non-templated kernel

@@ -3,7 +3,6 @@ cmake_minimum_required (VERSION 3.0)
 find_package(CUDA REQUIRED)
 
 set(LIB_SOURCES
-DeviceViewable.cpp
 TRTCContext.cpp
 DVVector.cpp
 CachedKernelTemplate.cpp
@@ -87,3 +86,5 @@ install(TARGETS ThrustRTC DESTINATION lib)
 endif()
 
 install(DIRECTORY DESTINATION test/__ptx_cache__)
+
+add_subdirectory(python)

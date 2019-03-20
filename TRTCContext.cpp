@@ -8,6 +8,7 @@
 #include "Timing.h"
 #include "md5.h"
 #include "cuda_inline_headers.hpp"
+#include "cuda_inline_headers_global.hpp"
 
 static int s_get_compute_capability()
 {
@@ -55,8 +56,12 @@ TRTCContext::TRTCContext()
 	for (int i = 0; i < s_num_headers; i++)
 		this->add_built_in_header(s_name_headers[i], s_content_headers[i]);
 
+	for (int i = 0; i < s_num_headers_global; i++)
+		this->add_built_in_header(s_name_headers_global[i], s_content_headers_global[i]);
+
 	this->add_preprocessor("#define DEVICE_ONLY");
 	this->add_inlcude_filename("DVVector.h");
+	this->add_inlcude_filename("cstdint");
 }
 
 TRTCContext::~TRTCContext()
@@ -214,11 +219,36 @@ size_t TRTCContext::size_of(const char* cls)
 	return size;
 }
 
-TRTCContext::KernelTemplate::KernelTemplate(const std::vector<ParamDesc>& params, const char* body, const std::vector<const char*> template_params)
+TRTCContext::KernelTemplate::KernelTemplate(const std::vector<const char*> template_params, const std::vector<ParamDesc>& params, const char* body)
 {
-	m_params = params;
-	m_body = body;
-	m_template_params = template_params;
+	m_template_params.resize(template_params.size());
+	for (size_t i = 0; i < m_template_params.size(); i++)
+		m_template_params[i] = template_params[i];
+
+	m_type_params.resize(params.size());
+	for (size_t i = 0; i < m_type_params.size(); i++)
+		m_type_params[i] = params[i].type;
+
+	m_code_buf += "extern \"C\" __global__\n";
+	m_code_buf += "void saxpy(";
+
+	if (params.size() > 0)
+	{
+		m_code_buf += params[0].type;
+		m_code_buf += " ";
+		m_code_buf += params[0].name;
+	}
+
+	for (size_t i = 1; i < params.size(); i++)
+	{
+		m_code_buf += ", ";
+		m_code_buf += params[i].type;
+		m_code_buf += " ";
+		m_code_buf += params[i].name;
+	}
+	m_code_buf += ")\n{\n";
+	m_code_buf += body;
+	m_code_buf += "\n}\n";
 }
 
 size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const
@@ -227,9 +257,9 @@ size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, 
 	size_t total = m_template_params.size();
 	template_args.resize(total);
 
-	for (size_t i = 0; i < m_params.size(); i++)
+	for (size_t i = 0; i < m_type_params.size(); i++)
 	{
-		std::string type_param = m_params[i].type;
+		std::string type_param = m_type_params[i];
 		std::string type_arg = args[i]->name_view_cls();
 
 		const char* p_type_param = type_param.c_str();
@@ -298,26 +328,7 @@ TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext&
 		saxpy += std::string("#define ") + m_template_params[i] + " " + template_args[i] + "\n";
 	
 	saxpy += "\n";
-	saxpy += "extern \"C\" __global__\n";
-	saxpy += "void saxpy(";
-
-	if (m_params.size() > 0)
-	{
-		saxpy += m_params[0].type;
-		saxpy += " ";
-		saxpy += m_params[0].name;
-	}
-
-	for (size_t i = 1; i < m_params.size(); i++)
-	{
-		saxpy += ", ";
-		saxpy += m_params[i].type;
-		saxpy += " ";
-		saxpy += m_params[i].name;
-	}
-	saxpy += ")\n{\n";
-	saxpy += m_body;
-	saxpy += "\n}\n";
+	saxpy += m_code_buf;
 
 	if (ctx.m_verbose)
 		print_code(saxpy.c_str());
@@ -377,7 +388,7 @@ TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext&
 	//puts(ptx.data());
 
 	Kernel* kernel = new TRTCContext::Kernel;
-	kernel->num_params = m_params.size();
+	kernel->num_params = m_type_params.size();
 
 	{
 #ifdef TIMING
@@ -396,7 +407,7 @@ TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext&
 
 TRTCContext::Kernel* TRTCContext::create_kernel(const std::vector<ParamDesc>& params, const char* body) const
 {
-	KernelTemplate templ(params, body, {});
+	KernelTemplate templ({}, params, body);
 	return templ.instantiate(*this, {});
 }
 

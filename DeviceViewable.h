@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 typedef std::vector<char> ViewBuf;
 
@@ -36,6 +37,7 @@ private:\
 };
 
 DECLAR_DV_BASIC(DVChar, char)
+DECLAR_DV_BASIC(DVSChar, signed char)
 DECLAR_DV_BASIC(DVUChar, unsigned char)
 DECLAR_DV_BASIC(DVShort, short)
 DECLAR_DV_BASIC(DVUShort, unsigned short)
@@ -47,6 +49,16 @@ DECLAR_DV_BASIC(DVLongLong, long long)
 DECLAR_DV_BASIC(DVULongLong, unsigned long long)
 DECLAR_DV_BASIC(DVFloat, float)
 DECLAR_DV_BASIC(DVDouble, double)
+DECLAR_DV_BASIC(DVBool, bool)
+
+DECLAR_DV_BASIC(DVInt8, int8_t)
+DECLAR_DV_BASIC(DVUInt8, uint8_t)
+DECLAR_DV_BASIC(DVInt16, int16_t)
+DECLAR_DV_BASIC(DVUInt16, uint16_t)
+DECLAR_DV_BASIC(DVInt32, int32_t)
+DECLAR_DV_BASIC(DVUInt32, uint32_t)
+DECLAR_DV_BASIC(DVInt64, int64_t)
+DECLAR_DV_BASIC(DVUInt64, uint64_t)
 
 
 #endif

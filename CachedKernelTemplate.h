@@ -8,14 +8,14 @@
 class THRUST_RTC_API CachedKernelTemplate
 {
 public:
-	CachedKernelTemplate(const TRTCContext* ctx, const std::vector<TRTCContext::ParamDesc>& params, const char* body, const std::vector<const char*> template_params = {});
+	CachedKernelTemplate(const TRTCContext* ctx, const std::vector<const char*> template_params, const std::vector<TRTCContext::ParamDesc>& params, const char* body);
 	~CachedKernelTemplate();
 
-	size_t num_params() const { return m_templ.num_params(); }
 	size_t num_template_params() const { return m_templ.num_template_params(); }
+	size_t num_params() const { return m_templ.num_params(); }
 
 	// explicit
-	void launch(dim_type gridDim, dim_type blockDim, DeviceViewable** args, const std::vector<std::string>& template_args, unsigned sharedMemBytes = 0);
+	void launch(dim_type gridDim, dim_type blockDim, const std::vector<std::string>& template_args, DeviceViewable** args,  unsigned sharedMemBytes = 0);
 
 	// deduce
 	void launch(dim_type gridDim, dim_type blockDim, DeviceViewable** args, unsigned sharedMemBytes = 0);
