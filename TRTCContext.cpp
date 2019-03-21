@@ -251,9 +251,99 @@ TRTCContext::KernelTemplate::KernelTemplate(const std::vector<const char*> templ
 	m_code_buf += "\n}\n";
 }
 
-size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const
+static void s_tokenize(const char* in, std::vector<std::string>& out)
 {
-	size_t count = 0;
+	const char* pin = in;
+	std::string cur_token;
+	out.clear();
+	while (*pin != 0)
+	{
+		if (*pin == '_' || (*pin >= 'a' && *pin <= 'z') || (*pin >= 'A' && *pin <= 'Z') || (*pin >= '0' && *pin <= '9'))
+			cur_token += *pin;
+		else if (*pin != ' ' && *pin != '\t')
+		{
+			if (cur_token.size() > 0)
+			{
+				out.push_back(cur_token);
+				cur_token = "";
+			}
+			cur_token = *pin;
+			out.push_back(cur_token);
+			cur_token = "";
+		}
+		else if (cur_token.size() > 0)
+		{
+			out.push_back(cur_token);
+			cur_token = "";
+		}
+		pin++;
+	}
+	if (cur_token.size() > 0)
+		out.push_back(cur_token);
+}
+
+static bool token_match(
+	const std::vector<std::string>& template_params,
+	std::vector<std::string>& template_args,
+	std::string* tokens_param, size_t count_tokens_param,
+	std::string* tokens_arg, size_t count_tokens_arg)
+{
+	while (count_tokens_param>0 && count_tokens_param <= count_tokens_arg)
+	{
+		if (*tokens_param == *tokens_arg)
+		{
+			tokens_param++;
+			tokens_arg++;
+			count_tokens_param--;
+			count_tokens_arg--;
+			continue;
+		}
+		size_t i = 0;
+		for (; i < template_params.size(); i++)
+			if (*tokens_param == template_params[i])
+				break;
+	
+		if (i >= template_params.size()) return false;
+
+		std::string templ_arg = *tokens_arg;
+		while (count_tokens_param <= count_tokens_arg)
+		{
+			if (template_args[i] == "" || template_args[i] == templ_arg)
+			{
+				std::vector<std::string>* cpy = new std::vector<std::string>(template_args);
+				(*cpy)[i] = templ_arg;
+				bool res = token_match(template_params, *cpy,
+					tokens_param + 1, count_tokens_param - 1, tokens_arg + 1, count_tokens_arg - 1);
+				if (res)
+				{
+					template_args = *cpy;
+					delete cpy;
+					return true;
+				}
+				delete cpy;
+			}
+			tokens_arg++;
+			count_tokens_arg--;
+			if ((*tokens_arg).size() > 1) templ_arg += " ";
+			templ_arg += *tokens_arg;			
+		}
+	}
+	return count_tokens_param == 0;
+}
+
+static bool s_type_match(const std::vector<std::string>& template_params,
+	std::vector<std::string>& template_args, const char* type_param, const char* type_arg)
+{
+	std::vector<std::string> tokens_param;
+	std::vector<std::string> tokens_arg;
+	s_tokenize(type_param, tokens_param);
+	s_tokenize(type_arg, tokens_arg);
+
+	return token_match(template_params, template_args, tokens_param.data(), tokens_param.size(), tokens_arg.data(), tokens_arg.size());
+}
+
+bool TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const
+{
 	size_t total = m_template_params.size();
 	template_args.resize(total);
 
@@ -262,67 +352,11 @@ size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, 
 		std::string type_param = m_type_params[i];
 		std::string type_arg = args[i]->name_view_cls();
 
-		const char* p_type_param = type_param.c_str();
-		const char* p_type_arg = type_arg.c_str();
-
-		while (*p_type_param != 0 && *p_type_arg != 0)
-		{
-			while (*p_type_param == ' ' || *p_type_param == '\t') p_type_param++;
-			while (*p_type_arg == ' ' || *p_type_arg == '\t') p_type_arg++;
-			if (*p_type_param == 0 || *p_type_arg == 0) break;
-
-			if (*p_type_param != *p_type_arg)
-			{
-				std::string templ_param;
-				std::string templ_arg;
-				while (*p_type_param == '_' ||
-					(*p_type_param >= 'a' && *p_type_param <= 'z') ||
-					(*p_type_param >= 'A' && *p_type_param <= 'Z') ||
-					(*p_type_param >= '0' && *p_type_param <= '9'))
-					templ_param += *(p_type_param++);
-				
-				while (*p_type_param == ' ' || *p_type_param == '\t') p_type_param++;
-				char end_marker = *p_type_param;
-
-				const char* p_type_arg_end = p_type_arg;
-				while (*p_type_arg_end != end_marker) p_type_arg_end++;
-				while (*(p_type_arg_end - 1) == ' ' || *(p_type_arg_end - 1) == '\t') p_type_arg_end--;
-				while (p_type_arg<p_type_arg_end) templ_arg += *(p_type_arg++);
-
-				size_t j = 0;
-				for (; j < total; j++)
-				{
-					if (templ_param == m_template_params[j])
-					{
-						if (template_args[j] == "")
-						{
-							template_args[j] = templ_arg;
-							count++;
-						}
-						else if (template_args[j] != templ_arg)
-						{
-							printf("Conflict during template-arg deduction of %s, assigned %s before assigning %s.\n", templ_param.c_str(), template_args[j].c_str(), templ_arg.c_str());
-							return count;
-						}						
-						break;
-					}
-				}
-				if (j == total)
-				{
-					printf("Parameter/argument type mismatch: %s vs. %s\n", type_param.c_str(), type_arg.c_str());
-					return count;
-				}
-			}
-			else
-			{
-				p_type_param++;
-				p_type_arg++;
-			}
-		}
+		bool res = s_type_match(m_template_params, template_args, type_param.c_str(), type_arg.c_str());
+		if (!res) return false;
 	}
-	return count;
+	return true;
 }
-
 
 TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext& ctx, const std::vector<std::string>& template_args) const
 {

@@ -40,21 +40,30 @@ void CachedKernelTemplate::launch(dim_type gridDim, dim_type blockDim, const std
 void CachedKernelTemplate::launch(dim_type gridDim, dim_type blockDim, DeviceViewable** args, unsigned sharedMemBytes)
 {
 	std::vector<std::string> template_args;
-	if (m_templ.deduce_template_args(args, template_args) >= m_templ.num_template_params())
+	if (m_templ.deduce_template_args(args, template_args))
 	{
-		launch(gridDim, blockDim, template_args, args, sharedMemBytes);
+		size_t total = m_templ.num_template_params();
+		if (template_args.size() >= total)
+		{
+			size_t i = 0;
+			for (; i <total; i++)
+				if (template_args[i].size() < 1) break;
+			if (i >= total)
+			{
+				launch(gridDim, blockDim, template_args, args, sharedMemBytes);
+				return;
+			}
+		}
 	}
-	else
-	{
-		const std::string* type_params = m_templ.type_params();
 
-		puts("Failed to deduce some of the template arguments.");
-		puts("Parameter types:");
-		for (size_t i = 0; i < m_templ.num_params(); i++)
-			printf("%s, ", type_params[i].c_str());
-		puts("\nArgument types:");
-		for (size_t i = 0; i < m_templ.num_params(); i++)
-			printf("%s, ", args[i]->name_view_cls().c_str());
-	}
+	const std::string* type_params = m_templ.type_params();
 
+	puts("Failed to deduce some of the template arguments.");
+	puts("Parameter types:");
+	for (size_t i = 0; i < m_templ.num_params(); i++)
+		printf("%s, ", type_params[i].c_str());
+	puts("\nArgument types:");
+	for (size_t i = 0; i < m_templ.num_params(); i++)
+		printf("%s, ", args[i]->name_view_cls().c_str());
+	puts("");
 }

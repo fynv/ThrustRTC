@@ -41,7 +41,7 @@ public:
 		size_t num_params() const { return m_type_params.size(); }
 		const std::string* type_params() const { return m_type_params.data(); }
 
-		size_t deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const;
+		bool deduce_template_args(DeviceViewable** args, std::vector<std::string>& template_args) const;
 		Kernel* instantiate(const TRTCContext& ctx, const std::vector<std::string>& template_args) const;
 
 	private:
