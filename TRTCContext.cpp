@@ -412,6 +412,15 @@ TRTCContext::Kernel* TRTCContext::KernelTemplate::instantiate(const TRTCContext&
 #endif
 	}
 
+	for (size_t i = 0; i < ctx.m_constants.size(); i++)
+	{
+		CUdeviceptr dptr;
+		size_t size;
+		cuModuleGetGlobal(&dptr, &size, kernel->module, ctx.m_constants[i].first.c_str());
+		if (size > ctx.m_constants[i].second.size()) size = ctx.m_constants[i].second.size();
+		cuMemcpyHtoD(dptr, ctx.m_constants[i].second.data(), size);
+	}
+
 	return kernel;	
 }
 
@@ -490,4 +499,13 @@ void TRTCContext::add_inlcude_filename(const char* fn)
 void TRTCContext::add_preprocessor(const char* line)
 {
 	m_preprocesors.push_back(line);
+}
+
+void TRTCContext::add_constant_object(const char* name, const DeviceViewable& obj)
+{
+	std::string type = obj.name_view_cls();
+	char line[1024];
+	sprintf(line, "__constant__ %s %s;", type.c_str(), name);
+	m_preprocesors.push_back(line);
+	m_constants.push_back({ name, obj.view() });
 }

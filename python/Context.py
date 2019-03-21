@@ -13,11 +13,17 @@ class Context:
     def add_include_dir(self, path):
         native.n_context_add_include_dir(self.m_cptr, path)
 
+    def add_built_in_header(self, filename, filecontent):
+    	native.n_context_add_built_in_header(self.m_cptr, filename, filecontent)
+
     def add_inlcude_filename(self, filename):
         native.n_context_add_inlcude_filename(self.m_cptr, filename)
 
     def add_preprocessor(self, line):
         native.n_context_add_preprocessor(self.m_cptr, line)
+
+    def add_constant_object(self, name, dv):
+    	native.n_context_add_constant_object(self.m_cptr, name, dv.m_cptr)
 
     def launch_once(self, gridDim, blockDim, arg_map, code_body, sharedMemBytes=0):
     	native.n_context_launch_once(

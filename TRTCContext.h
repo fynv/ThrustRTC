@@ -68,7 +68,7 @@ public:
 	void add_built_in_header(const char* name, const char* content);
 	void add_inlcude_filename(const char* fn);
 	void add_preprocessor(const char* line);	
-
+	void add_constant_object(const char* name, const DeviceViewable& obj);
 
 private:
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
@@ -82,6 +82,7 @@ private:
 	std::vector<const char*> m_name_built_in_headers;
 	std::vector<const char*> m_content_built_in_headers;
 	std::vector<std::string> m_preprocesors;
+	std::vector<std::pair<std::string, ViewBuf>> m_constants;
 
 };
 

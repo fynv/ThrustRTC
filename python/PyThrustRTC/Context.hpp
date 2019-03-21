@@ -34,6 +34,15 @@ static PyObject* n_context_add_include_dir(PyObject* self, PyObject* args)
 	return PyLong_FromLong(0);
 }
 
+static PyObject* n_context_add_built_in_header(PyObject* self, PyObject* args)
+{
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	const char* filename = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
+	const char* filecontent = PyUnicode_AsUTF8(PyTuple_GetItem(args, 2));
+	ctx->add_built_in_header(filename, filecontent);
+	return PyLong_FromLong(0);
+}
+
 static PyObject* n_context_add_inlcude_filename(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
@@ -48,6 +57,15 @@ static PyObject* n_context_add_preprocessor(PyObject* self, PyObject* args)
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
 	const char* line = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
 	ctx->add_preprocessor(line);
+	return PyLong_FromLong(0);
+}
+
+static PyObject* n_context_add_constant_object(PyObject* self, PyObject* args)
+{
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	const char* name = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
+	DeviceViewable* dv = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	ctx->add_constant_object(name, *dv);
 	return PyLong_FromLong(0);
 }
 
