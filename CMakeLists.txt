@@ -73,7 +73,6 @@ endif()
 target_link_libraries(test_trtc ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
-install(TARGETS test_trtc RUNTIME DESTINATION test)
 
 if (WIN32) 
 install(TARGETS ThrustRTC 
@@ -85,6 +84,8 @@ else()
 install(TARGETS ThrustRTC DESTINATION lib)
 endif()
 
+install(TARGETS test_trtc RUNTIME DESTINATION test)
 install(DIRECTORY DESTINATION test/__ptx_cache__)
 
+add_subdirectory(python/PyThrustRTC)
 add_subdirectory(python)
