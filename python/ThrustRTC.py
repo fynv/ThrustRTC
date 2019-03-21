@@ -26,6 +26,15 @@ class Context:
     def add_preprocessor(self, line):
         native.n_context_add_preprocessor(self.m_cptr, line)
 
+    def launch_once(self, gridDim, blockDim, arg_map, code_body, sharedMemBytes=0):
+    	native.n_context_launch_once(
+    		self.m_cptr, 
+    		gridDim, 
+    		blockDim, 
+    		[ (param_name, arg.m_cptr) for param_name, arg in arg_map.items()], 
+    		code_body, 
+    		sharedMemBytes)
+
 class DeviceViewable:
 	def name_view_cls(self):
 		return native.n_dv_name_view_cls(self.m_cptr)

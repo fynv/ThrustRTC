@@ -56,6 +56,13 @@ public:
 	static void destroy_kernel(Kernel* kernel);
 	static void launch_kernel(const Kernel* kernel, dim_type gridDim, dim_type blockDim, DeviceViewable** args, unsigned sharedMemBytes = 0);
 
+	// immediate launch the given code
+	struct AssignedParam
+	{
+		const char* param_name;
+		DeviceViewable* arg;
+	};
+	void launch_once(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes = 0) const;
 
 	void add_include_dir(const char* path);
 	void add_built_in_header(const char* name, const char* content);
@@ -67,7 +74,6 @@ private:
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
 
 	std::unordered_map<std::string, size_t> m_size_of_types;
-
 
 	static const char* s_ptx_cache_path;
 	bool m_verbose;

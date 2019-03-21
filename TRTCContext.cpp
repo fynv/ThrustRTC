@@ -269,35 +269,42 @@ size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, 
 		{
 			while (*p_type_param == ' ' || *p_type_param == '\t') p_type_param++;
 			while (*p_type_arg == ' ' || *p_type_arg == '\t') p_type_arg++;
+			if (*p_type_param == 0 || *p_type_arg == 0) break;
 
 			if (*p_type_param != *p_type_arg)
 			{
 				std::string templ_param;
 				std::string templ_arg;
+				int ab = 0;
 				while (*p_type_param == '_' ||
 					(*p_type_param >= 'a' && *p_type_param <= 'z') ||
 					(*p_type_param >= 'A' && *p_type_param <= 'Z') ||
 					(*p_type_param >= '0' && *p_type_param <= '9'))
 					templ_param += *(p_type_param++);
+				
+				while (*p_type_param == ' ' || *p_type_param == '\t') p_type_param++;
+				char end_marker = *p_type_param;
 
-				while (*p_type_arg == '_' ||
-					(*p_type_arg >= 'a' && *p_type_arg <= 'z') ||
-					(*p_type_arg >= 'A' && *p_type_arg <= 'Z') ||
-					(*p_type_arg >= '0' && *p_type_arg <= '9'))
-					templ_arg += *(p_type_arg++);
+				const char* p_type_arg_end = p_type_arg;
+				while (*p_type_arg_end != end_marker) p_type_arg_end++;
+				while (*(p_type_arg_end - 1) == ' ' || *(p_type_arg_end - 1) == '\t') p_type_arg_end--;
+				while (p_type_arg<p_type_arg_end) templ_arg += *(p_type_arg++);
 
 				size_t j = 0;
 				for (; j < total; j++)
 				{
 					if (templ_param == m_template_params[j])
 					{
-						if (template_args[j] != "" && template_args[j] != templ_arg)
+						if (template_args[j] == "")
+						{
+							template_args[j] = templ_arg;
+							count++;
+						}
+						else if (template_args[j] != templ_arg)
 						{
 							printf("Conflict during template-arg deduction of %s, assigned %s before assigning %s.\n", templ_param.c_str(), template_args[j].c_str(), templ_arg.c_str());
 							return count;
 						}						
-						template_args[j] = templ_arg;
-						count++;
 						break;
 					}
 				}
@@ -307,8 +314,11 @@ size_t TRTCContext::KernelTemplate::deduce_template_args(DeviceViewable** args, 
 					return count;
 				}
 			}
-			p_type_param++;
-			p_type_arg++;
+			else
+			{
+				p_type_param++;
+				p_type_arg++;
+			}
 		}
 	}
 	return count;
@@ -440,6 +450,23 @@ void TRTCContext::launch_kernel(const Kernel* kernel, dim_type gridDim, dim_type
 		converted_args[i] = argbufs[i].data();
 	}
 	cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
+}
+
+void TRTCContext::launch_once(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes) const
+{
+	size_t num_params = arg_map.size();
+	std::vector<ParamDesc> params(num_params);
+	std::vector<std::string> param_types(num_params);
+	std::vector<DeviceViewable*> args(num_params);
+	for (size_t i = 0; i < num_params; i++)
+	{
+		param_types[i] = arg_map[i].arg->name_view_cls();
+		params[i] = { param_types[i].c_str(), arg_map[i].param_name };
+		args[i] = arg_map[i].arg;
+	}
+	Kernel* ker = create_kernel(params, code_body);
+	launch_kernel(ker, gridDim, blockDim, args.data(), sharedMemBytes);
+	destroy_kernel(ker);
 }
 
 void TRTCContext::add_include_dir(const char* path)

@@ -29,8 +29,6 @@ static PyObject* n_context_destroy(PyObject* self, PyObject* args)
 static PyObject* n_context_set_verbose(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	if (!ctx) return PyLong_FromLong(0);
-
 	bool verbose = PyObject_IsTrue(PyTuple_GetItem(args, 1)) != 0;
 	ctx->set_verbose(verbose);
 
@@ -41,8 +39,6 @@ static PyObject* n_context_set_verbose(PyObject* self, PyObject* args)
 static PyObject* n_context_add_include_dir(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	if (!ctx) return PyLong_FromLong(0);
-
 	const char* dir = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
 	ctx->add_include_dir(dir);
 
@@ -52,8 +48,6 @@ static PyObject* n_context_add_include_dir(PyObject* self, PyObject* args)
 static PyObject* n_context_add_inlcude_filename(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	if (!ctx) return PyLong_FromLong(0);
-
 	const char* fn = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
 	ctx->add_inlcude_filename(fn);
 
@@ -63,10 +57,59 @@ static PyObject* n_context_add_inlcude_filename(PyObject* self, PyObject* args)
 static PyObject* n_context_add_preprocessor(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	if (!ctx) return PyLong_FromLong(0);
-
 	const char* line = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
 	ctx->add_preprocessor(line);
+	return PyLong_FromLong(0);
+}
+
+static PyObject* n_context_launch_once(PyObject* self, PyObject* args)
+{
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	dim_type gridDim;
+	PyObject* arg1 = PyTuple_GetItem(args, 1);
+	if (PyObject_TypeCheck(arg1, &PyTuple_Type))
+	{
+		ssize_t size = PyTuple_Size(arg1);
+		gridDim.x = size > 0 ? (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(arg1, 0)) : 1;
+		gridDim.y = size > 1 ? (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(arg1, 1)) : 1;
+		gridDim.z = size > 2 ? (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(arg1, 2)) : 1;
+	}
+	else
+	{
+		gridDim.x = (unsigned)PyLong_AsUnsignedLong(arg1);
+		gridDim.y = 1;
+		gridDim.z = 1;
+	}
+
+	dim_type blockDim;
+	PyObject* arg2 = PyTuple_GetItem(args, 2);
+	if (PyObject_TypeCheck(arg2, &PyTuple_Type))
+	{
+		ssize_t size = PyTuple_Size(arg2);
+		blockDim.x = size > 0 ? (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(arg2, 0)) : 1;
+		blockDim.y = size > 1 ? (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(arg2, 1)) : 1;
+		blockDim.z = size > 2 ? (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(arg2, 2)) : 1;
+	}
+	else
+	{
+		blockDim.x = (unsigned)PyLong_AsUnsignedLong(arg2);
+		blockDim.y = 1;
+		blockDim.z = 1;
+	}
+
+	PyObject* pyArgMap = PyTuple_GetItem(args, 3);
+	ssize_t num_params = PyList_Size(pyArgMap);
+	std::vector<TRTCContext::AssignedParam> arg_map(num_params);
+	for (ssize_t i = 0; i < num_params; i++)
+	{
+		PyObject* pyAssignedParam = PyList_GetItem(pyArgMap, i);
+		arg_map[i].param_name =  PyUnicode_AsUTF8(PyTuple_GetItem(pyAssignedParam, 0));
+		arg_map[i].arg = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(pyAssignedParam, 1));
+	}
+
+	const char* code_body = PyUnicode_AsUTF8(PyTuple_GetItem(args, 4));
+	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 5));
+	ctx->launch_once(gridDim, blockDim, arg_map, code_body, sharedMemBytes);
 
 	return PyLong_FromLong(0);
 }
@@ -523,6 +566,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_context_add_include_dir", n_context_add_include_dir, METH_VARARGS, "" },
 	{ "n_context_add_inlcude_filename", n_context_add_inlcude_filename, METH_VARARGS, "" },
 	{ "n_context_add_preprocessor", n_context_add_preprocessor, METH_VARARGS, "" },
+	{ "n_context_launch_once", n_context_launch_once, METH_VARARGS, "" },
 	{ "n_dv_name_view_cls", n_dv_name_view_cls, METH_VARARGS, "" },
 	{ "n_dv_destroy", n_dv_destroy, METH_VARARGS, "" },
 	{ "n_dv_create_basic", n_dv_create_basic, METH_VARARGS, "" },

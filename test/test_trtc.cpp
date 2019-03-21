@@ -6,9 +6,9 @@
 int main()
 {
 	TRTCContext::set_ptx_cache("__ptx_cache__");
-
 	TRTCContext ctx;
 
+	/// Kernel template, launched with different arguments
 	CachedKernelTemplate ktempl(&ctx, 
 	{ "T" },
 	{ {"VectorView<T>", "arr_in"}, {"VectorView<T>", "arr_out"}, {"double", "k"} },
@@ -33,6 +33,16 @@ int main()
 	DeviceViewable* args_i[] = { &dvec_in_i, &dvec_out_i, &k2 };
 
 	ktempl.launch({ 1, 1, 1 }, { 128, 1, 1 }, args_i);
+	dvec_out_i.to_host(test_i);
+	printf("%d %d %d %d %d\n", test_i[0], test_i[1], test_i[2], test_i[3], test_i[4]);
+
+	// Launch immediately - automatic decide parameter types from arguments
+	ctx.launch_once({ 1, 1, 1 }, { 128, 1, 1 }, { { "arr", &dvec_out_i } },
+		"    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
+		"    if (idx >= arr.size) return;\n"
+		"    arr[idx]*=100;\n"
+		);
+
 	dvec_out_i.to_host(test_i);
 	printf("%d %d %d %d %d\n", test_i[0], test_i[1], test_i[2], test_i[3], test_i[4]);
 
