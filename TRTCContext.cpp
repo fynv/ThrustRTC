@@ -407,8 +407,11 @@ KernelId_t TRTCContext::KernelTemplate::instantiate(TRTCContext& ctx, const std:
 
 	{
 		std::unordered_map<std::string, KernelId_t>::iterator it = ctx.m_kernel_id_map.find(md5);
-		m_kernel_id_map[templ_pattern] = it->second;
-		if (it != ctx.m_kernel_id_map.end()) return it->second;
+		if (it != ctx.m_kernel_id_map.end()) 
+		{
+			m_kernel_id_map[templ_pattern] = it->second;
+			return it->second;
+		}
 	}
 
 	std::vector<char> ptx;
