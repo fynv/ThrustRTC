@@ -25,7 +25,6 @@ static PyMethodDef s_Methods[] = {
 	{ "n_context_add_constant_object", n_context_add_constant_object, METH_VARARGS, "" },
 	{ "n_context_launch_once", n_context_launch_once, METH_VARARGS, "" },
 	{ "n_kernel_create", n_kernel_create, METH_VARARGS, "" },
-	{ "n_kernel_destroy", n_kernel_destroy, METH_VARARGS, "" },
 	{ "n_kernel_num_params", n_kernel_num_params, METH_VARARGS, "" },
 	{ "n_kernel_launch", n_kernel_launch, METH_VARARGS, "" },
 	{ "n_kernel_template_create", n_kernel_template_create, METH_VARARGS, "" },

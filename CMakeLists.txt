@@ -5,7 +5,6 @@ find_package(CUDA REQUIRED)
 set(LIB_SOURCES
 TRTCContext.cpp
 DVVector.cpp
-CachedKernelTemplate.cpp
 internal/md5.c
 )
 
@@ -13,7 +12,6 @@ set(LIB_HEADERS
 DeviceViewable.h
 TRTCContext.h
 DVVector.h
-CachedKernelTemplate.h
 TRTC_api.h
 )
 

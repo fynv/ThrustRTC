@@ -1,6 +1,5 @@
 #include <Python.h>
 #include "TRTCContext.h"
-#include "CachedKernelTemplate.h"
 
 static PyObject* n_context_create(PyObject* self, PyObject* args)
 {
@@ -136,35 +135,30 @@ static PyObject* n_kernel_create(PyObject* self, PyObject* args)
 	}
 	const char* body = PyUnicode_AsUTF8(PyTuple_GetItem(args, 2));
 
-	TRTCContext::Kernel* kernel = ctx->create_kernel(params, body);
-	if (kernel == nullptr)
+	KernelId_t kerId = ctx->create_kernel(params, body);
+	if (kerId == (KernelId_t)(-1))
 	{
 		PyErr_Format(PyExc_ValueError, "Failed to compile kernel");
 		Py_RETURN_NONE;
 	}
-	return PyLong_FromVoidPtr((void*)kernel);
-}
-
-static PyObject* n_kernel_destroy(PyObject* self, PyObject* args)
-{
-	TRTCContext::Kernel* kernel = (TRTCContext::Kernel*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	TRTCContext::destroy_kernel(kernel);
-	return PyLong_FromLong(0);
+	return PyLong_FromUnsignedLong((unsigned long)kerId);
 }
 
 static PyObject* n_kernel_num_params(PyObject* self, PyObject* args)
 {
-	TRTCContext::Kernel* kernel = (TRTCContext::Kernel*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	return PyLong_FromLong((long)TRTCContext::get_num_of_params(kernel));
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	KernelId_t kerId = (KernelId_t)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 1));
+	return PyLong_FromLong((long)ctx->get_num_of_params(kerId));
 }
 
 static PyObject* n_kernel_launch(PyObject* self, PyObject* args)
 {
-	TRTCContext::Kernel* kernel = (TRTCContext::Kernel*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	size_t num_params = TRTCContext::get_num_of_params(kernel);
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	KernelId_t kerId = (KernelId_t)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 1));
+	size_t num_params = ctx->get_num_of_params(kerId);
 
 	dim_type gridDim;
-	PyObject* arg1 = PyTuple_GetItem(args, 1);
+	PyObject* arg1 = PyTuple_GetItem(args, 2);
 	if (PyObject_TypeCheck(arg1, &PyTuple_Type))
 	{
 		ssize_t size = PyTuple_Size(arg1);
@@ -180,7 +174,7 @@ static PyObject* n_kernel_launch(PyObject* self, PyObject* args)
 	}
 
 	dim_type blockDim;
-	PyObject* arg2 = PyTuple_GetItem(args, 2);
+	PyObject* arg2 = PyTuple_GetItem(args, 3);
 	if (PyObject_TypeCheck(arg2, &PyTuple_Type))
 	{
 		ssize_t size = PyTuple_Size(arg2);
@@ -195,8 +189,8 @@ static PyObject* n_kernel_launch(PyObject* self, PyObject* args)
 		blockDim.z = 1;
 	}
 
-	PyObject* arg3 = PyTuple_GetItem(args, 3);
-	std::vector<DeviceViewable*> params;
+	PyObject* arg3 = PyTuple_GetItem(args, 4);
+	std::vector<const DeviceViewable*> params;
 	if (PyObject_TypeCheck(arg3, &PyList_Type))
 	{
 		ssize_t size = PyList_Size(arg3);
@@ -227,22 +221,21 @@ static PyObject* n_kernel_launch(PyObject* self, PyObject* args)
 			Py_RETURN_NONE;
 		}
 	}
-	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 4));
-	TRTCContext::launch_kernel(kernel, gridDim, blockDim, params.data(), sharedMemBytes);
+	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 5));
+	ctx->launch_kernel(kerId, gridDim, blockDim, params.data(), sharedMemBytes);
 	return PyLong_FromLong(0);
 }
 
 
 static PyObject* n_kernel_template_create(PyObject* self, PyObject* args)
 {
-	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	PyObject* pyTemplParamList = PyTuple_GetItem(args, 1);
+	PyObject* pyTemplParamList = PyTuple_GetItem(args, 0);
 	ssize_t num_templ_params = PyList_Size(pyTemplParamList);
 	std::vector<const char*> templ_params(num_templ_params);
 	for (ssize_t i = 0; i < num_templ_params; i++)
 		templ_params[i] = PyUnicode_AsUTF8(PyList_GetItem(pyTemplParamList, i));
 
-	PyObject* pyParamList = PyTuple_GetItem(args, 2);
+	PyObject* pyParamList = PyTuple_GetItem(args, 1);
 	ssize_t num_params = PyList_Size(pyParamList);
 	std::vector<TRTCContext::ParamDesc> params(num_params);
 	for (ssize_t i = 0; i < num_params; i++)
@@ -251,40 +244,41 @@ static PyObject* n_kernel_template_create(PyObject* self, PyObject* args)
 		params[i].type = PyUnicode_AsUTF8(PyTuple_GetItem(tuple, 0));
 		params[i].name = PyUnicode_AsUTF8(PyTuple_GetItem(tuple, 1));
 	}
-	const char* body = PyUnicode_AsUTF8(PyTuple_GetItem(args, 3));
+	const char* body = PyUnicode_AsUTF8(PyTuple_GetItem(args, 2));
 
-	CachedKernelTemplate* ktempl = new CachedKernelTemplate(ctx, templ_params, params, body);
+	TRTCContext::KernelTemplate* ktempl = new TRTCContext::KernelTemplate(templ_params, params, body);
 	return PyLong_FromVoidPtr((void*)ktempl);
 }
 
 static PyObject* n_kernel_template_destroy(PyObject* self, PyObject* args)
 {
-	CachedKernelTemplate* kernel = (CachedKernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTCContext::KernelTemplate*  kernel = (TRTCContext::KernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
 	delete kernel;
 	return PyLong_FromLong(0);
 }
 
 static PyObject* n_kernel_template_num_template_params(PyObject* self, PyObject* args)
 {
-	CachedKernelTemplate* kernel = (CachedKernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTCContext::KernelTemplate*  kernel = (TRTCContext::KernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
 	return PyLong_FromLong((long)kernel->num_template_params());
 }
 
 
 static PyObject* n_kernel_template_num_params(PyObject* self, PyObject* args)
 {
-	CachedKernelTemplate* kernel = (CachedKernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTCContext::KernelTemplate*  kernel = (TRTCContext::KernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
 	return PyLong_FromLong((long)kernel->num_params());
 }
 
 static PyObject* n_kernel_template_launch_explict(PyObject* self, PyObject* args)
 {
-	CachedKernelTemplate* kernel = (CachedKernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTCContext::KernelTemplate*  kernel = (TRTCContext::KernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
 	size_t num_template_params = kernel->num_template_params();
 	size_t num_params = kernel->num_params();
 
 	dim_type gridDim;
-	PyObject* arg1 = PyTuple_GetItem(args, 1);
+	PyObject* arg1 = PyTuple_GetItem(args, 2);
 	if (PyObject_TypeCheck(arg1, &PyTuple_Type))
 	{
 		ssize_t size = PyTuple_Size(arg1);
@@ -300,7 +294,7 @@ static PyObject* n_kernel_template_launch_explict(PyObject* self, PyObject* args
 	}
 
 	dim_type blockDim;
-	PyObject* arg2 = PyTuple_GetItem(args, 2);
+	PyObject* arg2 = PyTuple_GetItem(args, 3);
 	if (PyObject_TypeCheck(arg2, &PyTuple_Type))
 	{
 		ssize_t size = PyTuple_Size(arg2);
@@ -315,7 +309,7 @@ static PyObject* n_kernel_template_launch_explict(PyObject* self, PyObject* args
 		blockDim.z = 1;
 	}
 
-	PyObject* arg3 = PyTuple_GetItem(args, 3);
+	PyObject* arg3 = PyTuple_GetItem(args, 4);
 	std::vector<std::string> template_args;
 	if (PyObject_TypeCheck(arg3, &PyList_Type))
 	{
@@ -348,8 +342,8 @@ static PyObject* n_kernel_template_launch_explict(PyObject* self, PyObject* args
 		}
 	}
 
-	PyObject* arg4 = PyTuple_GetItem(args, 4);
-	std::vector<DeviceViewable*> params;
+	PyObject* arg4 = PyTuple_GetItem(args, 5);
+	std::vector<const DeviceViewable*> params;
 	if (PyObject_TypeCheck(arg4, &PyList_Type))
 	{
 		ssize_t size = PyList_Size(arg4);
@@ -380,17 +374,18 @@ static PyObject* n_kernel_template_launch_explict(PyObject* self, PyObject* args
 			Py_RETURN_NONE;
 		}
 	}
-	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 5));
-	kernel->launch(gridDim, blockDim, template_args, params.data(), sharedMemBytes);
+	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 6));
+	ctx->launch_kernel_template_explict(*kernel, template_args, gridDim, blockDim, params.data(), sharedMemBytes);
 	return PyLong_FromLong(0);
 }
 
 static PyObject* n_kernel_template_launch(PyObject* self, PyObject* args)
 {
-	CachedKernelTemplate* kernel = (CachedKernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTCContext::KernelTemplate*  kernel = (TRTCContext::KernelTemplate*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
 	size_t num_params = kernel->num_params();
 	dim_type gridDim;
-	PyObject* arg1 = PyTuple_GetItem(args, 1);
+	PyObject* arg1 = PyTuple_GetItem(args, 2);
 	if (PyObject_TypeCheck(arg1, &PyTuple_Type))
 	{
 		ssize_t size = PyTuple_Size(arg1);
@@ -406,7 +401,7 @@ static PyObject* n_kernel_template_launch(PyObject* self, PyObject* args)
 	}
 
 	dim_type blockDim;
-	PyObject* arg2 = PyTuple_GetItem(args, 2);
+	PyObject* arg2 = PyTuple_GetItem(args, 3);
 	if (PyObject_TypeCheck(arg2, &PyTuple_Type))
 	{
 		ssize_t size = PyTuple_Size(arg2);
@@ -421,8 +416,8 @@ static PyObject* n_kernel_template_launch(PyObject* self, PyObject* args)
 		blockDim.z = 1;
 	}
 
-	PyObject* arg3 = PyTuple_GetItem(args, 3);
-	std::vector<DeviceViewable*> params;
+	PyObject* arg3 = PyTuple_GetItem(args, 4);
+	std::vector<const DeviceViewable*> params;
 	if (PyObject_TypeCheck(arg3, &PyList_Type))
 	{
 		ssize_t size = PyList_Size(arg3);
@@ -453,7 +448,10 @@ static PyObject* n_kernel_template_launch(PyObject* self, PyObject* args)
 			Py_RETURN_NONE;
 		}
 	}
-	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 4));
-	kernel->launch(gridDim, blockDim, params.data(), sharedMemBytes);
-	return PyLong_FromLong(0);
+	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 5));
+
+	if (ctx->launch_kernel_template(*kernel, gridDim, blockDim, params.data(), sharedMemBytes))
+		return PyLong_FromLong(0);
+	else
+		Py_RETURN_NONE;
 }
