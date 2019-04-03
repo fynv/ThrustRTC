@@ -14,6 +14,7 @@ I've decided to license this project under ["996ICU License"](https://github.com
 
 Basically, you can use the code any way you like unless you are working for a 996 company.
 
+[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 
 
 
