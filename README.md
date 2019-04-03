@@ -4,7 +4,9 @@
 
 The core infrastructure for handling device-viewable data objects has been constructed.
 
-However, I have got time to add any of the Thrust algorithms yet. I'll get back to that soon.
+However, I have not got time to add any of the Thrust algorithms yet. I'll get back to that soon.
+
+Please go to the "test" folder and "python/test" folder to see what it can be used for now.
 
 ## License 
 
