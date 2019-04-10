@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "TRTCContext.h"
 #include "DVVector.h"
+#include "fill.h"
 
 int main()
 {
@@ -44,6 +45,16 @@ int main()
 
 	dvec_out_i.to_host(test_i);
 	printf("%d %d %d %d %d\n", test_i[0], test_i[1], test_i[2], test_i[3], test_i[4]);
+
+
+	// Fill
+	printf("TRTC_Fill:\n");
+	DVVector vec_to_fill(ctx, "int32_t", 5);
+	TRTC_Fill(ctx, vec_to_fill, DVInt32(123));
+	int values_filled[5];
+	vec_to_fill.to_host(values_filled);
+	printf("%d %d %d %d %d\n", values_filled[0], values_filled[1], values_filled[2], values_filled[3], values_filled[4]);
+
 
 	return 0;
 }

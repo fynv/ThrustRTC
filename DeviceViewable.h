@@ -60,5 +60,6 @@ DECLAR_DV_BASIC(DVUInt32, uint32_t)
 DECLAR_DV_BASIC(DVInt64, int64_t)
 DECLAR_DV_BASIC(DVUInt64, uint64_t)
 
+DECLAR_DV_BASIC(DVSizeT, size_t)
 
 #endif

@@ -6,13 +6,15 @@ set(LIB_SOURCES
 TRTCContext.cpp
 DVVector.cpp
 internal/md5.c
+fill.cpp
 )
 
 set(LIB_HEADERS
+TRTC_api.h
 DeviceViewable.h
 TRTCContext.h
 DVVector.h
-TRTC_api.h
+fill.h
 )
 
 set(INTERNAL_HEADERS
