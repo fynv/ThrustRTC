@@ -44,7 +44,7 @@ bool TRTC_For_Template::deduce_template_args(const DeviceViewable** _args, std::
 	args[total_params - 2] = &begin;
 	args[total_params - 1] = &end;
 
-	m_ker_templ->deduce_template_args(args.data(), template_args);
+	return m_ker_templ->deduce_template_args(args.data(), template_args);
 }
 
 void TRTC_For_Template::launch_explict(TRTCContext& ctx, const std::vector<std::string>& template_args, size_t begin, size_t end, const DeviceViewable** args, unsigned sharedMemBytes)
