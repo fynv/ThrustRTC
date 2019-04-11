@@ -43,9 +43,11 @@ bool TRTC_Replace_If(TRTCContext& ctx, DVVector& vec, const Functor& pred, const
 	if (end == (size_t)(-1)) end = vec.size();
 
 	TRTC_For_Once(ctx, begin, end, arg_map, "_idx",
-		(std::string("    ") + vec.name_elem_cls() + " " + pred.functor_params[0] + " = _view_vec[_idx];\n"
-		"    bool " + pred.functor_ret + "=false;\n"
-		"    do{\n" + pred.code_body + "    } while(false);\n"
+		(std::string("    bool ") + pred.functor_ret + "=false;\n"
+		"    do{\n"
+		"        " + vec.name_elem_cls() + " " + pred.functor_params[0] + " = _view_vec[_idx];\n" +
+		pred.code_body + 
+		"    } while(false);\n"
 		"    if (" + pred.functor_ret + ") _view_vec[_idx] = _new_value; \n").c_str());
 
 	return true;
@@ -109,9 +111,11 @@ bool TRTC_Replace_Copy_If(TRTCContext& ctx, const DVVector& vec_in, DVVector& ve
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
 
 	TRTC_For_Once(ctx, begin_in, end_in, arg_map, "_idx",
-		(std::string("    ") + vec_in.name_elem_cls() + " " + pred.functor_params[0] + " = _view_vec_in[_idx];\n"
-		"    bool " + pred.functor_ret + "=false;\n"
-		"    do{\n" + pred.code_body + "    } while(false);\n"
+		(std::string("    bool ") + pred.functor_ret + "=false;\n"
+		"    do{\n"
+		"        " + vec_in.name_elem_cls() + " " + pred.functor_params[0] + " = _view_vec_in[_idx];\n" +
+		pred.code_body +
+		"    } while(false);\n"
 		"    _view_vec_out[_idx+_delta] = " + pred.functor_ret + "? _new_value : _view_vec_in[_idx]; \n").c_str());
 
 	return true;
