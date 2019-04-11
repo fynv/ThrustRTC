@@ -8,6 +8,7 @@ DVVector.cpp
 internal/md5.c
 for.cpp
 fill.cpp
+replace.cpp
 )
 
 set(LIB_HEADERS
@@ -17,6 +18,7 @@ TRTCContext.h
 DVVector.h
 for.h
 fill.h
+replace.h
 )
 
 set(INTERNAL_HEADERS
@@ -61,7 +63,7 @@ add_dependencies(Run_PackHeaders PackHeaders)
 add_dependencies(ThrustRTC Run_PackHeaders)
 
 if (WIN32) 
-target_compile_definitions(ThrustRTC PUBLIC THRUST_RTC_DLL_EXPORT)
+target_compile_definitions(ThrustRTC PRIVATE THRUST_RTC_DLL_EXPORT)
 endif()
 
 target_link_libraries(ThrustRTC cuda nvrtc)
@@ -69,16 +71,19 @@ target_link_libraries(ThrustRTC cuda nvrtc)
 cuda_add_executable(test_trtc test/test_trtc.cpp)
 cuda_add_executable(test_for test/test_for.cpp)
 cuda_add_executable(test_fill test/test_fill.cpp)
+cuda_add_executable(test_replace test/test_replace.cpp)
 
 if (WIN32) 
 target_compile_definitions(test_trtc PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_for PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_fill PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_replace PUBLIC THRUST_RTC_DLL_IMPORT)
 endif()
 
 target_link_libraries(test_trtc ThrustRTC)
 target_link_libraries(test_for ThrustRTC)
 target_link_libraries(test_fill ThrustRTC)
+target_link_libraries(test_replace ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
 
@@ -92,7 +97,7 @@ else()
 install(TARGETS ThrustRTC DESTINATION lib)
 endif()
 
-install(TARGETS test_trtc test_for test_fill RUNTIME DESTINATION test)
+install(TARGETS test_trtc test_for test_fill test_replace RUNTIME DESTINATION test)
 install(DIRECTORY DESTINATION test/__ptx_cache__)
 
 add_subdirectory(python/PyThrustRTC)
