@@ -67,12 +67,18 @@ endif()
 target_link_libraries(ThrustRTC cuda nvrtc)
 
 cuda_add_executable(test_trtc test/test_trtc.cpp)
+cuda_add_executable(test_for test/test_for.cpp)
+cuda_add_executable(test_fill test/test_fill.cpp)
 
 if (WIN32) 
 target_compile_definitions(test_trtc PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_for PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_fill PUBLIC THRUST_RTC_DLL_IMPORT)
 endif()
 
 target_link_libraries(test_trtc ThrustRTC)
+target_link_libraries(test_for ThrustRTC)
+target_link_libraries(test_fill ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
 
@@ -86,7 +92,7 @@ else()
 install(TARGETS ThrustRTC DESTINATION lib)
 endif()
 
-install(TARGETS test_trtc RUNTIME DESTINATION test)
+install(TARGETS test_trtc test_for test_fill RUNTIME DESTINATION test)
 install(DIRECTORY DESTINATION test/__ptx_cache__)
 
 add_subdirectory(python/PyThrustRTC)

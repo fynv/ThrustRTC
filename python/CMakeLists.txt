@@ -10,6 +10,7 @@ install(FILES ${PYTHON} DESTINATION test/ThrustRTC)
 
 set(PYTHON_TEST
 	test/test_trtc.py
+	test/test_for.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test )
