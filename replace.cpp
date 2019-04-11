@@ -38,7 +38,8 @@ void THRUST_RTC_API TRTC_Replace_If(TRTCContext& ctx, DVVector& vec, const Funct
 
 	TRTC_For_Once(ctx, begin, end, arg_map, "_idx",
 		(std::string("    ") + vec.name_elem_cls() + " " + pred.functor_params[0] + " = _view_vec[_idx];\n"
-		"    bool " + pred.functor_ret + "=false;\n" + "    {\n" + pred.code_body + "    }\n"
+		"    bool " + pred.functor_ret + "=false;\n"
+		"    do{\n" + pred.code_body + "    } while(false);\n"
 		"    if (" + pred.functor_ret + ") _view_vec[_idx] = _new_value; \n").c_str());
 }
 
