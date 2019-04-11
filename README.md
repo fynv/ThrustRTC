@@ -3,14 +3,24 @@
 ## Progress
 
 The core infrastructure for handling device-viewable data objects has been constructed.
+The following examples shows how to construct and launch general kernels and for-loops,
+and how to use them to operate on DVVectors (device viewable GPU vectors).
 
-However, I have not got time to add any of the Thrust algorithms yet. I'll get back to that soon.
+* test/test_trtc.cpp
+* test/test_for.cpp
+* python/test/test_trtc.py
+* python/test/test_for.py
 
-Please go to the "test" folder and "python/test" folder to see what it can be used for now.
+The following examples shows the use of the ported Thrust algorithms.
+(Currently we only have "fill", I will populate the code progressively)
+
+* fill
+  * test/test_fill.cpp
+  * python/test/test_fill.py
 
 ## License 
 
-I've decided to license this project under ["996ICU License"](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+I've decided to license this project under ['"Anti 996" License'](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 
 Basically, you can use the code any way you like unless you are working for a 996 company.
 
