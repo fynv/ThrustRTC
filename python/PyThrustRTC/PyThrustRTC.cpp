@@ -13,6 +13,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "DeviceViewable.hpp"
 #include "DVVector.hpp"
 #include "for.hpp"
+#include "fill.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_ptx_cache", n_set_ptx_cache, METH_VARARGS, "" },
@@ -53,6 +54,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_for_template_num_params", n_for_template_num_params, METH_VARARGS, "" },
 	{ "n_for_template_launch_explict", n_for_template_launch_explict, METH_VARARGS, "" },
 	{ "n_for_template_launch", n_for_template_launch, METH_VARARGS, "" },
+	{ "n_fill", n_fill, METH_VARARGS, "" },
 	0
 };
 

@@ -9,6 +9,7 @@ Context.hpp
 DeviceViewable.hpp
 DVVector.hpp
 for.hpp
+fill.hpp
 )
 
 set (INCLUDE_DIR 
