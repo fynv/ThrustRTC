@@ -8,6 +8,7 @@ PyThrustRTC.cpp
 Context.hpp
 DeviceViewable.hpp
 DVVector.hpp
+for.hpp
 )
 
 set (INCLUDE_DIR 

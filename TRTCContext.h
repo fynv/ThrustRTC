@@ -35,7 +35,7 @@ public:
 	class THRUST_RTC_API KernelTemplate
 	{
 	public:
-		KernelTemplate(const std::vector<const char*> template_params, const std::vector<ParamDesc>& params, const char* body);
+		KernelTemplate(const std::vector<const char*>& template_params, const std::vector<ParamDesc>& params, const char* body);
 
 		size_t num_template_params() const { return m_template_params.size(); }
 		size_t num_params() const { return m_type_params.size(); }

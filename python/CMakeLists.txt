@@ -3,6 +3,7 @@ set(PYTHON
 	Context.py
 	DeviceViewable.py
 	DVVector.py
+	ForLoop.py
 )
 
 install(FILES ${PYTHON} DESTINATION test/ThrustRTC)

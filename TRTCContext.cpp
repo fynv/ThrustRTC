@@ -225,7 +225,7 @@ size_t TRTCContext::size_of(const char* cls)
 	return size;
 }
 
-TRTCContext::KernelTemplate::KernelTemplate(const std::vector<const char*> template_params, const std::vector<ParamDesc>& params, const char* body)
+TRTCContext::KernelTemplate::KernelTemplate(const std::vector<const char*>& template_params, const std::vector<ParamDesc>& params, const char* body)
 {
 	m_template_params.resize(template_params.size());
 	for (size_t i = 0; i < m_template_params.size(); i++)

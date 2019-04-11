@@ -12,6 +12,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "Context.hpp"
 #include "DeviceViewable.hpp"
 #include "DVVector.hpp"
+#include "for.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_ptx_cache", n_set_ptx_cache, METH_VARARGS, "" },
@@ -41,6 +42,17 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvvector_size", n_dvvector_size, METH_VARARGS, "" },
 	{ "n_dvvector_to_host", n_dvvector_to_host, METH_VARARGS, "" },
 	{ "n_dvvector_from_dvs", n_dvvector_from_dvs, METH_VARARGS, "" },
+	{ "n_for_launch_once", n_for_launch_once, METH_VARARGS, "" },
+	{ "n_for_create", n_for_create, METH_VARARGS, "" },
+	{ "n_for_destroy", n_for_destroy, METH_VARARGS, "" },
+	{ "n_for_num_params", n_for_num_params, METH_VARARGS, "" },
+	{ "n_for_launch", n_for_launch, METH_VARARGS, "" },
+	{ "n_for_template_create", n_for_template_create, METH_VARARGS, "" },
+	{ "n_for_template_destroy", n_for_template_destroy, METH_VARARGS, "" },
+	{ "n_for_template_num_template_params", n_for_template_num_template_params, METH_VARARGS, "" },
+	{ "n_for_template_num_params", n_for_template_num_params, METH_VARARGS, "" },
+	{ "n_for_template_launch_explict", n_for_template_launch_explict, METH_VARARGS, "" },
+	{ "n_for_template_launch", n_for_template_launch, METH_VARARGS, "" },
 	0
 };
 
