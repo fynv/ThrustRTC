@@ -67,7 +67,7 @@ public:
 	struct AssignedParam
 	{
 		const char* param_name;
-		DeviceViewable* arg;
+		const DeviceViewable* arg;
 	};
 	void launch_once(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes = 0);
 

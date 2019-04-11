@@ -17,6 +17,7 @@ DeviceViewable.h
 TRTCContext.h
 DVVector.h
 for.h
+functor.h
 fill.h
 replace.h
 )

@@ -1,5 +1,5 @@
-#ifndef TRTC_for_h
-#define TRTC_for_h
+#ifndef _TRTC_for_h
+#define _TRTC_for_h
 
 #include "TRTC_api.h"
 #include "TRTCContext.h"
