@@ -13,3 +13,4 @@ from .ForLoop import *
 from .Fill import *
 from .Functor import *
 from .Replace import *
+from .ForEach import *

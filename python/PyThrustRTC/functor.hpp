@@ -24,7 +24,10 @@ inline Functor PyFunctor_AsFunctor(PyObject* pyFunctor)
 		functor.functor_params[i] = PyUnicode_AsUTF8(PyList_GetItem(py_functor_params, i));
 	
 	PyObject* py_functor_ret = PyObject_GetAttrString(pyFunctor, "functor_ret");
-	functor.functor_ret = PyUnicode_AsUTF8(py_functor_ret);
+	if (py_functor_ret == Py_None)
+		functor.functor_ret = nullptr;
+	else
+		functor.functor_ret = PyUnicode_AsUTF8(py_functor_ret);
 
 	PyObject* py_code_body = PyObject_GetAttrString(pyFunctor, "code_body");
 	functor.code_body = PyUnicode_AsUTF8(py_code_body);

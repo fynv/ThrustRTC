@@ -12,6 +12,7 @@ for.hpp
 fill.hpp
 functor.hpp
 replace.hpp
+for_each.hpp
 )
 
 set (INCLUDE_DIR 

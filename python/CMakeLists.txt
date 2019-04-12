@@ -7,6 +7,7 @@ set(PYTHON
 	Fill.py
 	Functor.py
 	Replace.py
+	ForEach.py
 )
 
 install(FILES ${PYTHON} DESTINATION test/ThrustRTC)
@@ -16,6 +17,7 @@ set(PYTHON_TEST
 	test/test_for.py
 	test/test_fill.py
 	test/test_replace.py
+	test/test_for_each.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test )
