@@ -9,11 +9,11 @@ int main()
 	TRTCContext ctx;
 	
 	// replace
-	int hvec[5] = { 1,2,3,1,2 };
-	DVVector vec(ctx, "int32_t", 5, hvec);
-	TRTC_Replace(ctx, vec, DVInt32(1), DVInt32(99));
-	vec.to_host(hvec);
-	printf("%d %d %d %d %d\n", hvec[0], hvec[1], hvec[2], hvec[3], hvec[4]);
+	int hvec1[5] = { 1,2,3,1,2 };
+	DVVector vec1(ctx, "int32_t", 5, hvec1);
+	TRTC_Replace(ctx, vec1, DVInt32(1), DVInt32(99));
+	vec1.to_host(hvec1);
+	printf("%d %d %d %d %d\n", hvec1[0], hvec1[1], hvec1[2], hvec1[3], hvec1[4]);
 
 	// replace_if
 	int hvec2[5] = { 1, -2, 3, -4, 5 };

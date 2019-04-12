@@ -26,6 +26,10 @@ The following examples shows the use of the ported Thrust algorithms.
   * test/test_for_each.cpp
   * python/test/test_for_each.py
 
+* adjacent_difference
+  * test/adjacent_difference.cpp
+  * python/test/adjacent_difference.py
+
 ## License 
 
 I've decided to license this project under ['"Anti 996" License'](https://github.com/996icu/996.ICU/blob/master/LICENSE)

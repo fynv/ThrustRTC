@@ -13,6 +13,7 @@ fill.hpp
 functor.hpp
 replace.hpp
 for_each.hpp
+adjacent_difference.hpp
 )
 
 set (INCLUDE_DIR 
