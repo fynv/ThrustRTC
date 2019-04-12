@@ -1,5 +1,80 @@
 # ThrustRTC
 
+## Idea
+
+The aim of the project is provide general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/),
+that can be used in non-C++ programming launguages (currently focused on Python).
+
+There are several options to integrate CUDA into a interpreted language like Python.
+
+* Writing both host code and device code in the interpreted launguage
+
+A special compiler/interpretor is required to translate from the interpreted launguage to GPU executable code.
+
+For Python, we need [Numba](http://numba.pydata.org/numba-doc/0.13/CUDAJit.html), which is great, but only a subset of CUDA features can be utilized.
+
+* Providing precompiled GPU code, accessible through host APIs
+
+This is what we do for most GPU libraries. There are some general limitations:
+
+  * Code bloat. Each kernel needs to be compiled for multiple GPU generations. For templated kernels, the number will be multiplied
+    with the number of different data types.
+
+  * Unextendable. Once a CUDA module is compiled, it will be extremely difficult to insert custom code from outside of the module. 
+
+Thrust uses templates and callback/functors intensively, so the above limitations will be unavoidable.
+
+* Integrate GPU RTC (runtime compilation) with the interpreted launguage
+
+This is the choice of this project. We still write the device code in C++. However, we delay the compilation of device code to runtime.
+
+Per-usecase runtime data-type information and custom code (functors) will be integrated with fixed routines dynamically, 
+through a string concatenation procedure, and concrete source code will be generated and compiled as kernels. 
+
+From user's perspective, the usage is of this library is quite simlar to using Thrust, although 2 different launguages needed to be used simultaneously. Using _replace_if()_ as an example:
+
+Thrust, C++:
+
+```cpp
+#include <thrust/replace.h>
+#include <thrust/device_vector.h>
+
+thrust::device_vector<int> A(4);
+A[0] =  1;
+A[1] = -3;
+A[2] =  2;
+A[3] = -1;
+
+thrust::replace_if(A.begin(), A.end(), [] __device__ (int x){ return x < 0; }, 0);
+
+// A contains [1, 0, 2, 0]
+```
+
+ThrustRTC, Python (host) + C++ (device):
+
+```python
+import ThrustRTC as trtc
+
+trtc.set_ptx_cache('__ptx_cache__')
+ctx = trtc.Context()
+
+A = trtc.device_vector_from_list(ctx, [1, -3, 2, -1], 'int32_t')
+
+trtc.Replace_If(ctx, A, trtc.Functor( {}, ['x'], 'ret',
+'''
+         ret = x<0;
+'''), trtc.DVInt32(0))
+
+# A contains [1, 0, 2, 0]
+```
+
+There are several differences between ThrustRTC and Thrust C++:
+
+* ThrustRTC does not include the iterators. All operations explicitly works on the device vectors.
+* Functors in ThrustRTC are implemented as "do{...} while(false);" blocks, so "return" is not supported. 
+  User need to specify a variable name for the return value and assign to it. "break" is supported though.
+* We may not be able to port all the Thrust algorithms. 
+
 ## Progress
 
 The core infrastructure has been built, which includes:
