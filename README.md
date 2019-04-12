@@ -12,11 +12,15 @@ and how to use them to operate on DVVectors (device viewable GPU vectors).
 * python/test/test_for.py
 
 The following examples shows the use of the ported Thrust algorithms.
-(Currently we only have "fill", I will populate the code progressively)
+(I will populate the code progressively)
 
 * fill
   * test/test_fill.cpp
   * python/test/test_fill.py
+
+* replace
+  * test/test_replace.cpp
+  * python/test/test_replace.py
 
 ## License 
 
