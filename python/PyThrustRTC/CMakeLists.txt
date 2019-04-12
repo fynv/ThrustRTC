@@ -10,6 +10,8 @@ DeviceViewable.hpp
 DVVector.hpp
 for.hpp
 fill.hpp
+functor.hpp
+replace.hpp
 )
 
 set (INCLUDE_DIR 

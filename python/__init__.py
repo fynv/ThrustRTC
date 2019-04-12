@@ -11,5 +11,5 @@ from .DeviceViewable import *
 from .DVVector import *
 from .ForLoop import *
 from .Fill import *
-
-
+from .Functor import *
+from .Replace import *

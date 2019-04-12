@@ -1,5 +1,4 @@
 import ThrustRTC as trtc
-import numpy as np
 
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
