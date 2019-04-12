@@ -7,13 +7,13 @@ that can be used in non-C++ programming launguages (currently focused on Python)
 
 There are several options to integrate CUDA into a interpreted language like Python.
 
-* Writing both host code and device code in the interpreted launguage
+### Writing both host code and device code in the interpreted launguage
 
 A special compiler/interpretor is required to translate from the interpreted launguage to GPU executable code.
 
 For Python, we need [Numba](http://numba.pydata.org/numba-doc/0.13/CUDAJit.html), which is great, but only a subset of CUDA features can be utilized.
 
-* Providing precompiled GPU code, accessible through host APIs
+### Providing precompiled GPU code, accessible through host APIs
 
 This is what we do for most GPU libraries. There are some general limitations:
 
@@ -24,7 +24,7 @@ This is what we do for most GPU libraries. There are some general limitations:
 
 Thrust uses templates and callback/functors intensively, so the above limitations will be unavoidable.
 
-* Integrate GPU RTC (runtime compilation) with the interpreted launguage
+### Integrate GPU RTC (runtime compilation) with the interpreted launguage
 
 This is the choice of this project. We still write the device code in C++. However, we delay the compilation of device code to runtime.
 
