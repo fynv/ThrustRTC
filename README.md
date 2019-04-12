@@ -31,7 +31,7 @@ This is the choice of this project. We still write the device code in C++. Howev
 Per-usecase runtime data-type information and custom code (functors) will be integrated with fixed routines dynamically, 
 through a string concatenation procedure, and concrete source code will be generated and compiled as kernels. 
 
-From user's perspective, the usage is of this library is quite simlar to using Thrust, although 2 different launguages needed to be used simultaneously. Using _replace_if()_ as an example:
+From user's perspective, the usage of this library is quite simlar to using Thrust, although 2 different launguages needed to be used simultaneously. Using _replace_if()_ as an example:
 
 Thrust, C++:
 
