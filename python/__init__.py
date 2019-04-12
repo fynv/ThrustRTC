@@ -15,3 +15,4 @@ from .Functor import *
 from .Replace import *
 from .ForEach import *
 from .AdjacentDifference import *
+from .Sequence import *

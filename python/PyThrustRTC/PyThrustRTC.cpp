@@ -17,6 +17,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "replace.hpp"
 #include "for_each.hpp"
 #include "adjacent_difference.hpp"
+#include "sequence.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_ptx_cache", n_set_ptx_cache, METH_VARARGS, "" },
@@ -64,6 +65,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_replace_copy_if", n_replace_copy_if, METH_VARARGS, "" },
 	{ "n_for_each", n_for_each, METH_VARARGS, "" },
 	{ "n_adjacent_difference", n_adjacent_difference, METH_VARARGS, "" },
+	{ "n_sequence", n_sequence, METH_VARARGS, "" },
 	0
 };
 

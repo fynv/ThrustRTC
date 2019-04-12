@@ -30,6 +30,10 @@ The following examples shows the use of the ported Thrust algorithms.
   * test/adjacent_difference.cpp
   * python/test/adjacent_difference.py
 
+* sequence
+  * test/sequence.cpp
+  * python/test/sequence.py
+
 ## License 
 
 I've decided to license this project under ['"Anti 996" License'](https://github.com/996icu/996.ICU/blob/master/LICENSE)

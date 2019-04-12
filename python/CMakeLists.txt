@@ -9,6 +9,7 @@ set(PYTHON
 	Replace.py
 	ForEach.py
 	AdjacentDifference.py
+	Sequence.py
 )
 
 install(FILES ${PYTHON} DESTINATION test/ThrustRTC)
@@ -20,6 +21,7 @@ set(PYTHON_TEST
 	test/test_replace.py
 	test/test_for_each.py
 	test/test_adjacent_difference.py
+	test/test_sequence.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test )
