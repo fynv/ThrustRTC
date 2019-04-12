@@ -25,8 +25,8 @@ class Context:
     def add_constant_object(self, name, dv):
         native.n_context_add_constant_object(self.m_cptr, name, dv.m_cptr)
 
-    def launch_once(self, gridDim, blockDim, arg_map, code_body, sharedMemBytes=0):
-        native.n_context_launch_once(
+    def launch_kernel(self, gridDim, blockDim, arg_map, code_body, sharedMemBytes=0):
+        native.n_context_launch_kernel(
             self.m_cptr, 
             gridDim, 
             blockDim, 
@@ -34,35 +34,38 @@ class Context:
             code_body, 
             sharedMemBytes)
 
+    def launch_for(self, begin, end, arg_map, name_iter, code_body, sharedMemBytes=0):
+        native.n_context_launch_for(
+            self.m_cptr, 
+            begin, 
+            end, 
+            [ (param_name, arg.m_cptr) for param_name, arg in arg_map.items()], 
+            name_iter,
+            code_body, 
+            sharedMemBytes)
+
 class Kernel:
-    def __init__(self, ctx, param_descs, body):
-        self.m_ctx = ctx
-        self.m_id = native.n_kernel_create(ctx.m_cptr, param_descs, body)
-
-    def num_params(self):
-        return native.n_kernel_num_params(self.m_ctx.m_cptr,self.m_id)
-
-    def launch(self, gridDim, blockDim, args, sharedMemBytes=0):
-        native.n_kernel_launch(self.m_ctx.m_cptr, self.m_id, gridDim, blockDim, [item.m_cptr for item in args], sharedMemBytes)
-
-class KernelTemplate:
-    def __init__(self, ctx, template_params, param_descs, body):
-        self.m_ctx = ctx
-        self.m_cptr = native.n_kernel_template_create(template_params, param_descs, body)
+    def __init__(self, param_descs, body):
+        self.m_cptr = native.n_kernel_create(param_descs, body)
 
     def __del__(self):
-        native.n_kernel_template_destroy(self.m_cptr)
-
-    def num_template_params(self):
-        return native.n_kernel_template_num_template_params(self.m_cptr)
+        native.n_kernel_destroy(self.m_cptr)
 
     def num_params(self):
-        return native.n_kernel_template_num_params(self.m_cptr)
+        return native.n_kernel_num_params(self.m_cptr)
 
-    def launch_explict(self, gridDim, blockDim, template_args, args, sharedMemBytes=0):
-        native.n_kernel_template_launch_explict(self.m_ctx.m_cptr, self.m_cptr, gridDim, blockDim, template_args, [item.m_cptr for item in args], sharedMemBytes)
+    def launch(self, ctx, gridDim, blockDim, args, sharedMemBytes=0):
+        native.n_kernel_launch(ctx.m_cptr, self.m_cptr, gridDim, blockDim, [item.m_cptr for item in args], sharedMemBytes)
 
-    def launch(self, gridDim, blockDim, args, sharedMemBytes=0):
-        native.n_kernel_template_launch(self.m_ctx.m_cptr, self.m_cptr, gridDim, blockDim, [item.m_cptr for item in args], sharedMemBytes)
+class For:
+    def __init__(self, param_descs, name_iter, body):
+        self.m_cptr = native.n_for_create(param_descs, name_iter, body)
 
+    def __del__(self):
+        native.n_for_destroy(self.m_cptr)
 
+    def num_params(self):
+        return native.n_for_num_params(self.m_cptr)
+
+    def launch(self, ctx, begin, end, args, sharedMemBytes=0):
+        native.n_for_launch(ctx.m_cptr, self.m_cptr, begin, end, [item.m_cptr for item in args], sharedMemBytes)

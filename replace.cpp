@@ -1,11 +1,8 @@
 #include "replace.h"
-#include "for.h"
 
 bool TRTC_Replace(TRTCContext& ctx, DVVector& vec, const DeviceViewable& old_value, const DeviceViewable& new_value, size_t begin, size_t end)
 {
-	static TRTC_For_Template s_templ(
-	{ "T" },
-	{ { "VectorView<T>", "view_vec" }, { "T", "old_value" },{ "T", "new_value" } }, "idx",
+	static TRTC_For s_for( {"view_vec", "old_value", "new_value" }, "idx",
 		"    if (view_vec[idx]==old_value) view_vec[idx] = new_value;\n"
 	);
 
@@ -23,7 +20,7 @@ bool TRTC_Replace(TRTCContext& ctx, DVVector& vec, const DeviceViewable& old_val
 
 	if (end == (size_t)(-1)) end = vec.size();
 	const DeviceViewable* args[] = { &vec, &old_value, &new_value };
-	s_templ.launch(ctx, begin, end, args);
+	s_for.launch(ctx, begin, end, args);
 	return true;
 
 }
@@ -42,10 +39,10 @@ bool TRTC_Replace_If(TRTCContext& ctx, DVVector& vec, const Functor& pred, const
 
 	if (end == (size_t)(-1)) end = vec.size();
 
-	TRTC_For_Once(ctx, begin, end, arg_map, "_idx",
+	ctx.launch_for(begin, end, arg_map, "_idx",
 		(std::string("    bool ") + pred.functor_ret + "=false;\n"
 		"    do{\n"
-		"        " + vec.name_elem_cls() + " " + pred.functor_params[0] + " = _view_vec[_idx];\n" +
+		"        auto " + pred.functor_params[0] + " = _view_vec[_idx];\n" +
 		pred.code_body + 
 		"    } while(false);\n"
 		"    if (" + pred.functor_ret + ") _view_vec[_idx] = _new_value; \n").c_str());
@@ -55,10 +52,9 @@ bool TRTC_Replace_If(TRTCContext& ctx, DVVector& vec, const Functor& pred, const
 
 bool TRTC_Replace_Copy(TRTCContext& ctx, const DVVector& vec_in, DVVector& vec_out, const DeviceViewable& old_value, const DeviceViewable& new_value, size_t begin_in, size_t end_in, size_t begin_out)
 {
-	static TRTC_For_Template s_templ(
-	{ "T" },
-	{ { "VectorView<T>", "view_vec_in" }, { "VectorView<T>", "view_vec_out" }, { "T", "old_value" }, { "T", "new_value" }, { "int32_t", "delta" } }, "idx",
-	"    T value = view_vec_in[idx];\n"
+	static TRTC_For s_for(
+	{ "view_vec_in", "view_vec_out" , "old_value", "new_value", "delta" }, "idx",
+	"    auto value = view_vec_in[idx];\n"
 	"    view_vec_out[idx+delta] = value == old_value ? new_value : value;\n"
 	);
 
@@ -83,7 +79,7 @@ bool TRTC_Replace_Copy(TRTCContext& ctx, const DVVector& vec_in, DVVector& vec_o
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
 	DVInt32 dvdelta((int)begin_out - (int)begin_in);
 	const DeviceViewable* args[] = { &vec_in, &vec_out, &old_value, &new_value, &dvdelta };
-	s_templ.launch(ctx, begin_in, end_in, args);
+	s_for.launch(ctx, begin_in, end_in, args);
 	return true;
 }
 
@@ -110,10 +106,10 @@ bool TRTC_Replace_Copy_If(TRTCContext& ctx, const DVVector& vec_in, DVVector& ve
 	
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
 
-	TRTC_For_Once(ctx, begin_in, end_in, arg_map, "_idx",
+	ctx.launch_for( begin_in, end_in, arg_map, "_idx",
 		(std::string("    bool ") + pred.functor_ret + "=false;\n"
 		"    do{\n"
-		"        " + vec_in.name_elem_cls() + " " + pred.functor_params[0] + " = _view_vec_in[_idx];\n" +
+		"        auto " + pred.functor_params[0] + " = _view_vec_in[_idx];\n" +
 		pred.code_body +
 		"    } while(false);\n"
 		"    _view_vec_out[_idx+_delta] = " + pred.functor_ret + "? _new_value : _view_vec_in[_idx]; \n").c_str());

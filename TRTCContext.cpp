@@ -45,7 +45,6 @@ static void s_get_md5(const char* source_code, char md5[33])
 
 struct TRTCContext::Kernel
 {
-	size_t num_params;
 	CUmodule module;
 	CUfunction func;
 };
@@ -225,367 +224,160 @@ size_t TRTCContext::size_of(const char* cls)
 	return size;
 }
 
-TRTCContext::KernelTemplate::KernelTemplate(const std::vector<const char*>& template_params, const std::vector<ParamDesc>& params, const char* body)
+bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes)
 {
-	m_template_params.resize(template_params.size());
-	for (size_t i = 0; i < m_template_params.size(); i++)
-		m_template_params[i] = template_params[i];
-
-	m_type_params.resize(params.size());
-	for (size_t i = 0; i < m_type_params.size(); i++)
-		m_type_params[i] = params[i].type;
-
-	m_code_buf += "extern \"C\" __global__\n";
-	m_code_buf += "void saxpy(";
-
-	if (params.size() > 0)
-	{
-		m_code_buf += params[0].type;
-		m_code_buf += " ";
-		m_code_buf += params[0].name;
-	}
-
-	for (size_t i = 1; i < params.size(); i++)
-	{
-		m_code_buf += ", ";
-		m_code_buf += params[i].type;
-		m_code_buf += " ";
-		m_code_buf += params[i].name;
-	}
-	m_code_buf += ")\n{\n";
-	m_code_buf += body;
-	m_code_buf += "\n}\n";
-}
-
-static void s_tokenize(const char* in, std::vector<std::string>& out)
-{
-	const char* pin = in;
-	std::string cur_token;
-	out.clear();
-	while (*pin != 0)
-	{
-		if (*pin == '_' || (*pin >= 'a' && *pin <= 'z') || (*pin >= 'A' && *pin <= 'Z') || (*pin >= '0' && *pin <= '9'))
-			cur_token += *pin;
-		else if (*pin != ' ' && *pin != '\t')
-		{
-			if (cur_token.size() > 0)
-			{
-				out.push_back(cur_token);
-				cur_token = "";
-			}
-			cur_token = *pin;
-			out.push_back(cur_token);
-			cur_token = "";
-		}
-		else if (cur_token.size() > 0)
-		{
-			out.push_back(cur_token);
-			cur_token = "";
-		}
-		pin++;
-	}
-	if (cur_token.size() > 0)
-		out.push_back(cur_token);
-}
-
-static bool token_match(
-	const std::vector<std::string>& template_params,
-	std::vector<std::string>& template_args,
-	std::string* tokens_param, size_t count_tokens_param,
-	std::string* tokens_arg, size_t count_tokens_arg)
-{
-	while (count_tokens_param>0 && count_tokens_param <= count_tokens_arg)
-	{
-		if (*tokens_param == *tokens_arg)
-		{
-			tokens_param++;
-			tokens_arg++;
-			count_tokens_param--;
-			count_tokens_arg--;
-			continue;
-		}
-		size_t i = 0;
-		for (; i < template_params.size(); i++)
-			if (*tokens_param == template_params[i])
-				break;
-	
-		if (i >= template_params.size()) return false;
-
-		std::string templ_arg = *tokens_arg;
-		while (count_tokens_param <= count_tokens_arg)
-		{
-			if (template_args[i] == "" || template_args[i] == templ_arg)
-			{
-				std::vector<std::string>* cpy = new std::vector<std::string>(template_args);
-				(*cpy)[i] = templ_arg;
-				bool res = token_match(template_params, *cpy,
-					tokens_param + 1, count_tokens_param - 1, tokens_arg + 1, count_tokens_arg - 1);
-				if (res)
-				{
-					template_args = *cpy;
-					delete cpy;
-					return true;
-				}
-				delete cpy;
-			}
-			tokens_arg++;
-			count_tokens_arg--;
-			if ((*tokens_arg).size() > 1) templ_arg += " ";
-			templ_arg += *tokens_arg;			
-		}
-	}
-	return count_tokens_param == 0;
-}
-
-static bool s_type_match(const std::vector<std::string>& template_params,
-	std::vector<std::string>& template_args, const char* type_param, const char* type_arg)
-{
-	std::vector<std::string> tokens_param;
-	std::vector<std::string> tokens_arg;
-	s_tokenize(type_param, tokens_param);
-	s_tokenize(type_arg, tokens_arg);
-
-	return token_match(template_params, template_args, tokens_param.data(), tokens_param.size(), tokens_arg.data(), tokens_arg.size());
-}
-
-bool TRTCContext::KernelTemplate::deduce_template_args(const DeviceViewable** args, std::vector<std::string>& template_args) const
-{
-	size_t total = m_template_params.size();
-	template_args.resize(total);
-
-	for (size_t i = 0; i < m_type_params.size(); i++)
-	{
-		std::string type_param = m_type_params[i];
-		std::string type_arg = args[i]->name_view_cls();
-
-		bool res = s_type_match(m_template_params, template_args, type_param.c_str(), type_arg.c_str());
-		if (!res) return false;
-	}
-	return true;
-}
-
-
-static std::string cat_templ_args(const std::vector<std::string>& template_args, const TRTCContext* ctx)
-{
-	std::string ret;
-	for (size_t i = 0; i < template_args.size(); i++)
-		ret += template_args[i] + ",";
-
-	char str_ptr[32];
-	sprintf(str_ptr, "%p", ctx);
-	ret += str_ptr;
-	return ret;
-}
-
-KernelId_t TRTCContext::KernelTemplate::instantiate(TRTCContext& ctx, const std::vector<std::string>& template_args)
-{
-	std::string templ_pattern = cat_templ_args(template_args, &ctx);
-
-	{
-		std::unordered_map<std::string, KernelId_t>::iterator it = m_kernel_id_map.find(templ_pattern);
-		if (it != m_kernel_id_map.end()) return it->second;
-	}
-
 	std::string saxpy;
-	for (size_t i = 0; i < ctx.m_preprocesors.size(); i++)
+	for (size_t i = 0; i < m_preprocesors.size(); i++)
 	{
-		saxpy += ctx.m_preprocesors[i] + "\n";
+		saxpy += m_preprocesors[i] + "\n";
 	}
-	saxpy += "\n";
 
-	for (size_t i = 0; i < m_template_params.size(); i++)
-		saxpy += std::string("#define ") + m_template_params[i] + " " + template_args[i] + "\n";
-	
 	saxpy += "\n";
-	saxpy += m_code_buf;
+	saxpy += "extern \"C\" __global__\n";
+	saxpy += "void saxpy(";
 
-	if (ctx.m_verbose)
+	size_t num_params = arg_map.size();
+
+	if (num_params > 0)
+	{
+		saxpy += arg_map[0].arg->name_view_cls();
+		saxpy += " ";
+		saxpy += arg_map[0].param_name;
+	}
+
+	for (size_t i = 1; i < num_params; i++)
+	{
+		saxpy += ", ";
+		saxpy += arg_map[i].arg->name_view_cls();
+		saxpy += " ";
+		saxpy += arg_map[i].param_name;
+	}
+
+	saxpy += ")\n{\n";
+	saxpy += code_body;
+	saxpy += "\n}\n";
+
+	if (m_verbose)
 		print_code(saxpy.c_str());
 
 	char md5[33];
 	s_get_md5(saxpy.c_str(), md5);
 
+	KernelId_t kid = (KernelId_t)(-1);
+	do
 	{
-		std::unordered_map<std::string, KernelId_t>::iterator it = ctx.m_kernel_id_map.find(md5);
-		if (it != ctx.m_kernel_id_map.end()) 
 		{
-			m_kernel_id_map[templ_pattern] = it->second;
-			return it->second;
-		}
-	}
-
-	std::vector<char> ptx;
-	{
-#ifdef TIMING
-		double t1 = GetTime();
-#endif
-		int compute_cap = s_get_compute_capability();
-
-		/// Try finding an existing ptx in cache
-		if (s_ptx_cache_path != nullptr)
-		{
-			char fn[2048];
-			sprintf(fn, "%s/%s_%d.ptx", s_ptx_cache_path, md5, compute_cap);
-			FILE* fp = fopen(fn, "rb");
-			if (fp)
+			std::unordered_map<std::string, KernelId_t>::iterator it = m_kernel_id_map.find(md5);
+			if (it != m_kernel_id_map.end())
 			{
-				fseek(fp, 0, SEEK_END);
-				size_t ptx_size = (size_t)ftell(fp) + 1;
-				fseek(fp, 0, SEEK_SET);
-				ptx.resize(ptx_size);
-				fread(ptx.data(), 1, ptx_size - 1, fp);
-				fclose(fp);
-				ptx[ptx_size - 1] = 0;
+				kid = it->second;
+				break;
 			}
 		}
 
-		if (ptx.size() < 1)
+		std::vector<char> ptx;
 		{
-			size_t ptx_size;
-			if (!ctx._src_to_ptx(saxpy.c_str(), ptx, ptx_size)) return (KernelId_t)(-1);
-			
+#ifdef TIMING
+			double t1 = GetTime();
+#endif
+			int compute_cap = s_get_compute_capability();
+
+			/// Try finding an existing ptx in cache
 			if (s_ptx_cache_path != nullptr)
 			{
 				char fn[2048];
 				sprintf(fn, "%s/%s_%d.ptx", s_ptx_cache_path, md5, compute_cap);
-				FILE* fp = fopen(fn, "wb");
+				FILE* fp = fopen(fn, "rb");
 				if (fp)
 				{
-					fwrite(ptx.data(), 1, ptx_size - 1, fp);
+					fseek(fp, 0, SEEK_END);
+					size_t ptx_size = (size_t)ftell(fp) + 1;
+					fseek(fp, 0, SEEK_SET);
+					ptx.resize(ptx_size);
+					fread(ptx.data(), 1, ptx_size - 1, fp);
 					fclose(fp);
+					ptx[ptx_size - 1] = 0;
 				}
 			}
+			if (ptx.size() < 1)
+			{
+				size_t ptx_size;
+				if (!_src_to_ptx(saxpy.c_str(), ptx, ptx_size)) break;
+
+				if (s_ptx_cache_path != nullptr)
+				{
+					char fn[2048];
+					sprintf(fn, "%s/%s_%d.ptx", s_ptx_cache_path, md5, compute_cap);
+					FILE* fp = fopen(fn, "wb");
+					if (fp)
+					{
+						fwrite(ptx.data(), 1, ptx_size - 1, fp);
+						fclose(fp);
+					}
+				}
+			}
+
+#ifdef TIMING
+			double t2 = GetTime();
+			printf("Compile Time: %f\n", t2 - t1);
+#endif
 		}
 
+		Kernel* kernel = new Kernel;
+
+		{
 #ifdef TIMING
-		double t2 = GetTime();
-		printf("Compile Time: %f\n", t2 - t1);
+			double t1 = GetTime();
 #endif
-	}
-
-	//puts(ptx.data());
-
-	Kernel* kernel = new TRTCContext::Kernel;
-	kernel->num_params = m_type_params.size();
-
-	{
+			cuModuleLoadDataEx(&kernel->module, ptx.data(), 0, 0, 0);
+			cuModuleGetFunction(&kernel->func, kernel->module, "saxpy");
 #ifdef TIMING
-		double t1 = GetTime();
+			double t2 = GetTime();
+			printf("Load Time: %f\n", t2 - t1);
 #endif
-		cuModuleLoadDataEx(&kernel->module, ptx.data(), 0, 0, 0);
-		cuModuleGetFunction(&kernel->func, kernel->module, "saxpy");
-#ifdef TIMING
-		double t2 = GetTime();
-		printf("Load Time: %f\n", t2 - t1);
-#endif
-	}
+		}
+		for (size_t i = 0; i < m_constants.size(); i++)
+		{
+			CUdeviceptr dptr;
+			size_t size;
+			cuModuleGetGlobal(&dptr, &size, kernel->module, m_constants[i].first.c_str());
+			if (size > m_constants[i].second.size()) size = m_constants[i].second.size();
+			cuMemcpyHtoD(dptr, m_constants[i].second.data(), size);
+		}
+		m_kernel_cache.push_back(kernel);
+		kid = m_kernel_cache.size() - 1;
+		m_kernel_id_map[md5] = kid;
+	} while (false);
 
-	for (size_t i = 0; i < ctx.m_constants.size(); i++)
-	{
-		CUdeviceptr dptr;
-		size_t size;
-		cuModuleGetGlobal(&dptr, &size, kernel->module, ctx.m_constants[i].first.c_str());
-		if (size > ctx.m_constants[i].second.size()) size = ctx.m_constants[i].second.size();
-		cuMemcpyHtoD(dptr, ctx.m_constants[i].second.data(), size);
-	}
+	if (kid == (KernelId_t)(-1)) return false;
 
-	ctx.m_kernel_cache.push_back(kernel);
-	KernelId_t ker_id = ctx.m_kernel_cache.size() - 1;
-	ctx.m_kernel_id_map[md5] = ker_id;
-	m_kernel_id_map[templ_pattern] = ker_id;
-
-	return ker_id;
-}
-
-KernelId_t TRTCContext::create_kernel(const std::vector<ParamDesc>& params, const char* body)
-{
-	KernelTemplate templ({}, params, body);
-	return templ.instantiate(*this, {});
-}
-
-size_t TRTCContext::get_num_of_params(KernelId_t kernel_id) const
-{
-	if (kernel_id == (KernelId_t)(-1)) return (size_t)(-1);
-	Kernel *kernel = m_kernel_cache[kernel_id];
-	return kernel->num_params;
-}
-
-
-void TRTCContext::launch_kernel(KernelId_t kernel_id, dim_type gridDim, dim_type blockDim, const DeviceViewable** args, unsigned sharedMemBytes) const
-{
-	if (kernel_id == (KernelId_t)(-1)) return;
-	Kernel *kernel = m_kernel_cache[kernel_id];
-
-	size_t num_params = kernel->num_params;
-
+	Kernel *kernel = m_kernel_cache[kid];
 	std::vector<ViewBuf> argbufs(num_params);
 	std::vector<void*> converted_args(num_params);
 
 	for (size_t i = 0; i < num_params; i++)
 	{
-		argbufs[i] = args[i]->view();
+		argbufs[i] = arg_map[i].arg->view();
 		converted_args[i] = argbufs[i].data();
 	}
 	cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
 }
 
 
-void TRTCContext::launch_kernel_template_explict(KernelTemplate& templ, const std::vector<std::string>& template_args,
-	dim_type gridDim, dim_type blockDim, const DeviceViewable** args, unsigned sharedMemBytes)
+bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& _arg_map, const char* name_iter, const char* _body, unsigned sharedMemBytes)
 {
-	KernelId_t kerId = templ.instantiate(*this, template_args);
-	launch_kernel(kerId, gridDim, blockDim, args, sharedMemBytes);
+	DVSizeT dvbegin(begin), dvend(end);
+	std::vector<TRTCContext::AssignedParam> arg_map = _arg_map;
+	arg_map.push_back({ "_begin", &dvbegin });
+	arg_map.push_back({ "_end", &dvend });
+
+	std::string body = std::string("    size_t ") + name_iter + " = threadIdx.x + blockIdx.x*blockDim.x + _begin;\n"
+		"    if (" + name_iter + ">=_end) return; \n" + _body;
+
+	unsigned num_blocks = (unsigned)((end - begin + 127) / 128);
+	launch_kernel({ num_blocks, 1, 1 }, { 128, 1, 1 }, arg_map, body.c_str(), sharedMemBytes);
 }
 
-bool TRTCContext::launch_kernel_template(KernelTemplate& templ, dim_type gridDim, dim_type blockDim, const DeviceViewable** args, unsigned sharedMemBytes)
-{
-	std::vector<std::string> template_args;
-	if (templ.deduce_template_args(args, template_args))
-	{
-		size_t total = templ.num_template_params();
-		if (template_args.size() >= total)
-		{
-			size_t i = 0;
-			for (; i <total; i++)
-				if (template_args[i].size() < 1) break;
-			if (i >= total)
-			{
-				KernelId_t kerId = templ.instantiate(*this, template_args);
-				launch_kernel(kerId, gridDim, blockDim, args, sharedMemBytes);
-				return true;
-			}
-		}
-	}
-	const std::string* type_params = templ.type_params();
-
-	puts("Failed to deduce some of the template arguments.");
-	puts("Parameter types:");
-	for (size_t i = 0; i < templ.num_params(); i++)
-		printf("%s, ", type_params[i].c_str());
-	puts("\nArgument types:");
-	for (size_t i = 0; i < templ.num_params(); i++)
-		printf("%s, ", args[i]->name_view_cls().c_str());
-	puts("");
-
-	return false;
-}
-
-
-void TRTCContext::launch_once(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes)
-{
-	size_t num_params = arg_map.size();
-	std::vector<ParamDesc> params(num_params);
-	std::vector<std::string> param_types(num_params);
-	std::vector<const DeviceViewable*> args(num_params);
-	for (size_t i = 0; i < num_params; i++)
-	{
-		param_types[i] = arg_map[i].arg->name_view_cls();
-		params[i] = { param_types[i].c_str(), arg_map[i].param_name };
-		args[i] = arg_map[i].arg;
-	}
-	KernelId_t ker_id = create_kernel(params, code_body);
-	launch_kernel(ker_id, gridDim, blockDim, args.data(), sharedMemBytes);
-}
 
 void TRTCContext::add_include_dir(const char* path)
 {
@@ -617,4 +409,40 @@ void TRTCContext::add_constant_object(const char* name, const DeviceViewable& ob
 	sprintf(line, "__constant__ %s %s;", type.c_str(), name);
 	m_preprocesors.push_back(line);
 	m_constants.push_back({ name, obj.view() });
+}
+
+TRTC_Kernel::TRTC_Kernel(const std::vector<const char*>& param_names, const char* code_body) :
+m_param_names(param_names.size()), m_code_body(code_body)
+{
+	for (size_t i = 0; i < param_names.size(); i++)
+		m_param_names[i] = param_names[i];
+}
+
+bool TRTC_Kernel::launch(TRTCContext& ctx, dim_type gridDim, dim_type blockDim, const DeviceViewable** args, unsigned sharedMemBytes)
+{
+	std::vector<TRTCContext::AssignedParam> arg_map(m_param_names.size());
+	for (size_t i = 0; i < m_param_names.size(); i++)
+	{
+		arg_map[i].param_name = m_param_names[i].c_str();
+		arg_map[i].arg = args[i];
+	}
+	return ctx.launch_kernel(gridDim, blockDim, arg_map, m_code_body.c_str(), sharedMemBytes);
+}
+
+TRTC_For::TRTC_For(const std::vector<const char*>& param_names, const char* name_iter, const char* code_body) :
+m_param_names(param_names.size()), m_name_iter(name_iter), m_code_body(code_body)
+{
+	for (size_t i = 0; i < param_names.size(); i++)
+		m_param_names[i] = param_names[i];
+}
+
+bool TRTC_For::launch(TRTCContext& ctx, size_t begin, size_t end, const DeviceViewable** args, unsigned sharedMemBytes)
+{
+	std::vector<TRTCContext::AssignedParam> arg_map(m_param_names.size());
+	for (size_t i = 0; i < m_param_names.size(); i++)
+	{
+		arg_map[i].param_name = m_param_names[i].c_str();
+		arg_map[i].arg = args[i];
+	}
+	return ctx.launch_for(begin, end, arg_map, m_name_iter.c_str(), m_code_body.c_str(), sharedMemBytes);
 }

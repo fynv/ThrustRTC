@@ -11,9 +11,11 @@
 template<class _T>
 struct VectorView
 {
-	_T* data;
+	typedef _T value_t;
+
+	value_t* data;
 	size_t size;
-	__device__ _T& operator [](size_t idx) 
+	__device__ value_t& operator [](size_t idx)
 	{
 		return data[idx];
 	}

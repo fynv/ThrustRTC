@@ -6,7 +6,6 @@ set(LIB_SOURCES
 TRTCContext.cpp
 DVVector.cpp
 internal/md5.c
-for.cpp
 fill.cpp
 replace.cpp
 for_each.cpp
@@ -19,7 +18,6 @@ TRTC_api.h
 DeviceViewable.h
 TRTCContext.h
 DVVector.h
-for.h
 functor.h
 fill.h
 replace.h

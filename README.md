@@ -2,18 +2,21 @@
 
 ## Progress
 
-The core infrastructure for handling device-viewable data objects has been constructed.
-The following examples shows how to construct and launch general kernels and for-loops,
-and how to use them to operate on DVVectors (device viewable GPU vectors).
+The core infrastructure has been built, which includes:
+
+* A context class that manages the included headers, global contants and provides cache of PTX code in both internal and external storages.
+* General kernels and for-loops can be launched within a context, given their source-code as strings
+* A hierachy of device-viewable classes. The most important one is DVVectors, device-viewable GPU vectors. These objects can be created and managed by host and passed to device. 
+
+The following examples shows the basic usage of the core infrastructure:
 
 * test/test_trtc.cpp
 * test/test_for.cpp
 * python/test/test_trtc.py
 * python/test/test_for.py
 
-The following examples shows the use of the ported Thrust algorithms.
-(I will populate the code progressively)
-
+Thrust algorithms are being ported progressively.
+The following examples shows the use of the ported Thrust algorithms:
 * fill
   * test/test_fill.cpp
   * python/test/test_fill.py

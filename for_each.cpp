@@ -1,5 +1,4 @@
 #include "for_each.h"
-#include "for.h"
 #include "DeviceViewable.h"
 
 void TRTC_For_Each(TRTCContext& ctx, DVVector& vec, const Functor& f, size_t begin, size_t end)
@@ -9,9 +8,9 @@ void TRTC_For_Each(TRTCContext& ctx, DVVector& vec, const Functor& f, size_t beg
 
 	if (end == (size_t)(-1)) end = vec.size();
 
-	TRTC_For_Once(ctx, begin, end, arg_map, "_idx",
+	ctx.launch_for(begin, end, arg_map, "_idx",
 		(std::string("    do{\n")+
-		"        " + vec.name_elem_cls() + " " + f.functor_params[0] + " = _view_vec[_idx];\n" +
+		"        auto " + f.functor_params[0] + " = _view_vec[_idx];\n" +
 		f.code_body +
 		"    } while(false);\n").c_str());
 

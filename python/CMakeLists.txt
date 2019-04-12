@@ -3,7 +3,6 @@ set(PYTHON
 	Context.py
 	DeviceViewable.py
 	DVVector.py
-	ForLoop.py
 	Fill.py
 	Functor.py
 	Replace.py
