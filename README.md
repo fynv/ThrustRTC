@@ -70,7 +70,7 @@ trtc.Replace_If(ctx, A, trtc.Functor( {}, ['x'], 'ret',
 
 There are several differences between ThrustRTC and Thrust C++:
 
-* ThrustRTC does not include the iterators. All operations explicitly works on the device vectors.
+* ThrustRTC does not include the iterators. All operations explicitly work on the device vectors.
 * Functors in ThrustRTC are implemented as "do{...} while(false);" blocks, so "return" is not supported. 
   User need to specify a variable name for the return value and assign to it. "break" is supported though.
 * We may not be able to port all the Thrust algorithms. 
