@@ -8,10 +8,6 @@ void TRTC_For_Each(TRTCContext& ctx, DVVector& vec, const Functor& f, size_t beg
 
 	if (end == (size_t)(-1)) end = vec.size();
 
-	ctx.launch_for(begin, end, arg_map, "_idx",
-		(std::string("    do{\n")+
-		"        auto " + f.functor_params[0] + " = _view_vec[_idx];\n" +
-		f.code_body +
-		"    } while(false);\n").c_str());
+	ctx.launch_for(begin, end, arg_map, "_idx", f.generate_code(nullptr, {"_view_vec[_idx]"}).c_str());
 
 }

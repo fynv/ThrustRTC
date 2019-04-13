@@ -46,6 +46,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvvector_size", n_dvvector_size, METH_VARARGS, "" },
 	{ "n_dvvector_to_host", n_dvvector_to_host, METH_VARARGS, "" },
 	{ "n_dvvector_from_dvs", n_dvvector_from_dvs, METH_VARARGS, "" },
+	{ "n_functor_generate_code", n_functor_generate_code, METH_VARARGS, "" },
 	{ "n_fill", n_fill, METH_VARARGS, "" },
 	{ "n_replace", n_replace, METH_VARARGS, "" },
 	{ "n_replace_if", n_replace_if, METH_VARARGS, "" },

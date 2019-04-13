@@ -38,14 +38,12 @@ bool TRTC_Adjacent_Difference(TRTCContext& ctx, const DVVector& vec_in, DVVector
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
 
 	ctx.launch_for(begin_in, end_in, arg_map, "_idx",
-		(std::string("    auto ") + binary_op.functor_ret + " = _view_vec_in[_idx];\n"
-		"    if (_idx>0)\n    {\n"
-		"        do{\n"
-		"            auto " + binary_op.functor_params[0] + " = _view_vec_in[_idx];\n"
-		"            auto " + binary_op.functor_params[1] + " = _view_vec_in[_idx - 1];\n" +
-		binary_op.code_body +
-		"        } while(false);\n"
+		(std::string("    auto value = _view_vec_in[_idx];\n") +
+		"    if (_idx>0)\n    {\n" +
+		binary_op.generate_code("decltype(_view_vec_in)::value_t", { "_view_vec_in[_idx]", "_view_vec_in[_idx - 1]" }) +
+		"    value = " + binary_op.functor_ret + ";\n"
 		"    }\n"
-		"    _view_vec_out[_idx+_delta] = " + binary_op.functor_ret + ";\n").c_str());
+		"    _view_vec_out[_idx+_delta] = value;\n").c_str());
+
 	return true;
 }

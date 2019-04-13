@@ -35,4 +35,30 @@ inline Functor PyFunctor_AsFunctor(PyObject* pyFunctor)
 	return functor;
 }
 
+
+static PyObject* n_functor_generate_code(PyObject* self, PyObject* args)
+{
+	Functor functor = PyFunctor_AsFunctor(PyTuple_GetItem(args, 0));
+	const char* type_ret = nullptr;
+	PyObject* py_type_ret = PyTuple_GetItem(args, 1);
+	if (py_type_ret != Py_None)
+		type_ret = PyUnicode_AsUTF8(py_type_ret);
+
+	size_t num_params = functor.functor_params.size();
+	std::vector<const char*> lst_args(num_params);
+	PyObject* py_list_args = PyTuple_GetItem(args, 2);
+	
+	ssize_t num_args = PyList_Size(py_list_args);
+	if (num_args != num_params)
+	{
+		PyErr_Format(PyExc_ValueError, "Wrong number of functor arguments received. %d required, %d received.", num_params, num_args);
+		Py_RETURN_NONE;
+	}
+
+	for (size_t i = 0; i < num_params; i++)
+		lst_args[i] = PyUnicode_AsUTF8(PyList_GetItem(py_list_args, i));
+
+	return PyUnicode_FromString(functor.generate_code(type_ret, lst_args).c_str());
+}
+
 #endif

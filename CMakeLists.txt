@@ -5,6 +5,7 @@ find_package(CUDA REQUIRED)
 set(LIB_SOURCES
 TRTCContext.cpp
 DVVector.cpp
+functor.cpp
 internal/md5.c
 fill.cpp
 replace.cpp

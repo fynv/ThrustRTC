@@ -94,7 +94,7 @@ void saxpy(VectorView<int32_t> _view_vec, int32_t _new_value, size_t _begin, siz
 }
 ```
 
-* We may not be able to port all the Thrust algorithms. 
+* We may not be able to port all the Thrust algorithms. (but hopefully most of them!)
 
 ## Progress
 

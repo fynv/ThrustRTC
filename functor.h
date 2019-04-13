@@ -9,6 +9,8 @@ struct Functor
 	std::vector<const char*> functor_params;
 	const char* functor_ret;
 	const char* code_body;
+
+	std::string THRUST_RTC_API generate_code(const char* type_ret, const std::vector<const char*>& args) const;
 };
 
 #endif
