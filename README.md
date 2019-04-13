@@ -36,16 +36,13 @@ From user's perspective, the usage of this library is quite simlar to using Thru
 Thrust, C++:
 
 ```cpp
+#include <vector>
 #include <thrust/replace.h>
 #include <thrust/device_vector.h>
 
-thrust::device_vector<int> A(4);
-A[0] =  1;
-A[1] = -3;
-A[2] =  2;
-A[3] = -1;
-
-thrust::replace_if(A.begin(), A.end(), [] __device__ (int x){ return x < 0; }, 0);
+std::vector<int> hdata({ 1, -3, 2, -1 });
+thrust::device_vector<int> A(hdata);
+thrust::replace_if(A.begin(), A.end(), [] __device__(int x){ return x < 0; }, 0);
 
 // A contains [1, 0, 2, 0]
 ```
@@ -59,11 +56,7 @@ trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
 A = trtc.device_vector_from_list(ctx, [1, -3, 2, -1], 'int32_t')
-
-trtc.Replace_If(ctx, A, trtc.Functor( {}, ['x'], 'ret',
-'''
-         ret = x<0;
-'''), trtc.DVInt32(0))
+trtc.Replace_If(ctx, A, trtc.Functor( {}, ['x'], 'ret', '        ret = x<0;\n'), trtc.DVInt32(0))
 
 # A contains [1, 0, 2, 0]
 ```
@@ -85,7 +78,7 @@ void saxpy(VectorView<int32_t> _view_vec, int32_t _new_value, size_t _begin, siz
 {
       size_t _idx = threadIdx.x + blockIdx.x*blockDim.x + _begin;
       if (_idx>=_end) return;
-      bool ret=false;
+      bool ret;
       do{
           auto x = _view_vec[_idx];
           ret = x<0;
