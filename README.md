@@ -1,5 +1,7 @@
 # ThrustRTC
 
+For introduction in Chinese, see [here](https://zhuanlan.zhihu.com/p/62293854).
+
 ## Idea
 
 The aim of the project is provide general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/),
