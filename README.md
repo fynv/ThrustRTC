@@ -4,29 +4,34 @@ For introduction in Chinese, see [here](https://zhuanlan.zhihu.com/p/62293854).
 
 ## Idea
 
-The aim of the project is provide general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/),
-that can be used in non-C++ programming launguages (currently focused on Python).
+The aim of the project is to provide a library of general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/), that can be used in non-C++ programming launguages (currently focused on Python).
 
-There are several options to integrate CUDA into a interpreted language like Python.
+There are several options to integrate CUDA with a language like Python.
 
-### Writing both host code and device code in the interpreted launguage
+### Writing both host code and device code in the target launguage
 
-A special compiler/interpretor is required to translate from the interpreted launguage to GPU executable code.
+A special compiler will be required to translate from the target launguage to GPU executable code. 
 
-For Python, we need [Numba](http://numba.pydata.org/numba-doc/0.13/CUDAJit.html), which is great, but only a subset of CUDA features can be utilized.
+Even though the target launguage can be an interpreted launguage, the GPU part of code still has to be compiled
+for efficiency. For Python, we will need [Numba](http://numba.pydata.org/numba-doc/0.13/CUDAJit.html) to do the
+trick. Numba is great, but when considering building a library, there are 2 limitations:
+
+* The resulted library will be for Python only. For another lauguage, we will need to find another tool and build the library again.
+
+* In Numba, it is difficult to extend data types that can be used in device code without hacking Numba itself.
 
 ### Providing precompiled GPU code, accessible through host APIs
 
 This is what we do for most GPU libraries. There are some general limitations:
 
-  * Code bloat. Each kernel needs to be compiled for multiple GPU generations. For templated kernels, the number will be multiplied
-    with the number of different data types.
+* Code bloat. Each kernel needs to be compiled for multiple GPU generations. For templated kernels, the number will be multiplied
+  with the number of different data types.
 
-  * Unextendable. Once a CUDA module is compiled, it will be extremely difficult to insert custom code from outside of the module. 
+* Unextendable. Once a CUDA module is compiled, it will be extremely difficult to insert custom code from outside of the module. 
 
 Thrust uses templates and callback/functors intensively, so the above limitations will be unavoidable.
 
-### Integrate GPU RTC (runtime compilation) with the interpreted launguage
+### Integrate GPU RTC (runtime compilation) with the target launguage
 
 This is the choice of this project. We still write the device code in C++. However, we delay the compilation of device code to runtime.
 
@@ -90,6 +95,25 @@ void saxpy(VectorView<int32_t> _view_vec, int32_t _new_value, size_t _begin, siz
 ```
 
 * We may not be able to port all the Thrust algorithms. (but hopefully most of them!)
+
+## Building the code
+
+### Dependencies
+
+* CUDA toolkit >= 7.0 is required. 
+* The shared library of NVRTC is needed to be redistributed with this library.
+* C libraries of Python 3 is required to build the Python binding part of the code.
+* CMake 3.x
+
+### Building with CMake
+
+$ mkdir build
+$ cd build
+$ cmake .. -DCMAKE_INSTALL_PREFIX=../install
+$ make
+$ make install
+
+You will get the library headers, binaries and examples in the "install" directory.
 
 ## Progress
 
