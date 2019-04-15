@@ -14,11 +14,8 @@ A special compiler will be required to translate from the target launguage to GP
 
 Even though the target launguage can be an interpreted launguage, the GPU part of code still has to be compiled
 for efficiency. For Python, we will need [Numba](http://numba.pydata.org/numba-doc/0.13/CUDAJit.html) to do the
-trick. Numba is great, but when considering building a library, there are 2 limitations:
-
-* The resulted library will be for Python only. For another lauguage, we will need to find another tool and build the library again.
-
-* In Numba, it is difficult to extend data types that can be used in device code without hacking Numba itself.
+trick. Numba is great, but when considering building a library, there is a limitation that the resulted library 
+will be for Python only. For another lauguage, we will need to find another tool and build the library again.
 
 ### Providing precompiled GPU code, accessible through host APIs
 
