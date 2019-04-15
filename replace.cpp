@@ -40,7 +40,7 @@ bool TRTC_Replace_If(TRTCContext& ctx, DVVector& vec, const Functor& pred, const
 	if (end == (size_t)(-1)) end = vec.size();
 
 	ctx.launch_for(begin, end, arg_map, "_idx",
-		(pred.generate_code("bool", {" _view_vec[_idx]"})+
+		(pred.generate_code("bool", {"_view_vec[_idx]"})+
 		"    if (" + pred.functor_ret + ") _view_vec[_idx] = _new_value; \n").c_str());
 
 	return true;
@@ -103,7 +103,7 @@ bool TRTC_Replace_Copy_If(TRTCContext& ctx, const DVVector& vec_in, DVVector& ve
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
 
 	ctx.launch_for( begin_in, end_in, arg_map, "_idx",
-		(pred.generate_code("bool", { " _view_vec_in[_idx]" }) +
+		(pred.generate_code("bool", { "_view_vec_in[_idx]" }) +
 		"    _view_vec_out[_idx+_delta] = " + pred.functor_ret + "? _new_value : _view_vec_in[_idx]; \n").c_str());
 
 	return true;

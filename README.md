@@ -149,6 +149,10 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/sequence.cpp
   * python/test/sequence.py
 
+* tabulate
+  * test/tabulate.cpp
+  * python/test/tabulate.py
+
 ## License 
 
 I've decided to license this project under ['"Anti 996" License'](https://github.com/996icu/996.ICU/blob/master/LICENSE)

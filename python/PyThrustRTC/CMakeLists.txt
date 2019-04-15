@@ -14,6 +14,7 @@ replace.hpp
 for_each.hpp
 adjacent_difference.hpp
 sequence.hpp
+tabulate.hpp
 )
 
 set (INCLUDE_DIR 

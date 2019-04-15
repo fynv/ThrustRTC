@@ -12,6 +12,7 @@ replace.cpp
 for_each.cpp
 adjacent_difference.cpp
 sequence.cpp
+tabulate.cpp
 )
 
 set(LIB_HEADERS
@@ -25,6 +26,7 @@ replace.h
 for_each.h
 adjacent_difference.h
 sequence.h
+tabulate.h
 )
 
 set(INTERNAL_HEADERS
@@ -81,6 +83,7 @@ cuda_add_executable(test_replace test/test_replace.cpp)
 cuda_add_executable(test_for_each test/test_for_each.cpp)
 cuda_add_executable(test_adjacent_difference test/test_adjacent_difference.cpp)
 cuda_add_executable(test_sequence test/test_sequence.cpp)
+cuda_add_executable(test_tabulate test/test_tabulate.cpp)
 
 if (WIN32) 
 target_compile_definitions(test_trtc PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -90,6 +93,7 @@ target_compile_definitions(test_replace PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_for_each PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_adjacent_difference PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_sequence PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_tabulate PUBLIC THRUST_RTC_DLL_IMPORT)
 endif()
 
 target_link_libraries(test_trtc ThrustRTC)
@@ -99,6 +103,7 @@ target_link_libraries(test_replace ThrustRTC)
 target_link_libraries(test_for_each ThrustRTC)
 target_link_libraries(test_adjacent_difference ThrustRTC)
 target_link_libraries(test_sequence ThrustRTC)
+target_link_libraries(test_tabulate ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
 
@@ -120,6 +125,7 @@ test_replace
 test_for_each 
 test_adjacent_difference 
 test_sequence
+test_tabulate
 RUNTIME DESTINATION test)
 
 install(DIRECTORY DESTINATION test/__ptx_cache__)
