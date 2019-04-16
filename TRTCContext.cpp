@@ -1,9 +1,9 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <nvrtc.h>
 #include <string>
 #include <string.h>
 #include <stdio.h>
+#include "nvtrc_wrapper.h"
 #include "TRTCContext.h"
 #include "Timing.h"
 #include "md5.h"
@@ -24,7 +24,14 @@ static int s_get_compute_capability()
 	return cap;
 }
 
+const char* TRTCContext::s_libnvrtc_path = nullptr;
 const char* TRTCContext::s_ptx_cache_path = nullptr;
+
+void TRTCContext::set_libnvrtc_path(const char* path)
+{
+	static std::string _libnvrtc_path = path;
+	s_libnvrtc_path = _libnvrtc_path.c_str();
+}
 
 void TRTCContext::set_ptx_cache(const char* path)
 {
@@ -105,6 +112,12 @@ static void print_code(const char* fullCode)
 
 bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const
 {
+	if (!init_nvrtc(s_libnvrtc_path))
+	{
+		printf("Loading libnvrtc failed.\n");
+		return false;
+	}
+
 	int compute_cap = s_get_compute_capability();
 
 	nvrtcProgram prog;

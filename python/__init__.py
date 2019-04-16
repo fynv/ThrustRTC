@@ -1,6 +1,9 @@
 from . import PyThrustRTC as native
 import os
 
+def set_libnvrtc_path(path):
+	native.n_set_libnvrtc_path(path)
+
 def set_ptx_cache(path):
     if not os.path.exists(path):
         os.makedirs(path)

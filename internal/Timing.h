@@ -3,7 +3,6 @@
 
 #include <string>
 #include <stdio.h>
-#include <cuda_runtime.h>
 
 #ifdef _WIN32
 

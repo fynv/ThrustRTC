@@ -21,7 +21,9 @@ public:
 	TRTCContext();
 	~TRTCContext();
 
+	static void set_libnvrtc_path(const char* path);
 	static void set_ptx_cache(const char* path);
+
 	void set_verbose(bool verbose = true);
 
 	size_t size_of(const char* cls); // reflect the size of the class in the current context
@@ -44,6 +46,7 @@ public:
 private:
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
 
+	static const char* s_libnvrtc_path;
 	static const char* s_ptx_cache_path;
 
 	bool m_verbose;

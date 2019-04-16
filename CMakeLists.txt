@@ -3,10 +3,13 @@ cmake_minimum_required (VERSION 3.0)
 find_package(CUDA REQUIRED)
 
 set(LIB_SOURCES
+
+internal/md5.c
+internal/nvtrc_wrapper.cpp
+
 TRTCContext.cpp
 DVVector.cpp
 functor.cpp
-internal/md5.c
 fill.cpp
 replace.cpp
 for_each.cpp
@@ -32,6 +35,7 @@ tabulate.h
 set(INTERNAL_HEADERS
 internal/Timing.h
 internal/md5.h
+internal/nvtrc_wrapper.h
 )
 
 set (INCLUDE_DIR 
@@ -74,7 +78,7 @@ if (WIN32)
 target_compile_definitions(ThrustRTC PRIVATE THRUST_RTC_DLL_EXPORT)
 endif()
 
-target_link_libraries(ThrustRTC cuda nvrtc)
+target_link_libraries(ThrustRTC cuda)
 
 cuda_add_executable(test_trtc test/test_trtc.cpp)
 cuda_add_executable(test_for test/test_for.cpp)
