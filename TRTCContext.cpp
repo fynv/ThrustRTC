@@ -1,5 +1,4 @@
 #include <cuda.h>
-#include <cuda_runtime.h>
 #include <string>
 #include <string.h>
 #include <stdio.h>
@@ -10,16 +9,53 @@
 #include "cuda_inline_headers.hpp"
 #include "cuda_inline_headers_global.hpp"
 
+static bool s_cuda_init(int& cap)
+{
+	cuInit(0);
+
+	int max_gflops_device = 0;
+	int max_gflops = 0;
+
+	int device_count;
+	cuDeviceGetCount(&device_count);
+
+	if (device_count < 1) return false;
+	for (int current_device = 0; current_device < device_count; current_device++)
+	{
+		CUdevice cuDevice;
+		cuDeviceGet(&cuDevice, current_device);
+		int multiProcessorCount;
+		cuDeviceGetAttribute(&multiProcessorCount, CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT, cuDevice);
+		int	clockRate;
+		cuDeviceGetAttribute(&clockRate, CU_DEVICE_ATTRIBUTE_CLOCK_RATE, cuDevice);
+		int gflops = multiProcessorCount * clockRate;
+		int major, minor;
+		cuDeviceGetAttribute(&major, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevice);
+		cuDeviceGetAttribute(&minor, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR, cuDevice);
+		if (major != -1 && minor != -1)
+		{
+			if (gflops > max_gflops)
+			{
+				max_gflops = gflops;
+				max_gflops_device = current_device;
+				cap = major;
+			}
+		}
+	}
+	CUdevice cuDevice;
+	cuDeviceGet(&cuDevice, max_gflops_device);
+	CUcontext cuContext;
+	cuCtxCreate(&cuContext, 0, cuDevice);
+	return true;
+}
+
 static int s_get_compute_capability()
 {
 	static int cap = -1;
 	if (cap == -1)
 	{
-		cudaDeviceProp devProp;
-		cudaGetDeviceProperties(&devProp, 0);
-		cap = devProp.major;
+		s_cuda_init(cap);
 		if (cap < 2 || cap>7) cap = 7;
-		cudaFree(0);
 	}
 	return cap;
 }
@@ -59,6 +95,8 @@ struct TRTCContext::Kernel
 
 TRTCContext::TRTCContext()
 {
+	int v=s_get_compute_capability();
+
 	m_verbose = false;
 	for (int i = 0; i < s_num_headers; i++)
 		this->add_built_in_header(s_name_headers[i], s_content_headers[i]);

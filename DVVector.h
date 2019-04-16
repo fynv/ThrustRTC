@@ -2,7 +2,6 @@
 #define _DVVector_h
 
 #ifndef DEVICE_ONLY
-#include <cuda_runtime.h>
 #include "TRTC_api.h"
 #include "DeviceViewable.h"
 #include "TRTCContext.h"
@@ -15,10 +14,13 @@ struct VectorView
 
 	value_t* data;
 	size_t size;
+
+#ifdef DEVICE_ONLY
 	__device__ value_t& operator [](size_t idx)
 	{
 		return data[idx];
 	}
+#endif
 };
 
 

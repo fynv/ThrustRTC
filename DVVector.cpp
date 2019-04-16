@@ -1,4 +1,4 @@
-#include <cuda_runtime.h>
+#include <cuda.h>
 #include "DVVector.h"
 
 DVVector::DVVector(TRTCContext& ctx, const char* elem_cls, size_t size, void* hdata)
@@ -6,20 +6,22 @@ DVVector::DVVector(TRTCContext& ctx, const char* elem_cls, size_t size, void* hd
 	m_elem_cls = elem_cls;
 	m_elem_size = ctx.size_of(elem_cls);
 	m_size = size;
-	cudaMalloc(&m_data, m_elem_size*m_size);
+	CUdeviceptr dptr;
+	cuMemAlloc(&dptr, m_elem_size*m_size);
+	m_data = (void*)dptr;
 	if (hdata)
-		cudaMemcpy(m_data, hdata, m_elem_size*m_size, cudaMemcpyHostToDevice);
+		cuMemcpyHtoD(dptr, hdata, m_elem_size*m_size);
 	else
-		cudaMemset(m_data, 0, m_elem_size*m_size);
+		cuMemsetD8(dptr, 0, m_elem_size*m_size);
 }
 
 DVVector::~DVVector()
 {
-	cudaFree(m_data);
+	cuMemFree((CUdeviceptr)m_data);
 }
 
 void DVVector::to_host(void* hdata)
 {
-	cudaMemcpy(hdata, m_data, m_elem_size*m_size, cudaMemcpyDeviceToHost);
+	cuMemcpyDtoH(hdata, (CUdeviceptr)m_data, m_elem_size*m_size);
 }
 
