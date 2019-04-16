@@ -1,5 +1,4 @@
 #include <Python.h>
-#include <cuda_runtime.h>
 #include "TRTCContext.h"
 
 static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
@@ -72,6 +71,5 @@ static struct PyModuleDef cModPyDem = { PyModuleDef_HEAD_INIT, "ThrustRTC_module
 
 PyMODINIT_FUNC PyInit_PyThrustRTC(void)
 {
-	cudaFree(0);
 	return PyModule_Create(&cModPyDem);
 }
