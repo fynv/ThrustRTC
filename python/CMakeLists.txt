@@ -1,17 +1,17 @@
 add_subdirectory(PyThrustRTC)
 
 set(PYTHON
-	__init__.py
-	Context.py
-	DeviceViewable.py
-	DVVector.py
-	Fill.py
-	Functor.py
-	Replace.py
-	ForEach.py
-	AdjacentDifference.py
-	Sequence.py
-	Tabulate.py
+	ThrustRTC/__init__.py
+	ThrustRTC/Context.py
+	ThrustRTC/DeviceViewable.py
+	ThrustRTC/DVVector.py
+	ThrustRTC/Fill.py
+	ThrustRTC/Functor.py
+	ThrustRTC/Replace.py
+	ThrustRTC/ForEach.py
+	ThrustRTC/AdjacentDifference.py
+	ThrustRTC/Sequence.py
+	ThrustRTC/Tabulate.py
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
