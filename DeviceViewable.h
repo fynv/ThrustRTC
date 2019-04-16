@@ -8,7 +8,7 @@
 typedef std::vector<char> ViewBuf;
 
 // root class of all device-viewable objects
-class DeviceViewable
+class THRUST_RTC_API DeviceViewable
 {
 public:
 	DeviceViewable(){}

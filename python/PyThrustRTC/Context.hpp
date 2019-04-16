@@ -215,7 +215,7 @@ static PyObject* n_kernel_launch(PyObject* self, PyObject* args)
 	if (PyObject_TypeCheck(arg3, &PyList_Type))
 	{
 		ssize_t size = PyList_Size(arg3);
-		if (num_params != size)
+		if ((ssize_t)num_params != size)
 		{
 			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
 			Py_RETURN_NONE;
@@ -289,7 +289,7 @@ static PyObject* n_for_launch(PyObject* self, PyObject* args)
 	if (PyObject_TypeCheck(arg3, &PyList_Type))
 	{
 		ssize_t size = PyList_Size(arg3);
-		if (num_params != size)
+		if ((ssize_t)num_params != size)
 		{
 			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
 			Py_RETURN_NONE;

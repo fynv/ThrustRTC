@@ -1,6 +1,8 @@
 #ifndef _TRTCContext_h
 #define _TRTCContext_h
 
+#pragma warning( disable: 4251 )
+
 #include <vector>
 #include <string>
 #include <unordered_map>

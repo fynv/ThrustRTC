@@ -49,7 +49,7 @@ static PyObject* n_functor_generate_code(PyObject* self, PyObject* args)
 	PyObject* py_list_args = PyTuple_GetItem(args, 2);
 	
 	ssize_t num_args = PyList_Size(py_list_args);
-	if (num_args != num_params)
+	if (num_args != (ssize_t)num_params)
 	{
 		PyErr_Format(PyExc_ValueError, "Wrong number of functor arguments received. %d required, %d received.", num_params, num_args);
 		Py_RETURN_NONE;
