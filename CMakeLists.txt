@@ -2,6 +2,15 @@ cmake_minimum_required (VERSION 3.0)
 
 find_package(CUDA REQUIRED)
 
+
+add_executable(PackHeaders internal/pack_headers.cpp)
+add_custom_target(Run_PackHeaders
+COMMAND PackHeaders
+WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+COMMENT "Running PackHeaders in ${CMAKE_CURRENT_SOURCE_DIR}"
+SOURCES internal/pack_headers.cpp ${LIB_HEADERS}
+)
+
 set(LIB_SOURCES
 
 internal/md5.c
@@ -62,16 +71,11 @@ add_definitions(${DEFINES})
 
 SET(CMAKE_INSTALL_RPATH ../lib)
 
+cuda_add_library (ThrustRTC_static ${LIB_SOURCES} ${LIB_HEADERS} ${INTERNAL_HEADERS})
 cuda_add_library (ThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${INTERNAL_HEADERS})
 
-add_executable(PackHeaders internal/pack_headers.cpp)
-add_custom_target(Run_PackHeaders
-COMMAND PackHeaders
-WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-COMMENT "Running PackHeaders in ${CMAKE_CURRENT_SOURCE_DIR}"
-SOURCES internal/pack_headers.cpp ${LIB_HEADERS}
-)
 add_dependencies(Run_PackHeaders PackHeaders)
+add_dependencies(ThrustRTC_static Run_PackHeaders)
 add_dependencies(ThrustRTC Run_PackHeaders)
 
 if (WIN32) 
@@ -110,10 +114,11 @@ target_link_libraries(test_sequence ThrustRTC)
 target_link_libraries(test_tabulate ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
+install(TARGETS ThrustRTC_static DESTINATION lib)
 
 if (WIN32) 
 install(TARGETS ThrustRTC 
-		RUNTIME DESTINATION test
+		RUNTIME DESTINATION test_cpp
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib 
 		)
@@ -130,9 +135,8 @@ test_for_each
 test_adjacent_difference 
 test_sequence
 test_tabulate
-RUNTIME DESTINATION test)
+RUNTIME DESTINATION test_cpp)
 
-install(DIRECTORY DESTINATION test/__ptx_cache__)
+install(DIRECTORY DESTINATION test_cpp/__ptx_cache__)
 
-add_subdirectory(python/PyThrustRTC)
 add_subdirectory(python)

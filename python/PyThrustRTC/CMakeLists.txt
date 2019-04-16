@@ -51,18 +51,12 @@ set_target_properties(PyThrustRTC PROPERTIES SUFFIX ".so")
 set_target_properties(PyThrustRTC PROPERTIES PREFIX "")
 endif()
 
-
-if (WIN32) 
-target_compile_definitions(PyThrustRTC PUBLIC THRUST_RTC_DLL_IMPORT)
-endif()
-
-
-target_link_libraries(PyThrustRTC ${PYTHON_LIBRARIES} ThrustRTC)
+target_link_libraries(PyThrustRTC ${PYTHON_LIBRARIES} ThrustRTC_static cuda)
 
 
 if (WIN32) 
-install(TARGETS PyThrustRTC RUNTIME DESTINATION test/ThrustRTC)
+install(TARGETS PyThrustRTC RUNTIME DESTINATION test_python/ThrustRTC)
 else()
-install(TARGETS PyThrustRTC DESTINATION test/ThrustRTC)
+install(TARGETS PyThrustRTC DESTINATION test_python/ThrustRTC)
 endif()
 

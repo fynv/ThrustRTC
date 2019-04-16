@@ -1,3 +1,5 @@
+add_subdirectory(PyThrustRTC)
+
 set(PYTHON
 	__init__.py
 	Context.py
@@ -12,7 +14,7 @@ set(PYTHON
 	Tabulate.py
 )
 
-install(FILES ${PYTHON} DESTINATION test/ThrustRTC)
+install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
 
 set(PYTHON_TEST
 	test/test_trtc.py
@@ -25,6 +27,6 @@ set(PYTHON_TEST
 	test/test_tabulate.py
 )
 
-install(FILES ${PYTHON_TEST} DESTINATION test )
+install(FILES ${PYTHON_TEST} DESTINATION test_python )
 
 
