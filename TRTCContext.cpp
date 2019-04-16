@@ -98,7 +98,7 @@ static void print_code(const char* fullCode)
 			p_nl = p + strlen(p);
 
 		char line[1024];
-		int len = p_nl - p;
+		int len = (int)(p_nl - p);
 		if (len > 1023) len = 1023;
 		memcpy(line, p, len);
 		line[len] = 0;
@@ -358,7 +358,7 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 			cuMemcpyHtoD(dptr, m_constants[i].second.data(), size);
 		}
 		m_kernel_cache.push_back(kernel);
-		kid = m_kernel_cache.size() - 1;
+		kid = (unsigned)m_kernel_cache.size() - 1;
 		m_kernel_id_map[md5] = kid;
 	} while (false);
 
@@ -373,7 +373,9 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 		argbufs[i] = arg_map[i].arg->view();
 		converted_args[i] = argbufs[i].data();
 	}
-	cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
+	CUresult res= cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
+
+	return res == CUDA_SUCCESS;
 }
 
 
@@ -388,7 +390,7 @@ bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<TRTCCon
 		"    if (" + name_iter + ">=_end) return; \n" + _body;
 
 	unsigned num_blocks = (unsigned)((end - begin + 127) / 128);
-	launch_kernel({ num_blocks, 1, 1 }, { 128, 1, 1 }, arg_map, body.c_str(), sharedMemBytes);
+	return launch_kernel({ num_blocks, 1, 1 }, { 128, 1, 1 }, arg_map, body.c_str(), sharedMemBytes);
 }
 
 

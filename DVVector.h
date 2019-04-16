@@ -2,7 +2,7 @@
 #define _DVVector_h
 
 #ifndef DEVICE_ONLY
-#include <host_defines.h>
+#include <cuda_runtime.h>
 #include "TRTC_api.h"
 #include "DeviceViewable.h"
 #include "TRTCContext.h"
