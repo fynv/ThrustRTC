@@ -1,4 +1,5 @@
 #include "tabulate.h"
+
 void TRTC_tabulate(TRTCContext& ctx, DVVector& vec, const Functor& op, size_t begin, size_t end)
 {
 	std::vector<TRTCContext::AssignedParam> arg_map = op.arg_map;

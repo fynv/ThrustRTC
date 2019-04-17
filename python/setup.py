@@ -32,7 +32,7 @@ module_PyThrustRTC = Extension(
 setup(
 	name = 'ThrustRTC',
 	version = '0.0.1',
-	description = 'Thrust for Python',
+	description = 'Thrust for Python based on NVRTC',
 	#long_description=long_description,
 	#long_description_content_type='text/markdown',  
 	url='https://github.com/fynv/ThrustRTC',
