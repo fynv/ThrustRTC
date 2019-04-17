@@ -2,7 +2,6 @@ cmake_minimum_required (VERSION 3.0)
 
 find_package(CUDA REQUIRED)
 
-
 add_executable(PackHeaders internal/pack_headers.cpp)
 add_custom_target(Run_PackHeaders
 COMMAND PackHeaders
@@ -63,7 +62,6 @@ link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib/x64)
 else()
 add_definitions(-std=c++14)
 add_compile_options(-fPIC)
-link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib64)
 endif()
 
 include_directories(${INCLUDE_DIR})

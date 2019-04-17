@@ -95,12 +95,11 @@ void saxpy(VectorView<int32_t> _view_vec, int32_t _new_value, size_t _begin, siz
 
 ## Building the code
 
-### Dependencies
+### Build-time Dependencies
 
-* CUDA toolkit >= 7.0 is required. 
-* The shared library of NVRTC is needed to be redistributed with this library.
-* C libraries of Python 3 is required to build the Python binding part of the code.
 * CMake 3.x
+* CUDA toolkit >= 7.0 (CMake needs to find it. Only the driver header cuda.h and cuda.lib/libcuda.so are used)
+* C libraries of Python 3 is required to build the Python binding part of the code.
 
 ### Building with CMake
 
@@ -111,6 +110,18 @@ $ make
 $ make install
 
 You will get the library headers, binaries and examples in the "install" directory.
+
+### Run-time dependencies
+
+* CUDA driver (up-to-date)
+* Shared library of NVRTC 
+  Windows: nvrtc64\*.dll, default location: %CUDA_PATH%/bin
+  Linux: libnvrtc.so, default location: /usr/local/cuda/lib64
+  If the library is not at the default location, TRTCContext::set_libnvrtc_path() need to be called at run-time to specify the path of the library.
+
+For Python
+* Python 3
+* numpy
 
 ## Progress
 

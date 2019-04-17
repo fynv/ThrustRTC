@@ -34,7 +34,6 @@ link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib/x64)
 else()
 add_definitions(-std=c++14)
 add_compile_options(-fPIC)
-link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib64)
 endif()
 
 include_directories(${INCLUDE_DIR})

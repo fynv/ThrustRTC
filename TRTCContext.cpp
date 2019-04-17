@@ -54,7 +54,11 @@ static int s_get_compute_capability()
 	static int cap = -1;
 	if (cap == -1)
 	{
-		s_cuda_init(cap);
+		if (!s_cuda_init(cap))
+		{
+			printf("CUDA initialization failed. Exiting.\n");
+			exit(0);
+		}
 		if (cap < 2 || cap>7) cap = 7;
 	}
 	return cap;
@@ -152,8 +156,8 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& p
 {
 	if (!init_nvrtc(s_libnvrtc_path))
 	{
-		printf("Loading libnvrtc failed.\n");
-		return false;
+		printf("Loading libnvrtc failed. Exiting.\n");
+		exit(0);
 	}
 
 	int compute_cap = s_get_compute_capability();
