@@ -117,8 +117,10 @@ You will get the library headers, binaries and examples in the "install" directo
 
 * CUDA driver (up-to-date)
 * Shared library of NVRTC 
+  
   * Windows: nvrtc64\*.dll, default location: %CUDA_PATH%/bin
   * Linux: libnvrtc.so, default location: /usr/local/cuda/lib64
+  
   If the library is not at the default location, TRTCContext::set_libnvrtc_path() need to be called at run-time to specify the path of the library.
 
 For Python
