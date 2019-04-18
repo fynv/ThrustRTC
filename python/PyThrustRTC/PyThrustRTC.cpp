@@ -24,6 +24,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "adjacent_difference.hpp"
 #include "sequence.hpp"
 #include "tabulate.hpp"
+#include "transform.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -64,6 +65,11 @@ static PyMethodDef s_Methods[] = {
 	{ "n_adjacent_difference", n_adjacent_difference, METH_VARARGS, "" },
 	{ "n_sequence", n_sequence, METH_VARARGS, "" },
 	{ "n_tabulate", n_tabulate, METH_VARARGS, "" },
+	{ "n_transform", n_transform, METH_VARARGS, "" },
+	{ "n_transform_binary", n_transform_binary, METH_VARARGS, "" },
+	{ "n_transform_if", n_transform_if, METH_VARARGS, "" },
+	{ "n_transform_if_stencil", n_transform_if_stencil, METH_VARARGS, "" },
+	{ "n_transform_binary_if_stencil", n_transform_binary_if_stencil, METH_VARARGS, "" },
 	0
 };
 

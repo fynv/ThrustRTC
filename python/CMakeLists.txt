@@ -12,6 +12,7 @@ set(PYTHON
 	ThrustRTC/AdjacentDifference.py
 	ThrustRTC/Sequence.py
 	ThrustRTC/Tabulate.py
+	ThrustRTC/Transform.py
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
@@ -25,6 +26,7 @@ set(PYTHON_TEST
 	test/test_adjacent_difference.py
 	test/test_sequence.py
 	test/test_tabulate.py
+	test/test_transform.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )

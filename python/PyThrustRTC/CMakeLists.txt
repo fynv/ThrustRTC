@@ -15,6 +15,7 @@ for_each.hpp
 adjacent_difference.hpp
 sequence.hpp
 tabulate.hpp
+transform.hpp
 )
 
 set (INCLUDE_DIR 

@@ -1,8 +1,4 @@
 from . import PyThrustRTC as native
-from .Context import *
-from .DVVector import *
-from .DeviceViewable import *
-from .Functor import *
 
 def Replace(ctx, vec, old_value, new_value, begin =0, end =-1):
 	native.n_replace(ctx.m_cptr, vec.m_cptr, old_value.m_cptr, new_value.m_cptr, begin, end)

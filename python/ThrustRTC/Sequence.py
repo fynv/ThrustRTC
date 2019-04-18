@@ -1,7 +1,4 @@
 from . import PyThrustRTC as native
-from .Context import *
-from .DVVector import *
-from .DeviceViewable import *
 
 def Sequence(ctx, vec, value_init=None, value_step=None, begin =0, end =-1):
 	cptr_init = None
