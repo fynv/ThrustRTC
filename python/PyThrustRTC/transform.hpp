@@ -6,8 +6,8 @@
 static PyObject* n_transform(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_in = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
 	Functor op = PyFunctor_AsFunctor(PyTuple_GetItem(args, 3));
 	size_t begin_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
 	size_t end_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
@@ -21,9 +21,9 @@ static PyObject* n_transform(PyObject* self, PyObject* args)
 static PyObject* n_transform_binary(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_in1 = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_in2 = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
+	DVVectorLike* vec_in1 = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_in2 = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
 	Functor op = PyFunctor_AsFunctor(PyTuple_GetItem(args, 4));
 	size_t begin_in1 = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
 	size_t end_in1 = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 6));
@@ -38,8 +38,8 @@ static PyObject* n_transform_binary(PyObject* self, PyObject* args)
 static PyObject* n_transform_if(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_in = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
 	Functor op = PyFunctor_AsFunctor(PyTuple_GetItem(args, 3));
 	Functor pred = PyFunctor_AsFunctor(PyTuple_GetItem(args, 4));
 	size_t begin_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
@@ -52,9 +52,9 @@ static PyObject* n_transform_if(PyObject* self, PyObject* args)
 static PyObject* n_transform_if_stencil(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_in = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_stencil = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_stencil = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
 	Functor op = PyFunctor_AsFunctor(PyTuple_GetItem(args, 4));
 	Functor pred = PyFunctor_AsFunctor(PyTuple_GetItem(args, 5));
 	size_t begin_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 6));
@@ -70,10 +70,10 @@ static PyObject* n_transform_if_stencil(PyObject* self, PyObject* args)
 static PyObject* n_transform_binary_if_stencil(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_in1 = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_in2 = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
-	DVVector* vec_stencil = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 4));
+	DVVectorLike* vec_in1 = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_in2 = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_stencil = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 4));
 	Functor op = PyFunctor_AsFunctor(PyTuple_GetItem(args, 5));
 	Functor pred = PyFunctor_AsFunctor(PyTuple_GetItem(args, 6));
 	size_t begin_in1 = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 7));

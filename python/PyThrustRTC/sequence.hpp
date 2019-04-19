@@ -5,7 +5,7 @@
 static PyObject* n_sequence(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
 	PyObject* py_value_init = PyTuple_GetItem(args, 2);
 	DeviceViewable* value_init = nullptr;
 	if (py_value_init!=Py_None)

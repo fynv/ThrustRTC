@@ -5,9 +5,9 @@
 static PyObject* n_gather(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_map = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_in = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
+	DVVectorLike* vec_map = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
 	size_t begin_map = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
 	size_t end_map = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
 	size_t begin_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 6));
@@ -21,10 +21,10 @@ static PyObject* n_gather(PyObject* self, PyObject* args)
 static PyObject* n_gather_if(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_map = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_stencil = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
-	DVVector* vec_in = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 4));
+	DVVectorLike* vec_map = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_stencil = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 4));
 	PyObject *py_pred = PyTuple_GetItem(args, 5);
 	bool has_pred = false;
 	Functor pred;

@@ -1,6 +1,6 @@
 #include "sequence.h"
 
-bool TRTC_Sequence(TRTCContext& ctx, DVVector& vec, size_t begin, size_t end)
+bool TRTC_Sequence(TRTCContext& ctx, DVVectorLike& vec, size_t begin, size_t end)
 {
 	static TRTC_For s_for( { "view_vec" }, "idx",
 	"    view_vec[idx]= (decltype(view_vec)::value_t)(idx-_begin);\n" );
@@ -10,7 +10,7 @@ bool TRTC_Sequence(TRTCContext& ctx, DVVector& vec, size_t begin, size_t end)
 	return s_for.launch(ctx, begin, end, args);
 }
 
-bool TRTC_Sequence(TRTCContext& ctx, DVVector& vec, const DeviceViewable& value_init, size_t begin, size_t end)
+bool TRTC_Sequence(TRTCContext& ctx, DVVectorLike& vec, const DeviceViewable& value_init, size_t begin, size_t end)
 {
 	static TRTC_For s_for(
 	{ "view_vec", "value_init" }, "idx",
@@ -23,7 +23,7 @@ bool TRTC_Sequence(TRTCContext& ctx, DVVector& vec, const DeviceViewable& value_
 	return true;
 }
 
-bool THRUST_RTC_API TRTC_Sequence(TRTCContext& ctx, DVVector& vec, const DeviceViewable& value_init, const DeviceViewable& value_step, size_t begin, size_t end)
+bool THRUST_RTC_API TRTC_Sequence(TRTCContext& ctx, DVVectorLike& vec, const DeviceViewable& value_init, const DeviceViewable& value_step, size_t begin, size_t end)
 {
 	static TRTC_For s_for(
 	{  "view_vec", "value_init", "value_step" }, "idx",

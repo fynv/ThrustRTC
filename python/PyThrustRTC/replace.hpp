@@ -6,7 +6,7 @@
 static PyObject* n_replace(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
 	DeviceViewable* old_value = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
 	DeviceViewable* new_value = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
 	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
@@ -20,7 +20,7 @@ static PyObject* n_replace(PyObject* self, PyObject* args)
 static PyObject* n_replace_if(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
 	Functor pred = PyFunctor_AsFunctor(PyTuple_GetItem(args, 2));
 	DeviceViewable* new_value = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
 	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
@@ -34,8 +34,8 @@ static PyObject* n_replace_if(PyObject* self, PyObject* args)
 static PyObject* n_replace_copy(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_in = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
 	DeviceViewable* old_value = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
 	DeviceViewable* new_value = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 4));
 	size_t begin_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
@@ -50,8 +50,8 @@ static PyObject* n_replace_copy(PyObject* self, PyObject* args)
 static PyObject* n_replace_copy_if(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_in = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
 	Functor pred = PyFunctor_AsFunctor(PyTuple_GetItem(args, 3));
 	DeviceViewable* new_value = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 4));
 	size_t begin_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));

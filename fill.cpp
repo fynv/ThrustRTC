@@ -1,6 +1,6 @@
 #include "fill.h"
 
-bool TRTC_Fill(TRTCContext& ctx, DVVector& vec, const DeviceViewable& value, size_t begin, size_t end)
+bool TRTC_Fill(TRTCContext& ctx, DVVectorLike& vec, const DeviceViewable& value, size_t begin, size_t end)
 {
 	static TRTC_For s_for(
 	{ "view_vec", "value"  }, "idx",

@@ -6,7 +6,7 @@
 #include "DeviceViewable.h"
 #include "DVVector.h"
 
-bool THRUST_RTC_API TRTC_Fill(TRTCContext& ctx, DVVector& vec, const DeviceViewable& value, size_t begin = 0, size_t end = (size_t)(-1));
+bool THRUST_RTC_API TRTC_Fill(TRTCContext& ctx, DVVectorLike& vec, const DeviceViewable& value, size_t begin = 0, size_t end = (size_t)(-1));
 
 
 #endif

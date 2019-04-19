@@ -6,8 +6,8 @@
 static PyObject* n_adjacent_difference(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVector* vec_in = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	DVVector* vec_out = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	DVVectorLike* vec_out = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2));
 	PyObject* py_binary_op = PyTuple_GetItem(args, 3);
 	Functor binary_op;
 	bool has_functor = false;

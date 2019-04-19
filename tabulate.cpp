@@ -1,6 +1,6 @@
 #include "tabulate.h"
 
-bool TRTC_tabulate(TRTCContext& ctx, DVVector& vec, const Functor& op, size_t begin, size_t end)
+bool TRTC_tabulate(TRTCContext& ctx, DVVectorLike& vec, const Functor& op, size_t begin, size_t end)
 {
 	std::vector<TRTCContext::AssignedParam> arg_map = op.arg_map;
 	arg_map.push_back({ "_view_vec", &vec });

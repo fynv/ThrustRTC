@@ -1,6 +1,6 @@
 #include "adjacent_difference.h"
 
-bool TRTC_Adjacent_Difference(TRTCContext& ctx, const DVVector& vec_in, DVVector& vec_out, size_t begin_in, size_t end_in, size_t begin_out)
+bool TRTC_Adjacent_Difference(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_in, size_t end_in, size_t begin_out)
 {
 	static TRTC_For s_for({ "view_vec_in", "view_vec_out", "delta"}, "idx",
 	"    auto value = view_vec_in[idx];\n"
@@ -15,7 +15,7 @@ bool TRTC_Adjacent_Difference(TRTCContext& ctx, const DVVector& vec_in, DVVector
 	return true;
 }
 
-bool TRTC_Adjacent_Difference(TRTCContext& ctx, const DVVector& vec_in, DVVector& vec_out, const Functor& binary_op, size_t begin_in, size_t end_in, size_t begin_out)
+bool TRTC_Adjacent_Difference(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& binary_op, size_t begin_in, size_t end_in, size_t begin_out)
 {
 	std::vector<TRTCContext::AssignedParam> arg_map = binary_op.arg_map;
 	arg_map.push_back({ "_view_vec_in", &vec_in });

@@ -1,6 +1,6 @@
 #include "transform.h"
 
-bool TRTC_Transform(TRTCContext& ctx, const DVVector& vec_in, DVVector& vec_out, const Functor& op, size_t begin_in, size_t end_in, size_t begin_out)
+bool TRTC_Transform(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& op, size_t begin_in, size_t end_in, size_t begin_out)
 {
 	DVInt32 dvdelta_out((int)begin_out - (int)begin_in);
 	std::vector<TRTCContext::AssignedParam> arg_map = op.arg_map;
@@ -15,7 +15,7 @@ bool TRTC_Transform(TRTCContext& ctx, const DVVector& vec_in, DVVector& vec_out,
 			"     _view_vec_out[_idx+_delta_out] = " + op.functor_ret + "; \n").c_str());
 }
 
-bool TRTC_Transform_Binary(TRTCContext& ctx, const DVVector& vec_in1, const DVVector& vec_in2, DVVector& vec_out, const Functor& op, size_t begin_in1, size_t end_in1, size_t begin_in2, size_t begin_out)
+bool TRTC_Transform_Binary(TRTCContext& ctx, const DVVectorLike& vec_in1, const DVVectorLike& vec_in2, DVVectorLike& vec_out, const Functor& op, size_t begin_in1, size_t end_in1, size_t begin_in2, size_t begin_out)
 {
 	DVInt32 dvdelta_in2((int)begin_in2 - (int)begin_in1);
 	DVInt32 dvdelta_out((int)begin_out - (int)begin_in1);
@@ -33,7 +33,7 @@ bool TRTC_Transform_Binary(TRTCContext& ctx, const DVVector& vec_in1, const DVVe
 			"     _view_vec_out[_idx+_delta_out] = " + op.functor_ret + "; \n").c_str());
 }
 
-bool TRTC_Transform_If(TRTCContext& ctx, const DVVector& vec_in, DVVector& vec_out, const Functor& op, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_out)
+bool TRTC_Transform_If(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& op, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_out)
 {
 	DVInt32 dvdelta_out((int)begin_out - (int)begin_in);
 	std::vector<TRTCContext::AssignedParam> arg_map(op.arg_map.size() + pred.arg_map.size() + 3);
@@ -53,7 +53,7 @@ bool TRTC_Transform_If(TRTCContext& ctx, const DVVector& vec_in, DVVector& vec_o
 			"     _view_vec_out[_idx+_delta_out] = " + op.functor_ret + "; \n    }\n").c_str());
 }
 
-bool TRTC_Transform_If_Stencil(TRTCContext& ctx, const DVVector& vec_in, const DVVector& vec_stencil, DVVector& vec_out, const Functor& op, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_out)
+bool TRTC_Transform_If_Stencil(TRTCContext& ctx, const DVVectorLike& vec_in, const DVVectorLike& vec_stencil, DVVectorLike& vec_out, const Functor& op, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_out)
 {
 	DVInt32 dvdelta_stencil((int)begin_stencil - (int)begin_in);
 	DVInt32 dvdelta_out((int)begin_out - (int)begin_in);
@@ -76,7 +76,7 @@ bool TRTC_Transform_If_Stencil(TRTCContext& ctx, const DVVector& vec_in, const D
 			"     _view_vec_out[_idx+_delta_out] = " + op.functor_ret + "; \n    }\n").c_str());
 }
 
-bool THRUST_RTC_API TRTC_Transform_Binary_If_Stencil(TRTCContext& ctx, const DVVector& vec_in1, const DVVector& vec_in2, const DVVector& vec_stencil, DVVector& vec_out, const Functor& op, const Functor& pred, size_t begin_in1, size_t end_in1, size_t begin_in2, size_t begin_stencil, size_t begin_out)
+bool THRUST_RTC_API TRTC_Transform_Binary_If_Stencil(TRTCContext& ctx, const DVVectorLike& vec_in1, const DVVectorLike& vec_in2, const DVVectorLike& vec_stencil, DVVectorLike& vec_out, const Functor& op, const Functor& pred, size_t begin_in1, size_t end_in1, size_t begin_in2, size_t begin_stencil, size_t begin_out)
 {
 	DVInt32 dvdelta_in2((int)begin_in2 - (int)begin_in1);
 	DVInt32 dvdelta_stencil((int)begin_stencil - (int)begin_in1);

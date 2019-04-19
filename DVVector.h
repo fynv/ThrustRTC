@@ -26,12 +26,25 @@ struct VectorView
 
 #ifndef DEVICE_ONLY
 
-class THRUST_RTC_API DVVector : public DeviceViewable
+class THRUST_RTC_API DVVectorLike : public DeviceViewable
 {
 public:
 	std::string name_elem_cls() const { return m_elem_cls; }
 	size_t elem_size() const { return m_elem_size; }
-	size_t size() const { return m_size; }	
+	size_t size() const { return m_size; }
+
+	DVVectorLike(TRTCContext& ctx, const char* elem_cls, size_t size);
+	virtual ~DVVectorLike() {}
+
+protected:
+	std::string m_elem_cls;
+	size_t m_elem_size;
+	size_t m_size;
+};
+
+class THRUST_RTC_API DVVector : public DVVectorLike
+{
+public:
 	void* data() const { return m_data; }
 
 	DVVector(TRTCContext& ctx, const char* elem_cls, size_t size, void* hdata=nullptr);
@@ -54,9 +67,6 @@ public:
 	}
 
 private:
-	std::string m_elem_cls;
-	size_t m_elem_size;
-	size_t m_size;
 	void* m_data;
 };
 #endif

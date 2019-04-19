@@ -7,9 +7,9 @@
 #include "DVVector.h"
 #include "functor.h"
 
-bool THRUST_RTC_API TRTC_Gather(TRTCContext& ctx, const DVVector& vec_map, const DVVector& vec_in, DVVector& vec_out, size_t begin_map = 0, size_t end_map = (size_t)(-1), size_t begin_in=0, size_t begin_out=0);
-bool THRUST_RTC_API TRTC_Gather_If(TRTCContext& ctx, const DVVector& vec_map, const DVVector& vec_stencil, const DVVector& vec_in, DVVector& vec_out, size_t begin_map = 0, size_t end_map = (size_t)(-1), size_t begin_stencil = 0, size_t begin_in = 0, size_t begin_out = 0);
-bool THRUST_RTC_API TRTC_Gather_If(TRTCContext& ctx, const DVVector& vec_map, const DVVector& vec_stencil, const DVVector& vec_in, DVVector& vec_out, const Functor& pred, size_t begin_map = 0, size_t end_map = (size_t)(-1), size_t begin_stencil = 0, size_t begin_in = 0, size_t begin_out = 0);
+bool THRUST_RTC_API TRTC_Gather(TRTCContext& ctx, const DVVectorLike& vec_map, const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_map = 0, size_t end_map = (size_t)(-1), size_t begin_in=0, size_t begin_out=0);
+bool THRUST_RTC_API TRTC_Gather_If(TRTCContext& ctx, const DVVectorLike& vec_map, const DVVectorLike& vec_stencil, const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_map = 0, size_t end_map = (size_t)(-1), size_t begin_stencil = 0, size_t begin_in = 0, size_t begin_out = 0);
+bool THRUST_RTC_API TRTC_Gather_If(TRTCContext& ctx, const DVVectorLike& vec_map, const DVVectorLike& vec_stencil, const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& pred, size_t begin_map = 0, size_t end_map = (size_t)(-1), size_t begin_stencil = 0, size_t begin_in = 0, size_t begin_out = 0);
 
 #endif
 

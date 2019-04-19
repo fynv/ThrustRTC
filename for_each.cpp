@@ -1,7 +1,7 @@
 #include "for_each.h"
 #include "DeviceViewable.h"
 
-bool TRTC_For_Each(TRTCContext& ctx, DVVector& vec, const Functor& f, size_t begin, size_t end)
+bool TRTC_For_Each(TRTCContext& ctx, DVVectorLike& vec, const Functor& f, size_t begin, size_t end)
 {
 	std::vector<TRTCContext::AssignedParam> arg_map = f.arg_map;
 	arg_map.push_back({ "_view_vec", &vec });
