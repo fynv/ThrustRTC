@@ -19,8 +19,10 @@ static PyObject* n_sequence(PyObject* self, PyObject* args)
 
 	if (value_init == nullptr)
 	{
-		TRTC_Sequence(*ctx, *vec, begin, end);
-		return PyLong_FromLong(0);
+		if (TRTC_Sequence(*ctx, *vec, begin, end))
+			return PyLong_FromLong(0);
+		else
+			Py_RETURN_NONE;
 	}
 	else if (value_step == nullptr)
 	{

@@ -10,6 +10,8 @@ static PyObject* n_tabulate(PyObject* self, PyObject* args)
 	Functor op = PyFunctor_AsFunctor(PyTuple_GetItem(args, 2));
 	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
 	size_t end = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
-	TRTC_tabulate(*ctx, *vec, op, begin, end);
-	return PyLong_FromLong(0);
+	if (TRTC_tabulate(*ctx, *vec, op, begin, end))
+		return PyLong_FromLong(0);
+	else
+		Py_RETURN_NONE;
 }

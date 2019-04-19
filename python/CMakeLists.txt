@@ -7,6 +7,7 @@ set(PYTHON
 	ThrustRTC/DVVector.py
 	ThrustRTC/Functor.py
 	ThrustRTC/Transformations.py
+	ThrustRTC/Copying.py
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
@@ -21,6 +22,7 @@ set(PYTHON_TEST
 	test/test_sequence.py
 	test/test_tabulate.py
 	test/test_transform.py
+	test/test_gather.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )

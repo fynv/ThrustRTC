@@ -25,6 +25,7 @@ adjacent_difference.cpp
 sequence.cpp
 tabulate.cpp
 transform.cpp
+gather.cpp
 )
 
 set(LIB_HEADERS
@@ -40,6 +41,7 @@ adjacent_difference.h
 sequence.h
 tabulate.h
 transform.h
+gather.h
 )
 
 set(INTERNAL_HEADERS
@@ -93,6 +95,7 @@ cuda_add_executable(test_adjacent_difference test/test_adjacent_difference.cpp)
 cuda_add_executable(test_sequence test/test_sequence.cpp)
 cuda_add_executable(test_tabulate test/test_tabulate.cpp)
 cuda_add_executable(test_transform test/test_transform.cpp)
+cuda_add_executable(test_gather test/test_gather.cpp)
 
 if (WIN32) 
 target_compile_definitions(test_trtc PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -104,6 +107,7 @@ target_compile_definitions(test_adjacent_difference PUBLIC THRUST_RTC_DLL_IMPORT
 target_compile_definitions(test_sequence PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_tabulate PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_transform PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_gather PUBLIC THRUST_RTC_DLL_IMPORT)
 endif()
 
 target_link_libraries(test_trtc ThrustRTC)
@@ -115,6 +119,7 @@ target_link_libraries(test_adjacent_difference ThrustRTC)
 target_link_libraries(test_sequence ThrustRTC)
 target_link_libraries(test_tabulate ThrustRTC)
 target_link_libraries(test_transform ThrustRTC)
+target_link_libraries(test_gather ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
 install(TARGETS ThrustRTC_static DESTINATION lib)
@@ -139,6 +144,7 @@ test_adjacent_difference
 test_sequence
 test_tabulate
 test_transform
+test_gather
 RUNTIME DESTINATION test_cpp)
 
 install(DIRECTORY DESTINATION test_cpp/__ptx_cache__)

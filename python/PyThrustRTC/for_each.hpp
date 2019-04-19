@@ -10,6 +10,8 @@ static PyObject* n_for_each(PyObject* self, PyObject* args)
 	Functor f = PyFunctor_AsFunctor(PyTuple_GetItem(args, 2));
 	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
 	size_t end = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
-	TRTC_For_Each(*ctx, *vec, f, begin, end);
-	return PyLong_FromLong(0);
+	if (TRTC_For_Each(*ctx, *vec, f, begin, end))
+		return PyLong_FromLong(0);
+	else 
+		Py_RETURN_NONE;
 }
