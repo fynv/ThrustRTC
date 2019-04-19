@@ -5,14 +5,8 @@ set(PYTHON
 	ThrustRTC/Context.py
 	ThrustRTC/DeviceViewable.py
 	ThrustRTC/DVVector.py
-	ThrustRTC/Fill.py
 	ThrustRTC/Functor.py
-	ThrustRTC/Replace.py
-	ThrustRTC/ForEach.py
-	ThrustRTC/AdjacentDifference.py
-	ThrustRTC/Sequence.py
-	ThrustRTC/Tabulate.py
-	ThrustRTC/Transform.py
+	ThrustRTC/Transformations.py
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
