@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "fake_vectors/DVCounter.h"
 
 DVCounter::DVCounter(TRTCContext& ctx, const DeviceViewable& dvobj_init, size_t size) :

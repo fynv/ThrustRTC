@@ -1,4 +1,5 @@
-#include "stdio.h"
+#include <stdio.h>
+#include <memory.h>
 #include "DVTransform.h"
 
 DVTransform::DVTransform(TRTCContext& ctx, const DVVectorLike& vec_in, const char* elem_cls, const Functor& op)

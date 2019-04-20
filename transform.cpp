@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "transform.h"
 
 bool TRTC_Transform(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& op, size_t begin_in, size_t end_in, size_t begin_out)

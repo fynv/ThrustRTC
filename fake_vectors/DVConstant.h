@@ -3,8 +3,8 @@
 
 #include "DVVector.h"
 
-template<class _T>
 #pragma pack(1)
+template<class _T>
 struct ConstantView
 {
 	typedef _T value_t;

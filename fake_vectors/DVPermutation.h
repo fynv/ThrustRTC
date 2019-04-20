@@ -3,8 +3,8 @@
 
 #include "DVVector.h"
 
-template<class _TVVALUE, class _TVINDEX>
 #pragma pack(1)
+template<class _TVVALUE, class _TVINDEX>
 struct PermutationView
 {
 	typedef typename _TVVALUE::value_t value_t;

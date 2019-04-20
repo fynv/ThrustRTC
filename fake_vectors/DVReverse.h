@@ -3,8 +3,8 @@
 
 #include "DVVector.h"
 
-template<class _TVVALUE>
 #pragma pack(1)
+template<class _TVVALUE>
 struct ReverseView
 {
 	typedef typename _TVVALUE::value_t value_t;

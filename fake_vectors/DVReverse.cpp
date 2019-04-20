@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "DVReverse.h"
 
 DVReverse::DVReverse(TRTCContext& ctx, const DVVectorLike& vec_value)

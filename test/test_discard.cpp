@@ -13,7 +13,8 @@ int main()
 	Functor negate = { {}, { "x" }, "ret", "        ret = -x;\n" };
 	
 	// just to verify that it compiles
-	TRTC_Transform(ctx, DVCounter(ctx, DVInt32(5), 10), DVDiscard(ctx, "int32_t"), negate);	
+	DVDiscard sink(ctx, "int32_t");
+	TRTC_Transform(ctx, DVCounter(ctx, DVInt32(5), 10), sink, negate);	
 
 	return 0;
 }

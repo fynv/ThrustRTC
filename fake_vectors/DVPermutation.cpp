@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "DVPermutation.h"
 
 DVPermutation::DVPermutation(TRTCContext& ctx, const DVVectorLike& vec_value, const DVVectorLike& vec_index)

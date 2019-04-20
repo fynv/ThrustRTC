@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "fake_vectors/DVConstant.h"
 
 DVConstant::DVConstant(TRTCContext& ctx, const DeviceViewable& dvobj, size_t size) :
