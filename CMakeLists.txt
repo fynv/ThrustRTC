@@ -21,6 +21,7 @@ fake_vectors/DVConstant.cpp
 fake_vectors/DVCounter.cpp
 fake_vectors/DVDiscard.cpp
 fake_vectors/DVPermutation.cpp
+fake_vectors/DVReverse.cpp
 functor.cpp
 fill.cpp
 replace.cpp
@@ -53,6 +54,7 @@ fake_vectors/DVConstant.h
 fake_vectors/DVCounter.h
 fake_vectors/DVDiscard.h
 fake_vectors/DVPermutation.h
+fake_vectors/DVReverse.h
 )
 
 set(INTERNAL_HEADERS
@@ -112,6 +114,7 @@ cuda_add_executable(test_constant test/test_constant.cpp)
 cuda_add_executable(test_counter test/test_counter.cpp)
 cuda_add_executable(test_discard test/test_discard.cpp)
 cuda_add_executable(test_permutation test/test_permutation.cpp)
+cuda_add_executable(test_reverse test/test_reverse.cpp)
 
 if (WIN32) 
 target_compile_definitions(test_trtc PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -129,6 +132,7 @@ target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_counter PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_discard PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_permutation PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_reverse PUBLIC THRUST_RTC_DLL_IMPORT)
 endif()
 
 target_link_libraries(test_trtc ThrustRTC)
@@ -146,6 +150,7 @@ target_link_libraries(test_constant ThrustRTC)
 target_link_libraries(test_counter ThrustRTC)
 target_link_libraries(test_discard ThrustRTC)
 target_link_libraries(test_permutation ThrustRTC)
+target_link_libraries(test_reverse ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
 install(FILES ${LIB_HEADERS_FAKEVECTORS} DESTINATION include/fake_vectors)
@@ -177,6 +182,7 @@ test_constant
 test_counter
 test_discard
 test_permutation
+test_reverse
 
 RUNTIME DESTINATION test_cpp)
 

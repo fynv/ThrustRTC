@@ -115,6 +115,7 @@ TRTCContext::TRTCContext()
 	this->add_inlcude_filename("fake_vectors/DVCounter.h");	
 	this->add_inlcude_filename("fake_vectors/DVDiscard.h");
 	this->add_inlcude_filename("fake_vectors/DVPermutation.h");
+	this->add_inlcude_filename("fake_vectors/DVReverse.h");
 }
 
 TRTCContext::~TRTCContext()

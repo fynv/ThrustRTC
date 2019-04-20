@@ -8,13 +8,18 @@ template<class _T>
 struct CounterView
 {
 	typedef _T value_t;
-	value_t value_init;
-	size_t size;
+	value_t _value_init;
+	size_t _size;
 
 #ifdef DEVICE_ONLY
+	__device__ size_t size() const
+	{
+		return _size;
+	}
+
 	__device__ value_t operator [](size_t idx)
 	{
-		return value_init+(value_t)idx;
+		return _value_init+(value_t)idx;
 	}
 #endif
 };

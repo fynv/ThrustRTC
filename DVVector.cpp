@@ -41,7 +41,7 @@ ViewBuf DVVector::view() const
 {
 	ViewBuf buf(sizeof(VectorView<char>));
 	VectorView<char> *pview = (VectorView<char>*)buf.data();
-	pview->data = (char*)m_data;
-	pview->size = m_size;
+	pview->_data = (char*)m_data;
+	pview->_size = m_size;
 	return buf;
 }

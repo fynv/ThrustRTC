@@ -7,7 +7,8 @@ const char* s_files[] =
 	"fake_vectors/DVConstant.h",
 	"fake_vectors/DVCounter.h",
 	"fake_vectors/DVDiscard.h",
-	"fake_vectors/DVPermutation.h"
+	"fake_vectors/DVPermutation.h",
+	"fake_vectors/DVReverse.h"
 };
 
 int main()

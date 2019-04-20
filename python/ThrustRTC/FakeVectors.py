@@ -16,3 +16,8 @@ class DVDiscard(DVVectorLike):
 class DVPermutation(DVVectorLike):
 	def __init__(self, ctx, vec_value, vec_index):
 		self.m_cptr = native.n_dvpermutation_create(ctx.m_cptr, vec_value.m_cptr, vec_index.m_cptr)
+
+class DVReverse(DVVectorLike):
+	def __init__(self, ctx, vec_value):
+		self.m_cptr = native.n_dvreverse_create(ctx.m_cptr, vec_value.m_cptr)
+

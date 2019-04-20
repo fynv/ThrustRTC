@@ -12,13 +12,18 @@ struct VectorView
 {
 	typedef _T value_t;
 
-	value_t* data;
-	size_t size;
+	value_t* _data;
+	size_t _size;
 
 #ifdef DEVICE_ONLY
+	__device__ size_t size() const
+	{
+		return _size;
+	}
+
 	__device__ value_t& operator [](size_t idx)
 	{
-		return data[idx];
+		return _data[idx];
 	}
 #endif
 };

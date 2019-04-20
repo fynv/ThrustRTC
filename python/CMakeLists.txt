@@ -29,6 +29,7 @@ set(PYTHON_TEST
 	test/test_counter.py
 	test/test_discard.py
 	test/test_permutation.py
+	test/test_reverse.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )

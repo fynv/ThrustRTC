@@ -12,6 +12,7 @@ DVConstant.hpp
 DVCounter.hpp
 DVDiscard.hpp
 DVPermutation.hpp
+DVReverse.hpp
 fill.hpp
 functor.hpp
 replace.hpp

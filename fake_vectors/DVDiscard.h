@@ -19,13 +19,18 @@ template<class _T>
 struct DiscardView
 {
 	typedef _T value_t;
-	size_t size;
-	_Sink<value_t> sink;
+	size_t _size;
+	_Sink<value_t> _sink;
 
 #ifdef DEVICE_ONLY
+	__device__ size_t size() const
+	{
+		return _size;
+	}
+
 	__device__ _Sink<value_t>& operator [](size_t)
 	{
-		return sink;
+		return _sink;
 	}
 #endif
 };
