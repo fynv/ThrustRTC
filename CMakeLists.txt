@@ -34,7 +34,6 @@ TRTC_api.h
 DeviceViewable.h
 TRTCContext.h
 DVVector.h
-fake_vectors/DVConstant.h
 functor.h
 fill.h
 replace.h
@@ -44,6 +43,10 @@ sequence.h
 tabulate.h
 transform.h
 gather.h
+)
+
+set(LIB_HEADERS_FAKEVECTORS
+	fake_vectors/DVConstant.h
 )
 
 set(INTERNAL_HEADERS
@@ -75,8 +78,8 @@ add_definitions(${DEFINES})
 
 SET(CMAKE_INSTALL_RPATH ../lib)
 
-cuda_add_library (ThrustRTC_static ${LIB_SOURCES} ${LIB_HEADERS} ${INTERNAL_HEADERS})
-cuda_add_library (ThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${INTERNAL_HEADERS})
+cuda_add_library (ThrustRTC_static ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
+cuda_add_library (ThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
 
 add_dependencies(Run_PackHeaders PackHeaders)
 add_dependencies(ThrustRTC_static Run_PackHeaders)
@@ -130,6 +133,7 @@ target_link_libraries(test_gather ThrustRTC)
 target_link_libraries(test_constant ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
+install(FILES ${LIB_HEADERS_FAKEVECTORS} DESTINATION include/fake_vectors)
 install(TARGETS ThrustRTC_static DESTINATION lib)
 
 if (WIN32) 
