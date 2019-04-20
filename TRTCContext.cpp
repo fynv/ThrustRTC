@@ -108,7 +108,7 @@ TRTCContext::TRTCContext()
 	for (int i = 0; i < s_num_headers_global; i++)
 		this->add_built_in_header(s_name_headers_global[i], s_content_headers_global[i]);
 
-	this->add_preprocessor("#define DEVICE_ONLY");
+	this->add_code_block("#define DEVICE_ONLY\n");
 	this->add_inlcude_filename("cstdint");
 	this->add_inlcude_filename("DVVector.h");
 	this->add_inlcude_filename("fake_vectors/DVConstant.h");
@@ -116,6 +116,8 @@ TRTCContext::TRTCContext()
 	this->add_inlcude_filename("fake_vectors/DVDiscard.h");
 	this->add_inlcude_filename("fake_vectors/DVPermutation.h");
 	this->add_inlcude_filename("fake_vectors/DVReverse.h");
+
+	m_identifier = 0;
 }
 
 TRTCContext::~TRTCContext()
@@ -229,8 +231,8 @@ size_t TRTCContext::size_of(const char* cls)
 
 	// reflect from device code
 	std::string saxpy;
-	for (size_t i = 0; i < m_preprocesors.size(); i++)
-		saxpy += m_preprocesors[i] + "\n";
+	for (size_t i = 0; i < m_code_blocks.size(); i++)
+		saxpy += m_code_blocks[i];
 	saxpy += std::string("__device__ ") + cls + " _test;\n";
 
 	if (m_verbose) print_code(saxpy.c_str());
@@ -287,9 +289,9 @@ size_t TRTCContext::size_of(const char* cls)
 bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes)
 {
 	std::string saxpy;
-	for (size_t i = 0; i < m_preprocesors.size(); i++)
+	for (size_t i = 0; i < m_code_blocks.size(); i++)
 	{
-		saxpy += m_preprocesors[i] + "\n";
+		saxpy += m_code_blocks[i];
 	}
 
 	saxpy += "\n";
@@ -452,25 +454,30 @@ void TRTCContext::add_built_in_header(const char* name, const char* content)
 	m_content_built_in_headers.push_back(content);
 }
 
+void TRTCContext::add_code_block(const char* code)
+{
+	m_code_blocks.push_back(code);
+}
+
 void TRTCContext::add_inlcude_filename(const char* fn)
 {
 	char line[1024];
-	sprintf(line, "#include \"%s\"", fn);
-	m_preprocesors.push_back(line);
-}
-
-void TRTCContext::add_preprocessor(const char* line)
-{
-	m_preprocesors.push_back(line);
+	sprintf(line, "#include \"%s\"\n", fn);
+	add_code_block(line);
 }
 
 void TRTCContext::add_constant_object(const char* name, const DeviceViewable& obj)
 {
 	std::string type = obj.name_view_cls();
 	char line[1024];
-	sprintf(line, "__constant__ %s %s;", type.c_str(), name);
-	m_preprocesors.push_back(line);
+	sprintf(line, "__constant__ %s %s;\n", type.c_str(), name);
+	add_code_block(line);
 	m_constants.push_back({ name, obj.view() });
+}
+
+int TRTCContext::next_identifier()
+{
+	return m_identifier++;
 }
 
 TRTC_Kernel::TRTC_Kernel(const std::vector<const char*>& param_names, const char* code_body) :

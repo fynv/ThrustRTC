@@ -19,8 +19,8 @@ class Context:
     def add_inlcude_filename(self, filename):
         native.n_context_add_inlcude_filename(self.m_cptr, filename)
 
-    def add_preprocessor(self, line):
-        native.n_context_add_preprocessor(self.m_cptr, line)
+    def add_code_block(self, code):
+        native.n_context_add_code_block(self.m_cptr, code)
 
     def add_constant_object(self, name, dv):
         native.n_context_add_constant_object(self.m_cptr, name, dv.m_cptr)

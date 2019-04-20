@@ -30,6 +30,7 @@ set(PYTHON_TEST
 	test/test_discard.py
 	test/test_permutation.py
 	test/test_reverse.py
+	test/test_transform_iter.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )

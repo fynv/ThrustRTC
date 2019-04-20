@@ -23,6 +23,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "DVDiscard.hpp"
 #include "DVPermutation.hpp"
 #include "DVReverse.hpp"
+#include "DVTransform.hpp"
 #include "fill.hpp"
 #include "replace.hpp"
 #include "for_each.hpp"
@@ -41,7 +42,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_context_add_include_dir", n_context_add_include_dir, METH_VARARGS, "" },
 	{ "n_context_add_built_in_header", n_context_add_built_in_header, METH_VARARGS, "" },
 	{ "n_context_add_inlcude_filename", n_context_add_inlcude_filename, METH_VARARGS, "" },
-	{ "n_context_add_preprocessor", n_context_add_preprocessor, METH_VARARGS, "" },
+	{ "n_context_add_code_block", n_context_add_code_block, METH_VARARGS, "" },
 	{ "n_context_add_constant_object", n_context_add_constant_object, METH_VARARGS, "" },
 	{ "n_context_launch_kernel", n_context_launch_kernel, METH_VARARGS, "" },
 	{ "n_context_launch_for", n_context_launch_for, METH_VARARGS, "" },
@@ -66,6 +67,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvdiscard_create", n_dvdiscard_create, METH_VARARGS, "" },
 	{ "n_dvpermutation_create", n_dvpermutation_create, METH_VARARGS, "" },
 	{ "n_dvreverse_create", n_dvreverse_create, METH_VARARGS, "" },
+	{ "n_dvtransform_create", n_dvtransform_create, METH_VARARGS, "" },
 	{ "n_functor_generate_code", n_functor_generate_code, METH_VARARGS, "" },
 	{ "n_fill", n_fill, METH_VARARGS, "" },
 	{ "n_replace", n_replace, METH_VARARGS, "" },

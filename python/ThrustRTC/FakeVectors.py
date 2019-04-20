@@ -21,3 +21,6 @@ class DVReverse(DVVectorLike):
 	def __init__(self, ctx, vec_value):
 		self.m_cptr = native.n_dvreverse_create(ctx.m_cptr, vec_value.m_cptr)
 
+class DVTransform(DVVectorLike):
+	def __init__(self, ctx, vec_in, elem_cls, op):
+		self.m_cptr = native.n_dvtransform_create(ctx.m_cptr, vec_in.m_cptr, elem_cls, op)

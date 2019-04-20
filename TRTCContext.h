@@ -41,9 +41,11 @@ public:
 	
 	void add_include_dir(const char* path);
 	void add_built_in_header(const char* name, const char* content);
+	void add_code_block(const char* code);
 	void add_inlcude_filename(const char* fn);
-	void add_preprocessor(const char* line);	
 	void add_constant_object(const char* name, const DeviceViewable& obj);
+
+	int next_identifier();
 
 private:
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
@@ -55,7 +57,7 @@ private:
 	std::vector<std::string> m_include_dirs;
 	std::vector<const char*> m_name_built_in_headers;
 	std::vector<const char*> m_content_built_in_headers;
-	std::vector<std::string> m_preprocesors;
+	std::vector<std::string> m_code_blocks;
 	std::vector<std::pair<std::string, ViewBuf>> m_constants;
 
 	std::unordered_map<std::string, size_t> m_size_of_types;
@@ -63,6 +65,8 @@ private:
 	struct Kernel;
 	std::vector<Kernel*> m_kernel_cache;
 	std::unordered_map<std::string, KernelId_t> m_kernel_id_map;
+
+	int m_identifier;
 
 };
 

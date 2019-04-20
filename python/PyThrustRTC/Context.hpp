@@ -51,11 +51,11 @@ static PyObject* n_context_add_inlcude_filename(PyObject* self, PyObject* args)
 	return PyLong_FromLong(0);
 }
 
-static PyObject* n_context_add_preprocessor(PyObject* self, PyObject* args)
+static PyObject* n_context_add_code_block(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
 	const char* line = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
-	ctx->add_preprocessor(line);
+	ctx->add_code_block(line);
 	return PyLong_FromLong(0);
 }
 
