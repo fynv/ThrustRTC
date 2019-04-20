@@ -19,7 +19,7 @@ darr2 = trtc.device_vector_from_numpy(ctx, harr2)
 kernel = trtc.Kernel(['arr_in', 'arr_out', 'k'],
 	'''
 	size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx >= arr_in.size) return;
+	if (idx >= arr_in.size()) return;
 	arr_out[idx] = arr_in[idx]*k;
 	''')
 
@@ -39,7 +39,7 @@ print(darr3.to_host())
 ctx.launch_kernel(1,128, {'arr': darr3}, 
 	'''
 	size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx >= arr.size) return;
+	if (idx >= arr.size()) return;
 	arr[idx]*=100.0f;
 	''')
 

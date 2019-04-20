@@ -11,7 +11,7 @@ int main()
 	TRTC_Kernel ker(
 	{ "arr_in", "arr_out", "k" },
 	"    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
-	"    if (idx >= arr_in.size) return;\n"
+	"    if (idx >= arr_in.size()) return;\n"
 	"    arr_out[idx] = arr_in[idx]*k;\n");
 
 	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
@@ -35,7 +35,7 @@ int main()
 	// Launch once, immediately
 	ctx.launch_kernel({ 1, 1, 1 }, { 128, 1, 1 }, { { "arr", &dvec_out_i } },
 		"    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
-		"    if (idx >= arr.size) return;\n"
+		"    if (idx >= arr.size()) return;\n"
 		"    arr[idx]*=100;\n"
 		);
 
