@@ -109,11 +109,12 @@ TRTCContext::TRTCContext()
 		this->add_built_in_header(s_name_headers_global[i], s_content_headers_global[i]);
 
 	this->add_preprocessor("#define DEVICE_ONLY");
+	this->add_inlcude_filename("cstdint");
 	this->add_inlcude_filename("DVVector.h");
 	this->add_inlcude_filename("fake_vectors/DVConstant.h");
 	this->add_inlcude_filename("fake_vectors/DVCounter.h");	
 	this->add_inlcude_filename("fake_vectors/DVDiscard.h");
-	this->add_inlcude_filename("cstdint");
+	this->add_inlcude_filename("fake_vectors/DVPermutation.h");
 }
 
 TRTCContext::~TRTCContext()

@@ -11,6 +11,7 @@ DVVector.hpp
 DVConstant.hpp
 DVCounter.hpp
 DVDiscard.hpp
+DVPermutation.hpp
 fill.hpp
 functor.hpp
 replace.hpp

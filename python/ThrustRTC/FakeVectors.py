@@ -12,3 +12,7 @@ class DVCounter(DVVectorLike):
 class DVDiscard(DVVectorLike):
 	def __init__(self, ctx, elem_cls, size = -1):
 		self.m_cptr = native.n_dvdiscard_create(ctx.m_cptr, elem_cls, size)
+
+class DVPermutation(DVVectorLike):
+	def __init__(self, ctx, vec_value, vec_index):
+		self.m_cptr = native.n_dvpermutation_create(ctx.m_cptr, vec_value.m_cptr, vec_index.m_cptr)
