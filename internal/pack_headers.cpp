@@ -4,7 +4,8 @@
 const char* s_files[] =
 {
 	"DVVector.h",
-	"fake_vectors/DVConstant.h"
+	"fake_vectors/DVConstant.h",
+	"fake_vectors/DVCounter.h"
 };
 
 int main()

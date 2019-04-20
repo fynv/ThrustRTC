@@ -9,6 +9,7 @@ Context.hpp
 DeviceViewable.hpp
 DVVector.hpp
 DVConstant.hpp
+DVCounter.hpp
 fill.hpp
 functor.hpp
 replace.hpp

@@ -26,6 +26,7 @@ set(PYTHON_TEST
 	test/test_gather.py
 
 	test/test_constant.py
+	test/test_counter.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )
