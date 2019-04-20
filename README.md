@@ -67,7 +67,7 @@ trtc.Replace_If(ctx, A, trtc.Functor( {}, ['x'], 'ret', '        ret = x<0;\n'),
 
 There are several differences between ThrustRTC and Thrust C++:
 
-* ThrustRTC does not include the iterators. All operations explicitly work on vectors types
+* ThrustRTC does not include the iterators. All operations explicitly work on vectors types.
   Funtion simliar to "fancy iterators" of Thrust are implemented through a group of "fake-vector" classes
 
 * Functors in ThrustRTC are implemented as "do{...} while(false);" blocks, so "return" is not supported.
@@ -178,8 +178,8 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_gather.cpp
   * python/test/test_gather.py
 
-Thrust fancy-iterators are being ported progressively (as "fake-vectors"):
-The following examples shows the use if the ported fake-vector classes:
+Thrust fancy-iterators are being ported progressively (as "fake-vectors").
+The following examples shows the use of the ported fake-vector classes:
 
 * DVConstant (constant_iterator)
   * test/test_constant.cpp
