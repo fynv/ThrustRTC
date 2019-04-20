@@ -2,15 +2,17 @@ from . import PyThrustRTC as native
 import numpy as np
 from .DeviceViewable import DeviceViewable
 
-class DVVector(DeviceViewable):
-	def __init__(self, cptr):
-		self.m_cptr = cptr
-
+class DVVectorLike(DeviceViewable):
 	def name_elem_cls(self):
-		return native.n_dvvector_name_elem_cls(self.m_cptr)
+		return native.n_dvvectorlike_name_elem_cls(self.m_cptr)
 
 	def size(self):
-		return native.n_dvvector_size(self.m_cptr)
+		return native.n_dvvectorlike_size(self.m_cptr)
+
+
+class DVVector(DVVectorLike):
+	def __init__(self, cptr):
+		self.m_cptr = cptr
 
 	def to_host(self):
 		elem_cls = self.name_elem_cls()

@@ -2,6 +2,18 @@
 #include "TRTCContext.h"
 #include "DVVector.h"
 
+static PyObject* n_dvvectorlike_name_elem_cls(PyObject* self, PyObject* args)
+{
+	DVVectorLike* dvvec = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	return PyUnicode_FromString(dvvec->name_elem_cls().c_str());
+}
+
+static PyObject* n_dvvectorlike_size(PyObject* self, PyObject* args)
+{
+	DVVectorLike* dvvec = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	return PyLong_FromLongLong((long long)dvvec->size());
+}
+
 static PyObject* n_dvvector_create(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
@@ -17,18 +29,6 @@ static PyObject* n_dvvector_create(PyObject* self, PyObject* args)
 		ret = new DVVector(*ctx, elem_cls, size, data);
 	}
 	return PyLong_FromVoidPtr(ret);
-}
-
-static PyObject* n_dvvector_name_elem_cls(PyObject* self, PyObject* args)
-{
-	DVVector* dvvec = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	return PyUnicode_FromString(dvvec->name_elem_cls().c_str());
-}
-
-static PyObject* n_dvvector_size(PyObject* self, PyObject* args)
-{
-	DVVector* dvvec = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	return PyLong_FromUnsignedLong((unsigned long)dvvec->size());
 }
 
 static PyObject* n_dvvector_to_host(PyObject* self, PyObject* args)

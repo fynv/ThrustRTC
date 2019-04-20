@@ -7,7 +7,7 @@ add_custom_target(Run_PackHeaders
 COMMAND PackHeaders
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 COMMENT "Running PackHeaders in ${CMAKE_CURRENT_SOURCE_DIR}"
-SOURCES internal/pack_headers.cpp ${LIB_HEADERS}
+SOURCES internal/pack_headers.cpp
 )
 
 set(LIB_SOURCES
@@ -17,6 +17,7 @@ internal/nvtrc_wrapper.cpp
 
 TRTCContext.cpp
 DVVector.cpp
+fake_vectors/DVConstant.cpp
 functor.cpp
 fill.cpp
 replace.cpp
@@ -33,6 +34,7 @@ TRTC_api.h
 DeviceViewable.h
 TRTCContext.h
 DVVector.h
+fake_vectors/DVConstant.h
 functor.h
 fill.h
 replace.h
@@ -97,6 +99,8 @@ cuda_add_executable(test_tabulate test/test_tabulate.cpp)
 cuda_add_executable(test_transform test/test_transform.cpp)
 cuda_add_executable(test_gather test/test_gather.cpp)
 
+cuda_add_executable(test_constant test/test_constant.cpp)
+
 if (WIN32) 
 target_compile_definitions(test_trtc PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_for PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -108,6 +112,8 @@ target_compile_definitions(test_sequence PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_tabulate PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_transform PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_gather PUBLIC THRUST_RTC_DLL_IMPORT)
+
+target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
 endif()
 
 target_link_libraries(test_trtc ThrustRTC)
@@ -120,6 +126,8 @@ target_link_libraries(test_sequence ThrustRTC)
 target_link_libraries(test_tabulate ThrustRTC)
 target_link_libraries(test_transform ThrustRTC)
 target_link_libraries(test_gather ThrustRTC)
+
+target_link_libraries(test_constant ThrustRTC)
 
 install(FILES ${LIB_HEADERS} DESTINATION include)
 install(TARGETS ThrustRTC_static DESTINATION lib)
@@ -145,6 +153,8 @@ test_sequence
 test_tabulate
 test_transform
 test_gather
+
+test_constant
 RUNTIME DESTINATION test_cpp)
 
 install(DIRECTORY DESTINATION test_cpp/__ptx_cache__)

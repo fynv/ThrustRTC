@@ -32,3 +32,16 @@ void DVVector::to_host(void* hdata)
 	cuMemcpyDtoH(hdata, (CUdeviceptr)m_data, m_elem_size*m_size);
 }
 
+std::string DVVector::name_view_cls() const
+{
+	return std::string("VectorView<") + m_elem_cls + ">";
+}
+
+ViewBuf DVVector::view() const
+{
+	ViewBuf buf(sizeof(VectorView<char>));
+	VectorView<char> *pview = (VectorView<char>*)buf.data();
+	pview->data = (char*)m_data;
+	pview->size = m_size;
+	return buf;
+}

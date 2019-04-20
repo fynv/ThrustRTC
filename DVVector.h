@@ -50,21 +50,9 @@ public:
 	DVVector(TRTCContext& ctx, const char* elem_cls, size_t size, void* hdata=nullptr);
 	~DVVector();
 
-	void to_host(void* hdata);	
-	
-	virtual std::string name_view_cls() const
-	{
-		return std::string("VectorView<") + m_elem_cls + ">";
-	}
-
-	virtual ViewBuf view() const
-	{
-		ViewBuf buf(sizeof(VectorView<char>));
-		VectorView<char> *pview = (VectorView<char>*)buf.data();
-		pview->data = (char*) m_data;
-		pview->size = m_size;
-		return buf;
-	}
+	void to_host(void* hdata);		
+	virtual std::string name_view_cls() const;
+	virtual ViewBuf view() const;
 
 private:
 	void* m_data;

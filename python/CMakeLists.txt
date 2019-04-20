@@ -5,6 +5,7 @@ set(PYTHON
 	ThrustRTC/Context.py
 	ThrustRTC/DeviceViewable.py
 	ThrustRTC/DVVector.py
+	ThrustRTC/FakeVectors.py
 	ThrustRTC/Functor.py
 	ThrustRTC/Transformations.py
 	ThrustRTC/Copying.py
@@ -23,6 +24,8 @@ set(PYTHON_TEST
 	test/test_tabulate.py
 	test/test_transform.py
 	test/test_gather.py
+
+	test/test_constant.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )
