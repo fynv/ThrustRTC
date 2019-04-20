@@ -197,6 +197,10 @@ The following examples shows the use if the ported fake-vector classes:
   * test/test_permutation.cpp
   * python/test/test_permutation.py
 
+* DVReverse (reverse_iterator)
+  * test/test_reverse.cpp
+  * python/test/test_reverse.py
+
 ## License 
 
 I've decided to license this project under ['"Anti 996" License'](https://github.com/996icu/996.ICU/blob/master/LICENSE)
