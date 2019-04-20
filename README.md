@@ -67,9 +67,11 @@ trtc.Replace_If(ctx, A, trtc.Functor( {}, ['x'], 'ret', '        ret = x<0;\n'),
 
 There are several differences between ThrustRTC and Thrust C++:
 
-* ThrustRTC does not include the iterators. All operations explicitly work on the device vectors.
-* Functors in ThrustRTC are implemented as "do{...} while(false);" blocks, so "return" is not supported. 
-  User need to specify a variable name for the return value and assign to it. "break" is supported though.
+* ThrustRTC does not include the iterators. All operations explicitly work on vectors types
+  Funtion simliar to "fancy iterators" of Thrust are implemented through a group of "fake-vector" classes
+
+* Functors in ThrustRTC are implemented as "do{...} while(false);" blocks, so "return" is not supported.
+  User need to specify a variable name for the return value and assign to it. "break" is supported though
 
 In verbose mode we can see the full code of the CUDA kerenel looks like:
 
@@ -167,6 +169,33 @@ The following examples shows the use of the ported Thrust algorithms:
 * tabulate
   * test/tabulate.cpp
   * python/test/tabulate.py
+
+* transform
+  * test/test_transform.cpp
+  * python/test/test_transform.py
+
+* gather
+  * test/test_gather.cpp
+  * python/test/test_gather.py
+
+Thrust fancy-iterators are being ported progressively (as "fake-vectors"):
+The following examples shows the use if the ported fake-vector classes:
+
+* DVConstant (constant_iterator)
+  * test/test_constant.cpp
+  * python/test/test_constant.py
+
+* DVCounter (counting_iterator)
+  * test/test_counter.cpp
+  * python/test/test_counter.py
+
+* DVDiscard (discard_iterator) 
+  * test/test_discard.cpp
+  * python/test/test_discard.py
+
+* DVPermutation (permutation_iterator)
+  * test/test_permutation.cpp
+  * python/test/test_permutation.py
 
 ## License 
 
