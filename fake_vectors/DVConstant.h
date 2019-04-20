@@ -12,7 +12,7 @@ struct ConstantView
 	size_t size;
 
 #ifdef DEVICE_ONLY
-	__device__ const value_t& operator [](size_t idx)
+	__device__ const value_t& operator [](size_t)
 	{
 		return value;
 	}

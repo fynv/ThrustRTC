@@ -111,7 +111,8 @@ TRTCContext::TRTCContext()
 	this->add_preprocessor("#define DEVICE_ONLY");
 	this->add_inlcude_filename("DVVector.h");
 	this->add_inlcude_filename("fake_vectors/DVConstant.h");
-	this->add_inlcude_filename("fake_vectors/DVCounter.h");
+	this->add_inlcude_filename("fake_vectors/DVCounter.h");	
+	this->add_inlcude_filename("fake_vectors/DVDiscard.h");
 	this->add_inlcude_filename("cstdint");
 }
 

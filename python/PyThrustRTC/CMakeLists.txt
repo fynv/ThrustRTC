@@ -10,6 +10,7 @@ DeviceViewable.hpp
 DVVector.hpp
 DVConstant.hpp
 DVCounter.hpp
+DVDiscard.hpp
 fill.hpp
 functor.hpp
 replace.hpp

@@ -20,6 +20,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "DVVector.hpp"
 #include "DVConstant.hpp"
 #include "DVCounter.hpp"
+#include "DVDiscard.hpp"
 #include "fill.hpp"
 #include "replace.hpp"
 #include "for_each.hpp"
@@ -60,6 +61,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvvector_from_dvs", n_dvvector_from_dvs, METH_VARARGS, "" },
 	{ "n_dvconstant_create", n_dvconstant_create, METH_VARARGS, "" },
 	{ "n_dvcounter_create", n_dvcounter_create, METH_VARARGS, "" },
+	{ "n_dvdiscard_create", n_dvdiscard_create, METH_VARARGS, "" },
 	{ "n_functor_generate_code", n_functor_generate_code, METH_VARARGS, "" },
 	{ "n_fill", n_fill, METH_VARARGS, "" },
 	{ "n_replace", n_replace, METH_VARARGS, "" },

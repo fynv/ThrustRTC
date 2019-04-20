@@ -8,3 +8,7 @@ class DVConstant(DVVectorLike):
 class DVCounter(DVVectorLike):
 	def __init__(self, ctx, dvobj_init, size = -1):
 		self.m_cptr = native.n_dvcounter_create(ctx.m_cptr, dvobj_init.m_cptr, size)
+
+class DVDiscard(DVVectorLike):
+	def __init__(self, ctx, elem_cls, size = -1):
+		self.m_cptr = native.n_dvdiscard_create(ctx.m_cptr, elem_cls, size)
