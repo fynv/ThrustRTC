@@ -34,6 +34,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "gather.hpp"
 #include "scatter.hpp"
 #include "copy.hpp"
+#include "swap.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -90,6 +91,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_scatter", n_scatter, METH_VARARGS, "" },
 	{ "n_scatter_if", n_scatter_if, METH_VARARGS, "" },
 	{ "n_copy", n_copy, METH_VARARGS, "" },
+	{ "n_swap", n_swap, METH_VARARGS, "" },
 	0
 };
 

@@ -34,6 +34,7 @@ transform.cpp
 gather.cpp
 scatter.cpp
 copy.cpp
+swap.cpp
 )
 
 set(LIB_HEADERS
@@ -52,6 +53,7 @@ transform.h
 gather.h
 scatter.h
 copy.h
+swap.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS
@@ -117,6 +119,7 @@ cuda_add_executable(test_transform test/test_transform.cpp)
 cuda_add_executable(test_gather test/test_gather.cpp)
 cuda_add_executable(test_scatter test/test_scatter.cpp)
 cuda_add_executable(test_copy test/test_copy.cpp)
+cuda_add_executable(test_swap test/test_swap.cpp)
 
 cuda_add_executable(test_constant test/test_constant.cpp)
 cuda_add_executable(test_counter test/test_counter.cpp)
@@ -138,6 +141,7 @@ target_compile_definitions(test_transform PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_gather PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_scatter PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_copy PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_swap PUBLIC THRUST_RTC_DLL_IMPORT)
 
 target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_counter PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -159,6 +163,7 @@ target_link_libraries(test_transform ThrustRTC)
 target_link_libraries(test_gather ThrustRTC)
 target_link_libraries(test_scatter ThrustRTC)
 target_link_libraries(test_copy ThrustRTC)
+target_link_libraries(test_swap ThrustRTC)
 
 target_link_libraries(test_constant ThrustRTC)
 target_link_libraries(test_counter ThrustRTC)
@@ -194,6 +199,7 @@ test_transform
 test_gather
 test_scatter
 test_copy
+test_swap
 
 test_constant
 test_counter

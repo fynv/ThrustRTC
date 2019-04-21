@@ -25,6 +25,7 @@ transform.hpp
 gather.hpp
 scatter.hpp
 copy.hpp
+swap.hpp
 )
 
 set (INCLUDE_DIR 

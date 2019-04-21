@@ -4,7 +4,7 @@ bool TRTC_Copy(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_o
 {
 	static TRTC_For s_for(
 		{ "view_vec_in", "view_vec_out", "delta" }, "idx",
-		"    view_vec_out[idx + delta]=(decltype(view_vec_out)::value_t)view_vec_in[idx];"
+		"    view_vec_out[idx + delta]=(decltype(view_vec_out)::value_t)view_vec_in[idx];\n"
 	);
 
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();

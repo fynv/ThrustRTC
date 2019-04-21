@@ -26,6 +26,7 @@ set(PYTHON_TEST
 	test/test_gather.py
 	test/test_scatter.py
 	test/test_copy.py
+	test/test_swap.py
 
 	test/test_constant.py
 	test/test_counter.py
