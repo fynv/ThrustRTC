@@ -226,7 +226,7 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& p
 size_t TRTCContext::size_of(const char* cls)
 {
 	// try to find in the context cache first
-	std::unordered_map<std::string, size_t>::iterator it = m_size_of_types.find(cls);
+	decltype(m_size_of_types)::iterator it = m_size_of_types.find(cls);
 	if (it != m_size_of_types.end()) return it->second;
 
 	// reflect from device code
@@ -329,7 +329,7 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 	do
 	{
 		{
-			std::unordered_map<std::string, KernelId_t>::iterator it = m_kernel_id_map.find(md5);
+			decltype(m_kernel_id_map)::iterator it = m_kernel_id_map.find(md5);
 			if (it != m_kernel_id_map.end())
 			{
 				kid = it->second;
@@ -473,6 +473,27 @@ void TRTCContext::add_constant_object(const char* name, const DeviceViewable& ob
 	sprintf(line, "__constant__ %s %s;\n", type.c_str(), name);
 	add_code_block(line);
 	m_constants.push_back({ name, obj.view() });
+}
+
+std::string TRTCContext::add_custom_struct(const char* struct_body)
+{
+	char md5[33];
+	s_get_md5(struct_body, md5);
+	decltype(m_custom_struct_map)::iterator it = m_custom_struct_map.find(md5);
+	if (it != m_custom_struct_map.end())
+		return it->second;
+	
+	char buf[64];
+	int id = next_identifier();
+	sprintf(buf, "_CustomView_%d", id);
+	std::string name_view_cls = buf;
+	m_custom_struct_map[md5] = name_view_cls;
+
+	std::string struct_def = "#pragma pack(1)\n";
+	struct_def += std::string("struct ") + name_view_cls + "\n{\n" + struct_body + "};\n";
+	add_code_block(struct_def.c_str());
+
+	return name_view_cls;
 }
 
 int TRTCContext::next_identifier()

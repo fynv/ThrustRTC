@@ -13,7 +13,6 @@ public:
 	virtual ViewBuf view() const;
 
 private:
-	TRTCContext& m_ctx;
 	std::string m_name_view_cls;
 	ViewBuf m_view_in;
 	std::vector<ViewBuf> m_view_params;

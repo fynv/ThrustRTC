@@ -44,6 +44,7 @@ public:
 	void add_code_block(const char* code);
 	void add_inlcude_filename(const char* fn);
 	void add_constant_object(const char* name, const DeviceViewable& obj);
+	std::string add_custom_struct(const char* struct_body);
 
 	int next_identifier();
 
@@ -59,6 +60,8 @@ private:
 	std::vector<const char*> m_content_built_in_headers;
 	std::vector<std::string> m_code_blocks;
 	std::vector<std::pair<std::string, ViewBuf>> m_constants;
+
+	std::unordered_map<std::string, std::string> m_custom_struct_map;
 
 	std::unordered_map<std::string, size_t> m_size_of_types;
 
