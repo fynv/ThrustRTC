@@ -190,6 +190,10 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_swap.cpp
   * python/test/test_swap.py
 
+* count
+  * test/test_count.cpp
+  * python/test/test_count.py
+
 Thrust fancy-iterators are being ported progressively (as "fake-vectors").
 The following examples shows the use of the ported fake-vector classes:
 

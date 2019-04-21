@@ -14,6 +14,7 @@ set(LIB_SOURCES
 
 internal/md5.c
 internal/nvtrc_wrapper.cpp
+internal/general_reduce.cpp
 
 TRTCContext.cpp
 DVVector.cpp
@@ -35,6 +36,7 @@ gather.cpp
 scatter.cpp
 copy.cpp
 swap.cpp
+count.cpp
 )
 
 set(LIB_HEADERS
@@ -54,6 +56,7 @@ gather.h
 scatter.h
 copy.h
 swap.h
+count.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS
@@ -69,6 +72,7 @@ set(INTERNAL_HEADERS
 internal/Timing.h
 internal/md5.h
 internal/nvtrc_wrapper.h
+internal/general_reduce.h
 )
 
 set (INCLUDE_DIR 
@@ -120,6 +124,7 @@ cuda_add_executable(test_gather test/test_gather.cpp)
 cuda_add_executable(test_scatter test/test_scatter.cpp)
 cuda_add_executable(test_copy test/test_copy.cpp)
 cuda_add_executable(test_swap test/test_swap.cpp)
+cuda_add_executable(test_count test/test_count.cpp)
 
 cuda_add_executable(test_constant test/test_constant.cpp)
 cuda_add_executable(test_counter test/test_counter.cpp)
@@ -142,6 +147,7 @@ target_compile_definitions(test_gather PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_scatter PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_copy PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_swap PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_count PUBLIC THRUST_RTC_DLL_IMPORT)
 
 target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_counter PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -164,6 +170,7 @@ target_link_libraries(test_gather ThrustRTC)
 target_link_libraries(test_scatter ThrustRTC)
 target_link_libraries(test_copy ThrustRTC)
 target_link_libraries(test_swap ThrustRTC)
+target_link_libraries(test_count ThrustRTC)
 
 target_link_libraries(test_constant ThrustRTC)
 target_link_libraries(test_counter ThrustRTC)
@@ -200,6 +207,7 @@ test_gather
 test_scatter
 test_copy
 test_swap
+test_count
 
 test_constant
 test_counter

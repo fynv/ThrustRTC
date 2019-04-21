@@ -9,6 +9,7 @@ set(PYTHON
 	ThrustRTC/Functor.py
 	ThrustRTC/Transformations.py
 	ThrustRTC/Copying.py
+	ThrustRTC/Reductions.py
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
@@ -27,6 +28,7 @@ set(PYTHON_TEST
 	test/test_scatter.py
 	test/test_copy.py
 	test/test_swap.py
+	test/test_count.py
 
 	test/test_constant.py
 	test/test_counter.py
