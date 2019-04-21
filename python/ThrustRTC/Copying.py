@@ -11,3 +11,6 @@ def Scatter(ctx, vec_in, vec_map, vec_out, begin_in = 0, end_in = -1, begin_map 
 
 def Scatter_If(ctx, vec_in, vec_map, vec_stencil, vec_out, pred = None, begin_in = 0, end_in = -1, begin_map = 0, begin_stencil = 0, begin_out = 0):
 	native.n_scatter_if(ctx.m_cptr, vec_in.m_cptr, vec_map.m_cptr, vec_stencil.m_cptr, vec_out.m_cptr, pred, begin_in, end_in, begin_map, begin_stencil, begin_out)
+
+def Copy(ctx, vec_in, vec_out, begin_in = 0, end_in = -1, begin_out = 0):
+	native.n_copy(ctx.m_cptr, vec_in.m_cptr, vec_out.m_cptr, begin_in, end_in, begin_out)	
