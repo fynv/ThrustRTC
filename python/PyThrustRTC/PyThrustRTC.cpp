@@ -32,6 +32,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "tabulate.hpp"
 #include "transform.hpp"
 #include "gather.hpp"
+#include "scatter.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -85,6 +86,8 @@ static PyMethodDef s_Methods[] = {
 	{ "n_transform_binary_if_stencil", n_transform_binary_if_stencil, METH_VARARGS, "" },
 	{ "n_gather", n_gather, METH_VARARGS, "" },
 	{ "n_gather_if", n_gather_if, METH_VARARGS, "" },
+	{ "n_scatter", n_scatter, METH_VARARGS, "" },
+	{ "n_scatter_if", n_scatter_if, METH_VARARGS, "" },
 	0
 };
 

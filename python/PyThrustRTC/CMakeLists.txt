@@ -23,6 +23,7 @@ sequence.hpp
 tabulate.hpp
 transform.hpp
 gather.hpp
+scatter.hpp
 )
 
 set (INCLUDE_DIR 
