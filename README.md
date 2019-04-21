@@ -178,6 +178,18 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_gather.cpp
   * python/test/test_gather.py
 
+* scatter
+  * test/test_scatter.cpp
+  * python/test/test_scatter.py
+
+* copy
+  * test/test_copy.cpp
+  * python/test/test_copy.py
+
+* swap
+  * test/test_swap.cpp
+  * python/test/test_swap.py
+
 Thrust fancy-iterators are being ported progressively (as "fake-vectors").
 The following examples shows the use of the ported fake-vector classes:
 
