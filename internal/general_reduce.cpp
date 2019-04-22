@@ -37,7 +37,7 @@ bool general_reduce(TRTCContext& ctx, size_t n, const char* name_cls, const Func
 {
 	if (n < 1) return false;
 
-	unsigned blocks = (n + BLOCK_SIZE - 1) / BLOCK_SIZE;
+	unsigned blocks = (unsigned)(n + BLOCK_SIZE - 1) / BLOCK_SIZE;
 	std::shared_ptr<DVVector> res(new DVVector(ctx, name_cls, blocks));
 
 	// first round
@@ -73,7 +73,7 @@ bool general_reduce(TRTCContext& ctx, size_t n, const char* name_cls, const Func
 	{
 		std::shared_ptr<DVVector> src = res;
 		n = (unsigned)src->size();
-		blocks = (n + BLOCK_SIZE - 1) / BLOCK_SIZE;		
+		blocks = (unsigned)(n + BLOCK_SIZE - 1) / BLOCK_SIZE;		
 		res = std::shared_ptr<DVVector>(new DVVector(ctx, name_cls, blocks));
 		if (!s_reduce(ctx, *src, *res, op)) return false;
 	}

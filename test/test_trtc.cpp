@@ -26,7 +26,7 @@ int main()
 	int test_i[5] = { 6, 7, 8, 9, 10 };
 	DVVector dvec_in_i(ctx, "int32_t", 5, test_i);
 	DVVector dvec_out_i(ctx, "int32_t", 5);
-	DVInt32 k2(5.0);
+	DVInt32 k2(5);
 	const DeviceViewable* args_i[] = { &dvec_in_i, &dvec_out_i, &k2 };
 	ker.launch(ctx, { 1, 1, 1 }, { 128, 1, 1 }, args_i);
 	dvec_out_i.to_host(test_i);
