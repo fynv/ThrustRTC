@@ -3,6 +3,7 @@
 
 #include <string>
 #include <stdio.h>
+#include <list>
 
 #ifdef _WIN32
 
@@ -33,5 +34,35 @@ inline double GetTime()
 
 
 #endif
+
+struct EventItem
+{
+	const char* mark;
+	double time;
+};
+
+inline std::list<EventItem>& s_event_list()
+{
+	static std::list<EventItem> _event_list;
+	return _event_list;
+}
+
+inline void s_put_event(const char* mark)
+{
+	std::list<EventItem>& event_list = s_event_list();
+	event_list.push_back({ mark, GetTime() });
+}
+
+inline void s_print_events()
+{
+	std::list<EventItem>& event_list = s_event_list();
+	std::list<EventItem>::iterator it = event_list.begin();
+	while (it != event_list.end())
+	{
+		printf("%s: %f\n", it->mark, it->time);
+		it++;
+	}
+	event_list.clear();
+}
 
 #endif
