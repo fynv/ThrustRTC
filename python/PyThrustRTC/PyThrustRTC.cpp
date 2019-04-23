@@ -36,6 +36,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "copy.hpp"
 #include "swap.hpp"
 #include "count.hpp"
+#include "reduce.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -61,6 +62,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dv_name_view_cls", n_dv_name_view_cls, METH_VARARGS, "" },
 	{ "n_dv_destroy", n_dv_destroy, METH_VARARGS, "" },
 	{ "n_dv_create_basic", n_dv_create_basic, METH_VARARGS, "" },
+	{ "n_dv_value", n_dv_value, METH_VARARGS, "" },
 	{ "n_dvvectorlike_name_elem_cls", n_dvvectorlike_name_elem_cls, METH_VARARGS, "" },
 	{ "n_dvvectorlike_size", n_dvvectorlike_size, METH_VARARGS, "" },
 	{ "n_dvvector_create", n_dvvector_create, METH_VARARGS, "" },
@@ -95,6 +97,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_swap", n_swap, METH_VARARGS, "" },
 	{ "n_count", n_count, METH_VARARGS, "" },
 	{ "n_count_if", n_count_if, METH_VARARGS, "" },
+	{ "n_reduce", n_reduce, METH_VARARGS, "" },
 	0
 };
 

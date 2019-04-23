@@ -5,6 +5,8 @@ class DeviceViewable:
 		return native.n_dv_name_view_cls(self.m_cptr)
 	def __del__(self):
 		native.n_dv_destroy(self.m_cptr)
+	def value(self):
+		return native.n_dv_value(self.m_cptr)
 
 class DVInt8(DeviceViewable):
 	def __init__(self, value):

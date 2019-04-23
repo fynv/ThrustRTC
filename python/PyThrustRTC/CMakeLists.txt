@@ -6,6 +6,7 @@ find_package(CUDA REQUIRED)
 set (SRC
 PyThrustRTC.cpp
 Context.hpp
+viewbuf_to_python.hpp
 DeviceViewable.hpp
 DVVector.hpp
 DVConstant.hpp
@@ -27,6 +28,7 @@ scatter.hpp
 copy.hpp
 swap.hpp
 count.hpp
+reduce.hpp
 )
 
 set (INCLUDE_DIR 

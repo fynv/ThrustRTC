@@ -1,6 +1,7 @@
 #include <Python.h>
 #include "TRTCContext.h"
 #include "DeviceViewable.h"
+#include "viewbuf_to_python.hpp"
 
 static PyObject* n_dv_name_view_cls(PyObject* self, PyObject* args)
 {
@@ -44,3 +45,10 @@ static PyObject* n_dv_create_basic(PyObject* self, PyObject* args)
 		ret = new DVBool(PyObject_IsTrue(value) != 0);
 	return PyLong_FromVoidPtr(ret);
 }
+
+static PyObject* n_dv_value(PyObject* self, PyObject* args)
+{
+	DeviceViewable* dv = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	return PyValue_FromViewBuf(dv->view(), dv->name_view_cls().c_str());
+}
+

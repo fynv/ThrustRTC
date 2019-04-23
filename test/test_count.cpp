@@ -4,7 +4,6 @@
 #include "sequence.h"
 #include "count.h"
 
-
 int main()
 {
 	TRTCContext::set_ptx_cache("__ptx_cache__");

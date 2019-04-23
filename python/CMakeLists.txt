@@ -29,6 +29,7 @@ set(PYTHON_TEST
 	test/test_copy.py
 	test/test_swap.py
 	test/test_count.py
+	test/test_reduce.py
 
 	test/test_constant.py
 	test/test_counter.py
