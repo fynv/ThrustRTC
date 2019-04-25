@@ -13,7 +13,13 @@ int main()
 
 	ViewBuf ret;
 	TRTC_Reduce(ctx, darr, ret);
+	printf("%d\n", *(int*)ret.data());
 
+	TRTC_Reduce(ctx, darr, DVInt32(1), ret);
+	printf("%d\n", *(int*)ret.data());
+
+	Functor maximum = { {},{ "x", "y" }, "ret", "        ret = x>y?x:y;\n" };
+	TRTC_Reduce(ctx, darr, DVInt32(-1), maximum, ret);
 	printf("%d\n", *(int*)ret.data());
 
 	return 0;
