@@ -34,7 +34,7 @@ bool TRTC_Reduce(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable
 	return true;
 }
 
-bool TRTC_Reduce(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable& init, const Functor& op, ViewBuf& ret, size_t begin, size_t end)
+bool TRTC_Reduce(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable& init, const Functor& binary_op, ViewBuf& ret, size_t begin, size_t end)
 {
 	DVSizeT dvbegin(begin);
 	Functor src = { { {"_vec_in", &vec}, {"_begin", &dvbegin}, {"_init", &init} } , { "_idx" }, "_ret",
@@ -44,6 +44,6 @@ bool TRTC_Reduce(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable
 	ret.resize(vec.elem_size());
 	memset(ret.data(), 0, vec.elem_size());
 	if (end - begin < 1) return true;
-	if (!general_reduce(ctx, end - begin, vec.name_elem_cls().c_str(), src, op, ret)) return false;
+	if (!general_reduce(ctx, end - begin, vec.name_elem_cls().c_str(), src, binary_op, ret)) return false;
 	return true;
 }
