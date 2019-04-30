@@ -47,3 +47,4 @@ bool TRTC_Reduce(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable
 	if (!general_reduce(ctx, end - begin, vec.name_elem_cls().c_str(), src, binary_op, ret)) return false;
 	return true;
 }
+

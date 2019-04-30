@@ -1,7 +1,7 @@
 #include "count.h"
 #include "general_reduce.h"
 
-size_t TRTC_Count(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable& value, size_t begin, size_t end)
+bool TRTC_Count(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable& value, size_t& ret, size_t begin, size_t end)
 {
 	DVSizeT dvbegin(begin);
 
@@ -11,13 +11,17 @@ size_t TRTC_Count(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewabl
 	Functor op  = { {},{ "x", "y" }, "ret", "        ret = x + y;\n" };
 
 	if (end == (size_t)(-1)) end = vec.size();
-	if (end - begin < 1) return 0;
+
+	ret = 0;
+	if (end - begin < 1) return true;
+
 	ViewBuf buf;
-	if (!general_reduce(ctx, end - begin, "size_t", src, op, buf)) return (size_t)(-1);
-	return *(size_t*)buf.data();
+	if (!general_reduce(ctx, end - begin, "size_t", src, op, buf)) return false;
+	ret = *(size_t*)buf.data();
+	return true;
 }
 
-size_t TRTC_Count_If(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, size_t begin, size_t end)
+bool TRTC_Count_If(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, size_t& ret, size_t begin, size_t end)
 {
 	DVSizeT dvbegin(begin);
 
@@ -31,9 +35,12 @@ size_t TRTC_Count_If(TRTCContext& ctx, const DVVectorLike& vec, const Functor& p
 	Functor src = { arg_map, { "_idx" }, "_ret", body_func_str.c_str()};
 	Functor op = { {},{ "x", "y" }, "ret", "        ret = x + y;\n" };
 	if (end == (size_t)(-1)) end = vec.size();
-	if (end - begin < 1) return 0;
+
+	ret = 0;
+	if (end - begin < 1) return true;
 	ViewBuf buf;
-	if (!general_reduce(ctx, end - begin, "size_t", src, op, buf)) return (size_t)(-1);
-	return *(size_t*)buf.data();
+	if (!general_reduce(ctx, end - begin, "size_t", src, op, buf)) return false;
+	ret = *(size_t*)buf.data();
+	return true;
 
 }

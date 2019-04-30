@@ -14,12 +14,13 @@ int main()
 		hin[i] = i % 100;
 
 	DVVector din(ctx, "int32_t", 2000, hin);
-	size_t c = TRTC_Count(ctx, din, DVInt32(47));
+	size_t c;
+	TRTC_Count(ctx, din, DVInt32(47), c);
 	printf("%d\n", (int)c);
 
 	TRTC_Sequence(ctx, din);
 	Functor op = { {},{ "x" }, "ret", "        ret = (x%100)==47;\n" };
-	c = TRTC_Count_If(ctx, din, op);
+	TRTC_Count_If(ctx, din, op, c);
 	printf("%d\n", (int)c);
 
 	return 0;

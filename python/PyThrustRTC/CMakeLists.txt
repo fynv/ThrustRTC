@@ -29,6 +29,7 @@ copy.hpp
 swap.hpp
 count.hpp
 reduce.hpp
+equal.hpp
 )
 
 set (INCLUDE_DIR 
