@@ -39,6 +39,7 @@ swap.cpp
 count.cpp
 reduce.cpp
 equal.cpp
+extrema.cpp
 )
 
 set(LIB_HEADERS
@@ -61,6 +62,7 @@ swap.h
 count.h
 reduce.h
 equal.h
+extrema.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS
@@ -131,6 +133,7 @@ cuda_add_executable(test_swap test/test_swap.cpp)
 cuda_add_executable(test_count test/test_count.cpp)
 cuda_add_executable(test_reduce test/test_reduce.cpp)
 cuda_add_executable(test_equal test/test_equal.cpp)
+cuda_add_executable(test_extrema test/test_extrema.cpp)
 
 cuda_add_executable(test_constant test/test_constant.cpp)
 cuda_add_executable(test_counter test/test_counter.cpp)
@@ -156,6 +159,7 @@ target_compile_definitions(test_swap PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_count PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_reduce PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_equal PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_extrema PUBLIC THRUST_RTC_DLL_IMPORT)
 
 target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_counter PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -181,6 +185,7 @@ target_link_libraries(test_swap ThrustRTC)
 target_link_libraries(test_count ThrustRTC)
 target_link_libraries(test_reduce ThrustRTC)
 target_link_libraries(test_equal ThrustRTC)
+target_link_libraries(test_extrema ThrustRTC)
 
 target_link_libraries(test_constant ThrustRTC)
 target_link_libraries(test_counter ThrustRTC)
@@ -220,6 +225,7 @@ test_swap
 test_count
 test_reduce
 test_equal
+test_extrema
 
 test_constant
 test_counter

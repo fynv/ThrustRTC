@@ -30,6 +30,7 @@ swap.hpp
 count.hpp
 reduce.hpp
 equal.hpp
+extrema.hpp
 )
 
 set (INCLUDE_DIR 

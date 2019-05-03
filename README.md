@@ -202,6 +202,10 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_equal.cpp
   * python/test/test_equal.py
 
+* extrema
+  * test/test_extrema.cpp
+  * python/test/test_extrema.py
+
 Thrust fancy-iterators are being ported progressively (as "fake-vectors").
 The following examples shows the use of the ported fake-vector classes:
 
