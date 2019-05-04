@@ -214,6 +214,10 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_transform_reduce.cpp
   * python/test/test_transform_reduce.py
 
+* logical
+  * test/test_logical.cpp
+  * python/test/test_logical.py
+
 Thrust fancy-iterators are being ported progressively (as "fake-vectors").
 The following examples shows the use of the ported fake-vector classes:
 
