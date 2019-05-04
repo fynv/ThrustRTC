@@ -31,6 +31,7 @@ count.hpp
 reduce.hpp
 equal.hpp
 extrema.hpp
+inner_product.hpp
 )
 
 set (INCLUDE_DIR 

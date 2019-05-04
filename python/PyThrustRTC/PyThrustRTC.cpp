@@ -39,6 +39,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "reduce.hpp"
 #include "equal.hpp"
 #include "extrema.hpp"
+#include "inner_product.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -104,6 +105,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_min_element", n_min_element, METH_VARARGS, "" },
 	{ "n_max_element", n_max_element, METH_VARARGS, "" },
 	{ "n_minmax_element", n_minmax_element, METH_VARARGS, "" },
+	{ "n_inner_product", n_inner_product, METH_VARARGS, "" },
 	0
 };
 

@@ -16,7 +16,7 @@ bool TRTC_Equal(TRTCContext& ctx, const DVVectorLike& vec1, const DVVectorLike& 
 	return true;
 }
 
-bool THRUST_RTC_API TRTC_Equal(TRTCContext& ctx, const DVVectorLike& vec1, const DVVectorLike& vec2, const Functor& binary_pred, bool& ret, size_t begin1, size_t end1, size_t begin2)
+bool TRTC_Equal(TRTCContext& ctx, const DVVectorLike& vec1, const DVVectorLike& vec2, const Functor& binary_pred, bool& ret, size_t begin1, size_t end1, size_t begin2)
 {
 	ret = true;
 	DVVector dvres(ctx, "bool", 1, &ret);
