@@ -26,3 +26,6 @@ def MinMax_Element(ctx, vec, comp = None, begin = 0, end = -1):
 
 def Inner_Product(ctx, vec1, vec2, value_init, binary_op1 = None, binary_op2 = None, begin1 = 0, end1 = -1, begin2 = 0):
 	return native.n_inner_product(ctx.m_cptr, vec1.m_cptr, vec2.m_cptr, value_init.m_cptr, binary_op1, binary_op2, begin1, end1, begin2)
+
+def Transform_Reduce(ctx, vec, unary_op, value_init, binary_op, begin = 0, end = -1):
+	return native.n_transform_reduce(ctx.m_cptr, vec.m_cptr, unary_op, value_init.m_cptr, binary_op, begin, end)

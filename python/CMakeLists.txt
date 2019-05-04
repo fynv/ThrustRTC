@@ -33,6 +33,7 @@ set(PYTHON_TEST
 	test/test_equal.py
 	test/test_extrema.py
 	test/test_inner_product.py
+	test/test_transform_reduce.py
 
 	test/test_constant.py
 	test/test_counter.py
