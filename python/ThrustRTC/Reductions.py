@@ -29,3 +29,13 @@ def Inner_Product(ctx, vec1, vec2, value_init, binary_op1 = None, binary_op2 = N
 
 def Transform_Reduce(ctx, vec, unary_op, value_init, binary_op, begin = 0, end = -1):
 	return native.n_transform_reduce(ctx.m_cptr, vec.m_cptr, unary_op, value_init.m_cptr, binary_op, begin, end)
+
+def All_Of(ctx, vec, pred, begin = 0, end = -1):
+	return native.n_all_of(ctx.m_cptr, vec.m_cptr, pred, begin, end)
+
+def Any_Of(ctx, vec, pred, begin = 0, end = -1):
+	return native.n_any_of(ctx.m_cptr, vec.m_cptr, pred, begin, end)
+
+def None_Of(ctx, vec, pred, begin = 0, end = -1):
+	return native.n_none_of(ctx.m_cptr, vec.m_cptr, pred, begin, end)
+

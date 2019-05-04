@@ -33,6 +33,7 @@ equal.hpp
 extrema.hpp
 inner_product.hpp
 transform_reduce.hpp
+logical.hpp
 )
 
 set (INCLUDE_DIR 
