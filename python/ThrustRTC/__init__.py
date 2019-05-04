@@ -17,3 +17,4 @@ from .Functor import *
 from .Transformations import *
 from .Copying import *
 from .Reductions import *
+from .PrefixSums import *

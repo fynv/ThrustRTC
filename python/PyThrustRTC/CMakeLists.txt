@@ -34,6 +34,7 @@ extrema.hpp
 inner_product.hpp
 transform_reduce.hpp
 logical.hpp
+scan.hpp
 )
 
 set (INCLUDE_DIR 

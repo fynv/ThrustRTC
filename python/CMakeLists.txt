@@ -10,6 +10,7 @@ set(PYTHON
 	ThrustRTC/Transformations.py
 	ThrustRTC/Copying.py
 	ThrustRTC/Reductions.py
+	ThrustRTC/PrefixSums.py
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
@@ -35,6 +36,7 @@ set(PYTHON_TEST
 	test/test_inner_product.py
 	test/test_transform_reduce.py
 	test/test_logical.py
+	test/test_scan.py
 
 	test/test_constant.py
 	test/test_counter.py

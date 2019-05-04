@@ -42,6 +42,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "inner_product.hpp"
 #include "transform_reduce.hpp"
 #include "logical.hpp"
+#include "scan.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -112,6 +113,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_all_of", n_all_of, METH_VARARGS, "" },
 	{ "n_any_of", n_any_of, METH_VARARGS, "" },
 	{ "n_none_of", n_none_of, METH_VARARGS, "" },
+	{ "n_inclusive_scan", n_inclusive_scan, METH_VARARGS, "" },
 	0
 };
 

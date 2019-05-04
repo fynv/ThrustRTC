@@ -43,6 +43,7 @@ extrema.cpp
 inner_product.cpp
 transform_reduce.cpp
 logical.cpp
+scan.cpp
 )
 
 set(LIB_HEADERS
@@ -69,6 +70,7 @@ extrema.h
 inner_product.h
 transform_reduce.h
 logical.h
+scan.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS
@@ -143,6 +145,7 @@ cuda_add_executable(test_extrema test/test_extrema.cpp)
 cuda_add_executable(test_inner_product test/test_inner_product.cpp)
 cuda_add_executable(test_transform_reduce test/test_transform_reduce.cpp)
 cuda_add_executable(test_logical test/test_logical.cpp)
+cuda_add_executable(test_scan test/test_scan.cpp)
 
 cuda_add_executable(test_constant test/test_constant.cpp)
 cuda_add_executable(test_counter test/test_counter.cpp)
@@ -172,6 +175,7 @@ target_compile_definitions(test_extrema PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_inner_product PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_transform_reduce PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_logical PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_scan PUBLIC THRUST_RTC_DLL_IMPORT)
 
 target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_counter PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -201,6 +205,7 @@ target_link_libraries(test_extrema ThrustRTC)
 target_link_libraries(test_inner_product ThrustRTC)
 target_link_libraries(test_transform_reduce ThrustRTC)
 target_link_libraries(test_logical ThrustRTC)
+target_link_libraries(test_scan ThrustRTC)
 
 target_link_libraries(test_constant ThrustRTC)
 target_link_libraries(test_counter ThrustRTC)
@@ -244,6 +249,7 @@ test_extrema
 test_inner_product
 test_transform_reduce
 test_logical
+test_scan
 
 test_constant
 test_counter
