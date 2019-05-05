@@ -114,6 +114,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_any_of", n_any_of, METH_VARARGS, "" },
 	{ "n_none_of", n_none_of, METH_VARARGS, "" },
 	{ "n_inclusive_scan", n_inclusive_scan, METH_VARARGS, "" },
+	{ "n_exclusive_scan", n_exclusive_scan, METH_VARARGS, "" },
 	0
 };
 

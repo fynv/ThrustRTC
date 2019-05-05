@@ -124,4 +124,48 @@ bool TRTC_Inclusive_Scan(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorL
 	return TRTC_Inclusive_Scan(ctx, vec_in, vec_out, plus, begin_in, end_in, begin_out);
 }
 
+// general version first
+bool TRTC_Exclusive_Scan(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const DeviceViewable& init, const Functor& binary_op, size_t begin_in, size_t end_in, size_t begin_out)
+{
+	if (end_in == (size_t)(-1)) end_in = vec_in.size();
+	size_t n = end_in - begin_in;
+	std::shared_ptr<DVVector> p_out_b(new DVVector(ctx, vec_out.name_elem_cls().c_str(), (n + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
 
+	DVSizeT dvbegin_in(begin_in);
+	Functor src = { { {"_vec_in", &vec_in}, {"_begin_in", &dvbegin_in}, {"_init", &init} } , { "_idx" }, "_ret",
+		"        _ret = _idx>0?  (decltype(_ret))_vec_in[_idx - 1 + _begin_in] :  (decltype(_ret))_init;\n" };
+
+	if (!s_scan_block(ctx, n, src, vec_out, *p_out_b, binary_op, begin_out)) return false;
+
+	std::vector<std::shared_ptr<DVVector>> bufs;
+	while (p_out_b->size() > 1)
+	{
+		bufs.push_back(p_out_b);
+		DVVector* pbuf = &*p_out_b;
+		n = p_out_b->size();
+		p_out_b = std::shared_ptr<DVVector>(new DVVector(ctx, vec_out.name_elem_cls().c_str(), (n + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
+
+		Functor src2 = { { {"_vec", pbuf}} , { "_idx" }, "_ret",
+		"        _ret = _vec[_idx];\n" };
+		if (!s_scan_block(ctx, n, src2, *pbuf, *p_out_b, binary_op, 0)) return false;
+	}
+
+	for (int i = (int)bufs.size() - 2; i >= 0; i--)
+		if (!s_additional(ctx, *bufs[i], *bufs[i + 1], binary_op, 0, bufs[i]->size())) return false;
+
+	if (bufs.size() > 0)
+		if (!s_additional(ctx, vec_out, *bufs[0], binary_op, begin_out, end_in - begin_in + begin_out)) return false;
+
+	return true;
+}
+
+bool TRTC_Exclusive_Scan(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const DeviceViewable& init, size_t begin_in, size_t end_in, size_t begin_out)
+{
+	Functor plus = { {},{ "x", "y" }, "ret", "        ret = x + y;\n" };
+	return TRTC_Exclusive_Scan(ctx, vec_in, vec_out, init, plus, begin_in, end_in, begin_out);
+}
+
+bool TRTC_Exclusive_Scan(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_in, size_t end_in, size_t begin_out)
+{
+	return TRTC_Exclusive_Scan(ctx, vec_in, vec_out, DVInt32(0), begin_in, end_in, begin_out);
+}
