@@ -13,8 +13,8 @@ if platform.system() == 'Windows':
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-#with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-#    long_description = f.read()
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 extra_compile_args=[]
 if os.name != 'nt':
@@ -33,8 +33,8 @@ setup(
 	name = 'ThrustRTC',
 	version = '0.0.1',
 	description = 'Thrust for Python based on NVRTC',
-	#long_description=long_description,
-	#long_description_content_type='text/markdown',  
+	long_description=long_description,
+	long_description_content_type='text/markdown',  
 	url='https://github.com/fynv/ThrustRTC',
 	license='Anti 996',
 	author='Fei Yang',
