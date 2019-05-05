@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "inner_product.h"
 #include "general_reduce.h"
 

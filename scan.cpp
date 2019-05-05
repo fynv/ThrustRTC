@@ -1,4 +1,5 @@
 #include "scan.h"
+#include <memory.h>
 #include <memory>
 #include <vector>
 

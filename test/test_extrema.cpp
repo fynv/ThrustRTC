@@ -13,7 +13,7 @@ int main()
 		DVVector d_data(ctx, "int32_t", 6, h_data);
 		size_t id_min;
 		TRTC_Min_Element(ctx, d_data, id_min);
-		printf("%d %d\n", id_min, h_data[id_min]);
+		printf("%lu %d\n", id_min, h_data[id_min]);
 	}
 
 	{
@@ -35,7 +35,7 @@ int main()
 		Functor compare_key_value = { {},{ "lhs", "rhs" }, "ret", "        ret =  lhs.key < rhs.key;\n" };
 		size_t id_min;
 		TRTC_Min_Element(ctx, d_data, compare_key_value, id_min);
-		printf("%d (%d, %d)\n", id_min, h_data[id_min].key, h_data[id_min].value);
+		printf("%lu (%d, %d)\n", id_min, h_data[id_min].key, h_data[id_min].value);
 
 	}
 
@@ -44,7 +44,7 @@ int main()
 		DVVector d_data(ctx, "int32_t", 6, h_data);
 		size_t id_max;
 		TRTC_Max_Element(ctx, d_data, id_max);
-		printf("%d %d\n", id_max, h_data[id_max]);
+		printf("%lu %d\n", id_max, h_data[id_max]);
 	}
 
 	{
@@ -66,7 +66,7 @@ int main()
 		Functor compare_key_value = { {},{ "lhs", "rhs" }, "ret", "        ret =  lhs.key < rhs.key;\n" };
 		size_t id_max;
 		TRTC_Max_Element(ctx, d_data, compare_key_value, id_max);
-		printf("%d (%d, %d)\n", id_max, h_data[id_max].key, h_data[id_max].value);
+		printf("%lu (%d, %d)\n", id_max, h_data[id_max].key, h_data[id_max].value);
 
 	}
 
@@ -75,8 +75,8 @@ int main()
 		DVVector d_data(ctx, "int32_t", 6, h_data);
 		size_t id_min, id_max;
 		TRTC_MinMax_Element(ctx, d_data, id_min, id_max);
-		printf("%d %d\n", id_min, h_data[id_min]);
-		printf("%d %d\n", id_max, h_data[id_max]);
+		printf("%lu %d\n", id_min, h_data[id_min]);
+		printf("%lu %d\n", id_max, h_data[id_max]);
 	}
 
 	{
@@ -98,8 +98,8 @@ int main()
 		Functor compare_key_value = { {},{ "lhs", "rhs" }, "ret", "        ret =  lhs.key < rhs.key;\n" };
 		size_t id_min, id_max;
 		TRTC_MinMax_Element(ctx, d_data, compare_key_value, id_min, id_max);
-		printf("%d (%d, %d)\n", id_min, h_data[id_min].key, h_data[id_min].value);
-		printf("%d (%d, %d)\n", id_max, h_data[id_max].key, h_data[id_max].value);
+		printf("%lu (%d, %d)\n", id_min, h_data[id_min].key, h_data[id_min].value);
+		printf("%lu (%d, %d)\n", id_max, h_data[id_max].key, h_data[id_max].value);
 
 	}
 

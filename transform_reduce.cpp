@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "transform_reduce.h"
 #include "general_reduce.h"
 
