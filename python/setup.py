@@ -6,10 +6,7 @@ import os
 import platform
 
 lib_dirs = ['../install/lib']
-libs = ['ThrustRTC_static','cuda']
-
-if platform.system() == 'Windows':
-    lib_dirs.append(os.environ['CUDA_PATH']+'\\lib\\x64')
+libs = ['ThrustRTC_static']
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -27,7 +24,6 @@ module_PyThrustRTC = Extension(
 	libraries = libs,
     library_dirs = lib_dirs,
 	extra_compile_args=extra_compile_args)
-
 
 setup(
 	name = 'ThrustRTC',

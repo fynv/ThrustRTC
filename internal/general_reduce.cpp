@@ -1,4 +1,4 @@
-#include <cuda.h>
+#include "cuda_wrapper.h"
 #include <memory>
 #include <memory.h>
 #include "general_reduce.h"

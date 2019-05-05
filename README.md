@@ -99,8 +99,9 @@ void saxpy(VectorView<int32_t> _view_vec, int32_t _new_value, size_t _begin, siz
 
 ### Build-time Dependencies
 
+CUDA SDK is NOT required anymore. At build time, we only need:
+
 * CMake 3.x
-* CUDA toolkit >= 7.0 (CMake needs to find it. Only the driver header cuda.h and cuda.lib/libcuda.so are used)
 * C libraries of Python 3 is required to build the Python binding part of the code.
 
 ### Building with CMake
@@ -128,6 +129,13 @@ You will get the library headers, binaries and examples in the "install" directo
 For Python
 * Python 3
 * numpy
+
+## Install ThrustRTC for Python from Pypi
+
+Experimental builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
+If your environment matches, you can try:
+
+$ pip3 install ThrustRTC
 
 ## Progress
 

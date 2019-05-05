@@ -1,4 +1,4 @@
-#include <cuda.h>
+#include "cuda_wrapper.h"
 #include <string>
 #include <string.h>
 #include <stdio.h>
@@ -11,6 +11,11 @@
 
 static bool s_cuda_init(int& cap)
 {
+	if (!init_cuda())
+	{
+		printf("Cannot find CUDA driver. Exiting.\n");
+		exit(0);
+	}
 	cuInit(0);
 
 	int max_gflops_device = 0;

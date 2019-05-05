@@ -25,7 +25,7 @@
  * needed on buffers full of bytes, and then call MD5Final, which
  * will fill a supplied 16-byte array with the digest.
  */
-#include <string.h>             /* for memcpy() */
+#include <memory.h>             /* for memcpy() */
 #include "md5.h"
 
 #ifndef HIGHFIRST

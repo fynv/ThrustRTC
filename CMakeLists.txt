@@ -1,7 +1,5 @@
 cmake_minimum_required (VERSION 3.0)
 
-find_package(CUDA REQUIRED)
-
 add_executable(PackHeaders internal/pack_headers.cpp)
 add_custom_target(Run_PackHeaders
 COMMAND PackHeaders
@@ -12,7 +10,8 @@ SOURCES internal/pack_headers.cpp
 
 set(LIB_SOURCES
 
-internal/md5.c
+internal/md5.cpp
+internal/cuda_wrapper.cpp
 internal/nvtrc_wrapper.cpp
 internal/general_reduce.cpp
 internal/general_scan.cpp
@@ -86,6 +85,7 @@ fake_vectors/DVTransform.h
 set(INTERNAL_HEADERS
 internal/Timing.h
 internal/md5.h
+internal/cuda_wrapper.h
 internal/nvtrc_wrapper.h
 internal/general_reduce.h
 internal/general_scan.h
@@ -103,7 +103,6 @@ set (DEFINES  ${DEFINES}
 -D"_SCL_SECURE_NO_DEPRECATE" 
 -D"_CRT_SECURE_NO_WARNINGS"
 )
-link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib/x64)
 else()
 add_definitions(-std=c++14)
 add_compile_options(-fPIC)
@@ -114,8 +113,14 @@ add_definitions(${DEFINES})
 
 SET(CMAKE_INSTALL_RPATH ../lib)
 
-cuda_add_library (ThrustRTC_static ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
-cuda_add_library (ThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
+add_library (ThrustRTC_static ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
+add_library (ThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
+
+if (WIN32) 
+else()
+target_link_libraries(ThrustRTC -ldl)
+endif()
+
 
 add_dependencies(Run_PackHeaders PackHeaders)
 add_dependencies(ThrustRTC_static Run_PackHeaders)
@@ -125,36 +130,34 @@ if (WIN32)
 target_compile_definitions(ThrustRTC PRIVATE THRUST_RTC_DLL_EXPORT)
 endif()
 
-target_link_libraries(ThrustRTC cuda)
+add_executable(test_trtc test/test_trtc.cpp)
+add_executable(test_for test/test_for.cpp)
+add_executable(test_fill test/test_fill.cpp)
+add_executable(test_replace test/test_replace.cpp)
+add_executable(test_for_each test/test_for_each.cpp)
+add_executable(test_adjacent_difference test/test_adjacent_difference.cpp)
+add_executable(test_sequence test/test_sequence.cpp)
+add_executable(test_tabulate test/test_tabulate.cpp)
+add_executable(test_transform test/test_transform.cpp)
+add_executable(test_gather test/test_gather.cpp)
+add_executable(test_scatter test/test_scatter.cpp)
+add_executable(test_copy test/test_copy.cpp)
+add_executable(test_swap test/test_swap.cpp)
+add_executable(test_count test/test_count.cpp)
+add_executable(test_reduce test/test_reduce.cpp)
+add_executable(test_equal test/test_equal.cpp)
+add_executable(test_extrema test/test_extrema.cpp)
+add_executable(test_inner_product test/test_inner_product.cpp)
+add_executable(test_transform_reduce test/test_transform_reduce.cpp)
+add_executable(test_logical test/test_logical.cpp)
+add_executable(test_scan test/test_scan.cpp)
 
-cuda_add_executable(test_trtc test/test_trtc.cpp)
-cuda_add_executable(test_for test/test_for.cpp)
-cuda_add_executable(test_fill test/test_fill.cpp)
-cuda_add_executable(test_replace test/test_replace.cpp)
-cuda_add_executable(test_for_each test/test_for_each.cpp)
-cuda_add_executable(test_adjacent_difference test/test_adjacent_difference.cpp)
-cuda_add_executable(test_sequence test/test_sequence.cpp)
-cuda_add_executable(test_tabulate test/test_tabulate.cpp)
-cuda_add_executable(test_transform test/test_transform.cpp)
-cuda_add_executable(test_gather test/test_gather.cpp)
-cuda_add_executable(test_scatter test/test_scatter.cpp)
-cuda_add_executable(test_copy test/test_copy.cpp)
-cuda_add_executable(test_swap test/test_swap.cpp)
-cuda_add_executable(test_count test/test_count.cpp)
-cuda_add_executable(test_reduce test/test_reduce.cpp)
-cuda_add_executable(test_equal test/test_equal.cpp)
-cuda_add_executable(test_extrema test/test_extrema.cpp)
-cuda_add_executable(test_inner_product test/test_inner_product.cpp)
-cuda_add_executable(test_transform_reduce test/test_transform_reduce.cpp)
-cuda_add_executable(test_logical test/test_logical.cpp)
-cuda_add_executable(test_scan test/test_scan.cpp)
-
-cuda_add_executable(test_constant test/test_constant.cpp)
-cuda_add_executable(test_counter test/test_counter.cpp)
-cuda_add_executable(test_discard test/test_discard.cpp)
-cuda_add_executable(test_permutation test/test_permutation.cpp)
-cuda_add_executable(test_reverse test/test_reverse.cpp)
-cuda_add_executable(test_transform_iter test/test_transform_iter.cpp)
+add_executable(test_constant test/test_constant.cpp)
+add_executable(test_counter test/test_counter.cpp)
+add_executable(test_discard test/test_discard.cpp)
+add_executable(test_permutation test/test_permutation.cpp)
+add_executable(test_reverse test/test_reverse.cpp)
+add_executable(test_transform_iter test/test_transform_iter.cpp)
 
 if (WIN32) 
 target_compile_definitions(test_trtc PUBLIC THRUST_RTC_DLL_IMPORT)

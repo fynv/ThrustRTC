@@ -1,7 +1,6 @@
 cmake_minimum_required (VERSION 3.0)
 
 find_package(PythonLibs 3 REQUIRED)
-find_package(CUDA REQUIRED)
 
 set (SRC
 PyThrustRTC.cpp
@@ -50,7 +49,6 @@ set (DEFINES  ${DEFINES}
 -D"_SCL_SECURE_NO_DEPRECATE" 
 -D"_CRT_SECURE_NO_WARNINGS"
 )
-link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib/x64)
 else()
 add_definitions(-std=c++14)
 add_compile_options(-fPIC)
@@ -61,7 +59,7 @@ add_definitions(${DEFINES})
 
 SET(CMAKE_INSTALL_RPATH ../lib)
 
-cuda_add_library (PyThrustRTC SHARED ${SRC})
+add_library (PyThrustRTC SHARED ${SRC})
 
 if (WIN32) 
 set_target_properties(PyThrustRTC PROPERTIES SUFFIX ".pyd")
@@ -70,7 +68,7 @@ set_target_properties(PyThrustRTC PROPERTIES SUFFIX ".so")
 set_target_properties(PyThrustRTC PROPERTIES PREFIX "")
 endif()
 
-target_link_libraries(PyThrustRTC ${PYTHON_LIBRARIES} ThrustRTC_static cuda)
+target_link_libraries(PyThrustRTC ${PYTHON_LIBRARIES} ThrustRTC_static)
 
 
 if (WIN32) 
