@@ -15,6 +15,7 @@ set(LIB_SOURCES
 internal/md5.c
 internal/nvtrc_wrapper.cpp
 internal/general_reduce.cpp
+internal/general_scan.cpp
 
 TRTCContext.cpp
 DVVector.cpp
@@ -87,6 +88,7 @@ internal/Timing.h
 internal/md5.h
 internal/nvtrc_wrapper.h
 internal/general_reduce.h
+internal/general_scan.h
 )
 
 set (INCLUDE_DIR 
