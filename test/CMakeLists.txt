@@ -1,0 +1,125 @@
+cmake_minimum_required (VERSION 3.0)
+
+add_executable(test_trtc test_trtc.cpp)
+add_executable(test_for test_for.cpp)
+add_executable(test_fill test_fill.cpp)
+add_executable(test_replace test_replace.cpp)
+add_executable(test_for_each test_for_each.cpp)
+add_executable(test_adjacent_difference test_adjacent_difference.cpp)
+add_executable(test_sequence test_sequence.cpp)
+add_executable(test_tabulate test_tabulate.cpp)
+add_executable(test_transform test_transform.cpp)
+add_executable(test_gather test_gather.cpp)
+add_executable(test_scatter test_scatter.cpp)
+add_executable(test_copy test_copy.cpp)
+add_executable(test_swap test_swap.cpp)
+add_executable(test_count test_count.cpp)
+add_executable(test_reduce test_reduce.cpp)
+add_executable(test_equal test_equal.cpp)
+add_executable(test_extrema test_extrema.cpp)
+add_executable(test_inner_product test_inner_product.cpp)
+add_executable(test_transform_reduce test_transform_reduce.cpp)
+add_executable(test_logical test_logical.cpp)
+add_executable(test_scan test_scan.cpp)
+
+add_executable(test_constant test_constant.cpp)
+add_executable(test_counter test_counter.cpp)
+add_executable(test_discard test_discard.cpp)
+add_executable(test_permutation test_permutation.cpp)
+add_executable(test_reverse test_reverse.cpp)
+add_executable(test_transform_iter test_transform_iter.cpp)
+
+if (WIN32) 
+target_compile_definitions(test_trtc PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_for PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_fill PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_replace PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_for_each PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_adjacent_difference PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_sequence PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_tabulate PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_transform PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_gather PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_scatter PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_copy PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_swap PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_count PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_reduce PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_equal PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_extrema PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_inner_product PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_transform_reduce PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_logical PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_scan PUBLIC THRUST_RTC_DLL_IMPORT)
+
+target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_counter PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_discard PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_permutation PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_reverse PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_transform_iter PUBLIC THRUST_RTC_DLL_IMPORT)
+endif()
+
+target_link_libraries(test_trtc ThrustRTC)
+target_link_libraries(test_for ThrustRTC)
+target_link_libraries(test_fill ThrustRTC)
+target_link_libraries(test_replace ThrustRTC)
+target_link_libraries(test_for_each ThrustRTC)
+target_link_libraries(test_adjacent_difference ThrustRTC)
+target_link_libraries(test_sequence ThrustRTC)
+target_link_libraries(test_tabulate ThrustRTC)
+target_link_libraries(test_transform ThrustRTC)
+target_link_libraries(test_gather ThrustRTC)
+target_link_libraries(test_scatter ThrustRTC)
+target_link_libraries(test_copy ThrustRTC)
+target_link_libraries(test_swap ThrustRTC)
+target_link_libraries(test_count ThrustRTC)
+target_link_libraries(test_reduce ThrustRTC)
+target_link_libraries(test_equal ThrustRTC)
+target_link_libraries(test_extrema ThrustRTC)
+target_link_libraries(test_inner_product ThrustRTC)
+target_link_libraries(test_transform_reduce ThrustRTC)
+target_link_libraries(test_logical ThrustRTC)
+target_link_libraries(test_scan ThrustRTC)
+
+target_link_libraries(test_constant ThrustRTC)
+target_link_libraries(test_counter ThrustRTC)
+target_link_libraries(test_discard ThrustRTC)
+target_link_libraries(test_permutation ThrustRTC)
+target_link_libraries(test_reverse ThrustRTC)
+target_link_libraries(test_transform_iter ThrustRTC)
+
+
+install(TARGETS 
+test_trtc 
+test_for 
+test_fill 
+test_replace 
+test_for_each 
+test_adjacent_difference 
+test_sequence
+test_tabulate
+test_transform
+test_gather
+test_scatter
+test_copy
+test_swap
+test_count
+test_reduce
+test_equal
+test_extrema
+test_inner_product
+test_transform_reduce
+test_logical
+test_scan
+
+test_constant
+test_counter
+test_discard
+test_permutation
+test_reverse
+test_transform_iter
+
+RUNTIME DESTINATION test_cpp)
+
+install(DIRECTORY DESTINATION test_cpp/__ptx_cache__)
