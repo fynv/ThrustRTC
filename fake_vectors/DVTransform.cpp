@@ -19,7 +19,7 @@ DVTransform::DVTransform(TRTCContext& ctx, const DVVectorLike& vec_in, const cha
 		op.generate_code("value_t", { "_view_vec_in[_idx]" }) +
 		"        return " + op.functor_ret + ";\n    }\n";
 
-	m_name_view_cls= ctx.add_custom_struct(struct_body.c_str());
+	m_name_view_cls= ctx.add_struct(struct_body.c_str());
 
 	m_view_in = vec_in.view();
 	m_view_params.resize(op.arg_map.size());

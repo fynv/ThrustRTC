@@ -91,7 +91,7 @@ bool TRTC_MinMax_Element(TRTCContext& ctx, const DVVectorLike& vec, size_t& id_m
 		size_t id_max;
 	};
 
-	std::string d_MinMaxIds = ctx.add_custom_struct(
+	std::string d_MinMaxIds = ctx.add_struct(
 		"    size_t id_min;\n"
 		"    size_t id_max;\n"
 	);
@@ -120,7 +120,7 @@ bool TRTC_MinMax_Element(TRTCContext& ctx, const DVVectorLike& vec, const Functo
 		size_t id_max;
 	};
 
-	std::string d_MinMaxIds = ctx.add_custom_struct(
+	std::string d_MinMaxIds = ctx.add_struct(
 		"    size_t id_min;\n"
 		"    size_t id_max;\n"
 	);

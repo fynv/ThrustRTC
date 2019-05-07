@@ -101,6 +101,9 @@ TRTCContext::TRTCContext()
 {
 	int v=s_get_compute_capability();
 
+	m_name_header_of_structs = "header_of_strcts.h";
+	this->add_built_in_header(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
+
 	m_verbose = false;
 	for (int i = 0; i < s_num_headers; i++)
 		this->add_built_in_header(s_name_headers[i], s_content_headers[i]);
@@ -116,8 +119,6 @@ TRTCContext::TRTCContext()
 	this->add_inlcude_filename("fake_vectors/DVDiscard.h");
 	this->add_inlcude_filename("fake_vectors/DVPermutation.h");
 	this->add_inlcude_filename("fake_vectors/DVReverse.h");
-
-	m_identifier = 0;
 }
 
 TRTCContext::~TRTCContext()
@@ -233,6 +234,7 @@ size_t TRTCContext::size_of(const char* cls)
 	std::string saxpy;
 	for (size_t i = 0; i < m_code_blocks.size(); i++)
 		saxpy += m_code_blocks[i];
+	saxpy += std::string("#include \"")+ m_name_header_of_structs + "\"\n";
 	saxpy += std::string("__device__ ") + cls + " _test;\n";
 
 	if (m_verbose) print_code(saxpy.c_str());
@@ -293,6 +295,7 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 	{
 		saxpy += m_code_blocks[i];
 	}
+	saxpy += std::string("#include \"") + m_name_header_of_structs + "\"\n";
 
 	saxpy += "\n";
 	saxpy += "extern \"C\" __global__\n";
@@ -474,30 +477,25 @@ void TRTCContext::add_constant_object(const char* name, const DeviceViewable& ob
 	m_constants.push_back({ name, obj.view() });
 }
 
-std::string TRTCContext::add_custom_struct(const char* struct_body)
+std::string TRTCContext::add_struct(const char* struct_body)
 {
 	int64_t hash = s_get_hash(struct_body);
-	decltype(m_custom_struct_map)::iterator it = m_custom_struct_map.find(hash);
-	if (it != m_custom_struct_map.end())
-		return it->second;
-	
-	char buf[64];
-	int id = next_identifier();
-	sprintf(buf, "_CustomView_%d", id);
-	std::string name_view_cls = buf;
-	m_custom_struct_map[hash] = name_view_cls;
+	decltype(m_known_structs)::iterator it = m_known_structs.find(hash);
+
+	char name[32];
+	sprintf(name, "_S_%016llx", hash);
+
+	if (it != m_known_structs.end())
+		return name;
 
 	std::string struct_def = "#pragma pack(1)\n";
-	struct_def += std::string("struct ") + name_view_cls + "\n{\n" + struct_body + "};\n";
-	add_code_block(struct_def.c_str());
+	struct_def += std::string("struct ") + name + "\n{\n" + struct_body + "};\n";
+	m_header_of_structs += struct_def;
+	m_content_built_in_headers[0] = m_header_of_structs.c_str();
 
-	return name_view_cls;
+	return name;
 }
 
-int TRTCContext::next_identifier()
-{
-	return m_identifier++;
-}
 
 TRTC_Kernel::TRTC_Kernel(const std::vector<const char*>& param_names, const char* code_body) :
 m_param_names(param_names.size()), m_code_body(code_body)

@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "TRTC_api.h"
 #include "DeviceViewable.h"
@@ -44,9 +45,7 @@ public:
 	void add_code_block(const char* code);
 	void add_inlcude_filename(const char* fn);
 	void add_constant_object(const char* name, const DeviceViewable& obj);
-	std::string add_custom_struct(const char* struct_body);
-
-	int next_identifier();
+	std::string add_struct(const char* struct_body);
 
 private:
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
@@ -61,16 +60,15 @@ private:
 	std::vector<std::string> m_code_blocks;
 	std::vector<std::pair<std::string, ViewBuf>> m_constants;
 
-	std::unordered_map<int64_t, std::string> m_custom_struct_map;
+	std::string m_header_of_structs;
+	std::string m_name_header_of_structs;
+	std::unordered_set<int64_t> m_known_structs;
 
 	std::unordered_map<std::string, size_t> m_size_of_types;
 
 	struct Kernel;
 	std::vector<Kernel*> m_kernel_cache;
 	std::unordered_map<int64_t, KernelId_t> m_kernel_id_map;
-
-	int m_identifier;
-
 };
 
 

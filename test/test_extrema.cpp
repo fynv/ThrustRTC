@@ -24,7 +24,7 @@ int main()
 			int value;
 		};
 
-		std::string d_key_value = ctx.add_custom_struct(
+		std::string d_key_value = ctx.add_struct(
 			"    int key;\n"
 			"    int value;\n"
 		);
@@ -55,7 +55,7 @@ int main()
 			int value;
 		};
 
-		std::string d_key_value = ctx.add_custom_struct(
+		std::string d_key_value = ctx.add_struct(
 			"    int key;\n"
 			"    int value;\n"
 		);
@@ -87,7 +87,7 @@ int main()
 			int value;
 		};
 
-		std::string d_key_value = ctx.add_custom_struct(
+		std::string d_key_value = ctx.add_struct(
 			"    int key;\n"
 			"    int value;\n"
 		);
