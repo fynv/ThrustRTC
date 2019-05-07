@@ -10,7 +10,7 @@ SOURCES internal/pack_headers.cpp
 
 set(LIB_SOURCES
 
-internal/md5.cpp
+internal/crc64.cpp
 internal/cuda_wrapper.cpp
 internal/nvtrc_wrapper.cpp
 internal/general_reduce.cpp
@@ -84,7 +84,7 @@ fake_vectors/DVTransform.h
 
 set(INTERNAL_HEADERS
 internal/Timing.h
-internal/md5.h
+internal/crc64.h
 internal/cuda_wrapper.h
 internal/nvtrc_wrapper.h
 internal/general_reduce.h

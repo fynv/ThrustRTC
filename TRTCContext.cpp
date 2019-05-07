@@ -5,7 +5,7 @@
 #include "nvtrc_wrapper.h"
 #include "TRTCContext.h"
 #include "Timing.h"
-#include "md5.h"
+#include "crc64.h"
 #include "cuda_inline_headers.hpp"
 #include "cuda_inline_headers_global.hpp"
 
@@ -84,15 +84,10 @@ void TRTCContext::set_ptx_cache(const char* path)
 	s_ptx_cache_path = _ptx_cache_path.c_str();
 }
 
-static void s_get_md5(const char* source_code, char md5[33])
+static inline int64_t s_get_hash(const char* source_code)
 {
-	MD5Context ctx;
-	MD5Init(&ctx);
-	unsigned len = (unsigned)strlen(source_code);
-	MD5Update(&ctx, (const unsigned char*)source_code, len);
-	unsigned char digest[16];
-	MD5Final(digest, &ctx);
-	sprintf(md5, "%08x%08x%08x%08x", ((unsigned*)digest)[3], ((unsigned*)digest)[2], ((unsigned*)digest)[1], ((unsigned*)digest)[0]);
+	uint64_t len = (uint64_t)strlen(source_code);
+	return crc64(0, (unsigned char*)source_code, len);
 }
 
 struct TRTCContext::Kernel
@@ -243,16 +238,16 @@ size_t TRTCContext::size_of(const char* cls)
 	if (m_verbose) print_code(saxpy.c_str());
 
 	int compute_cap = s_get_compute_capability();
-	char md5[33];
+	uint64_t hash;
 
 	size_t size=(size_t)(-1);
 
 	/// Try finding an existing ptx in disk cache
 	if (s_ptx_cache_path != nullptr)
 	{
-		s_get_md5(saxpy.c_str(), md5);
+		hash = s_get_hash(saxpy.c_str());
 		char fn[2048];
-		sprintf(fn, "%s/%s_%d.size", s_ptx_cache_path, md5, compute_cap);
+		sprintf(fn, "%s/%016llx_%d.size", s_ptx_cache_path, hash, compute_cap);
 		FILE* fp = fopen(fn, "rb");
 		if (fp)
 		{
@@ -275,7 +270,7 @@ size_t TRTCContext::size_of(const char* cls)
 		if (s_ptx_cache_path != nullptr)
 		{
 			char fn[2048];
-			sprintf(fn, "%s/%s_%d.size", s_ptx_cache_path, md5, compute_cap);
+			sprintf(fn, "%s/%016llx_%d.size", s_ptx_cache_path, hash, compute_cap);
 			FILE* fp = fopen(fn, "wb");
 			if (fp)
 			{
@@ -327,14 +322,13 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 	if (m_verbose)
 		print_code(saxpy.c_str());
 
-	char md5[33];
-	s_get_md5(saxpy.c_str(), md5);
+	int64_t hash = s_get_hash(saxpy.c_str());
 
 	KernelId_t kid = (KernelId_t)(-1);
 	do
 	{
 		{
-			decltype(m_kernel_id_map)::iterator it = m_kernel_id_map.find(md5);
+			decltype(m_kernel_id_map)::iterator it = m_kernel_id_map.find(hash);
 			if (it != m_kernel_id_map.end())
 			{
 				kid = it->second;
@@ -353,7 +347,7 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 			if (s_ptx_cache_path != nullptr)
 			{
 				char fn[2048];
-				sprintf(fn, "%s/%s_%d.ptx", s_ptx_cache_path, md5, compute_cap);
+				sprintf(fn, "%s/%016llx_%d.ptx", s_ptx_cache_path, hash, compute_cap);
 				FILE* fp = fopen(fn, "rb");
 				if (fp)
 				{
@@ -374,7 +368,7 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 				if (s_ptx_cache_path != nullptr)
 				{
 					char fn[2048];
-					sprintf(fn, "%s/%s_%d.ptx", s_ptx_cache_path, md5, compute_cap);
+					sprintf(fn, "%s/%016llx_%d.ptx", s_ptx_cache_path, hash, compute_cap);
 					FILE* fp = fopen(fn, "wb");
 					if (fp)
 					{
@@ -413,7 +407,7 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 		}
 		m_kernel_cache.push_back(kernel);
 		kid = (unsigned)m_kernel_cache.size() - 1;
-		m_kernel_id_map[md5] = kid;
+		m_kernel_id_map[hash] = kid;
 	} while (false);
 
 	if (kid == (KernelId_t)(-1)) return false;
@@ -482,9 +476,8 @@ void TRTCContext::add_constant_object(const char* name, const DeviceViewable& ob
 
 std::string TRTCContext::add_custom_struct(const char* struct_body)
 {
-	char md5[33];
-	s_get_md5(struct_body, md5);
-	decltype(m_custom_struct_map)::iterator it = m_custom_struct_map.find(md5);
+	int64_t hash = s_get_hash(struct_body);
+	decltype(m_custom_struct_map)::iterator it = m_custom_struct_map.find(hash);
 	if (it != m_custom_struct_map.end())
 		return it->second;
 	
@@ -492,7 +485,7 @@ std::string TRTCContext::add_custom_struct(const char* struct_body)
 	int id = next_identifier();
 	sprintf(buf, "_CustomView_%d", id);
 	std::string name_view_cls = buf;
-	m_custom_struct_map[md5] = name_view_cls;
+	m_custom_struct_map[hash] = name_view_cls;
 
 	std::string struct_def = "#pragma pack(1)\n";
 	struct_def += std::string("struct ") + name_view_cls + "\n{\n" + struct_body + "};\n";

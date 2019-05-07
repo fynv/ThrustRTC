@@ -61,13 +61,13 @@ private:
 	std::vector<std::string> m_code_blocks;
 	std::vector<std::pair<std::string, ViewBuf>> m_constants;
 
-	std::unordered_map<std::string, std::string> m_custom_struct_map;
+	std::unordered_map<int64_t, std::string> m_custom_struct_map;
 
 	std::unordered_map<std::string, size_t> m_size_of_types;
 
 	struct Kernel;
 	std::vector<Kernel*> m_kernel_cache;
-	std::unordered_map<std::string, KernelId_t> m_kernel_id_map;
+	std::unordered_map<int64_t, KernelId_t> m_kernel_id_map;
 
 	int m_identifier;
 
