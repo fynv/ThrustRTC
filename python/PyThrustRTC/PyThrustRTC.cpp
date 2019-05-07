@@ -24,6 +24,7 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 #include "DVPermutation.hpp"
 #include "DVReverse.hpp"
 #include "DVTransform.hpp"
+#include "functor.hpp"
 #include "fill.hpp"
 #include "replace.hpp"
 #include "for_each.hpp"
@@ -80,7 +81,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvpermutation_create", n_dvpermutation_create, METH_VARARGS, "" },
 	{ "n_dvreverse_create", n_dvreverse_create, METH_VARARGS, "" },
 	{ "n_dvtransform_create", n_dvtransform_create, METH_VARARGS, "" },
-	{ "n_functor_generate_code", n_functor_generate_code, METH_VARARGS, "" },
+	{ "n_functor_create", n_functor_create, METH_VARARGS, "" },
 	{ "n_fill", n_fill, METH_VARARGS, "" },
 	{ "n_replace", n_replace, METH_VARARGS, "" },
 	{ "n_replace_if", n_replace_if, METH_VARARGS, "" },

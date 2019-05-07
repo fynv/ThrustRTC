@@ -8,7 +8,7 @@ int main()
 	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
-	Functor plus = { {}, { "lhs", "rhs" }, "ret", "            ret = lhs + rhs;\n" };
+	Functor plus = { ctx, {}, { "lhs", "rhs" }, "            return lhs + rhs;\n" };
 
 	int hvec1[8] = { 1, 2, 1, 2, 1, 2, 1, 2 };
 	DVVector vec1_in(ctx, "int32_t", 8, hvec1);

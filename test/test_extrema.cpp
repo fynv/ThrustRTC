@@ -32,7 +32,7 @@ int main()
 		key_value h_data[4] = { { 4,5 }, { 0,7 }, { 2,3 }, { 6,1 }};
 		DVVector d_data(ctx, d_key_value.c_str(), 4, h_data);
 
-		Functor compare_key_value = { {},{ "lhs", "rhs" }, "ret", "        ret =  lhs.key < rhs.key;\n" };
+		Functor compare_key_value = { ctx, {},{ "lhs", "rhs" }, "        return  lhs.key < rhs.key;\n" };
 		size_t id_min;
 		TRTC_Min_Element(ctx, d_data, compare_key_value, id_min);
 		printf("%lu (%d, %d)\n", id_min, h_data[id_min].key, h_data[id_min].value);
@@ -63,7 +63,7 @@ int main()
 		key_value h_data[4] = { { 4,5 }, { 0,7 }, { 2,3 }, { 6,1 } };
 		DVVector d_data(ctx, d_key_value.c_str(), 4, h_data);
 
-		Functor compare_key_value = { {},{ "lhs", "rhs" }, "ret", "        ret =  lhs.key < rhs.key;\n" };
+		Functor compare_key_value = { ctx, {},{ "lhs", "rhs" }, "        return  lhs.key < rhs.key;\n" };
 		size_t id_max;
 		TRTC_Max_Element(ctx, d_data, compare_key_value, id_max);
 		printf("%lu (%d, %d)\n", id_max, h_data[id_max].key, h_data[id_max].value);
@@ -95,7 +95,7 @@ int main()
 		key_value h_data[4] = { { 4,5 }, { 0,7 }, { 2,3 }, { 6,1 } };
 		DVVector d_data(ctx, d_key_value.c_str(), 4, h_data);
 
-		Functor compare_key_value = { {},{ "lhs", "rhs" }, "ret", "        ret =  lhs.key < rhs.key;\n" };
+		Functor compare_key_value = { ctx, {},{ "lhs", "rhs" }, "        return  lhs.key < rhs.key;\n" };
 		size_t id_min, id_max;
 		TRTC_MinMax_Element(ctx, d_data, compare_key_value, id_min, id_max);
 		printf("%lu (%d, %d)\n", id_min, h_data[id_min].key, h_data[id_min].value);

@@ -46,7 +46,7 @@ int main()
 
 	}
 
-	Functor is_even = { {},{ "x" }, "ret", "        ret = ((x % 2) == 0);\n" };
+	Functor is_even = { ctx, {},{ "x" }, "        return ((x % 2) == 0);\n" };
 
 	{
 		int h_V[8] = { 10, 20, 30, 40, 50, 60, 70, 80 };

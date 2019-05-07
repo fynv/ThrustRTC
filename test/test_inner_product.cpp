@@ -21,8 +21,8 @@ int main()
 	}
 
 	{
-		Functor plus = { {},{ "x", "y" }, "ret", "        ret = x + y;\n" };
-		Functor multiplies = { {},{ "x", "y" }, "ret", "        ret = x * y;\n" };
+		Functor plus = { ctx, {},{ "x", "y" }, "        return x + y;\n" };
+		Functor multiplies = { ctx, {},{ "x", "y" }, "        return x * y;\n" };
 
 		float h_vec1[3] = { 1.0f, 2.0f, 5.0f };
 		float h_vec2[3] = { 4.0f, 1.0f, 5.0f };

@@ -20,7 +20,7 @@ int main()
 
 	printf("%d %d\n", res1, res2);
 
-	Functor compare_modulo_two = { {},{ "x", "y" }, "ret", "        ret = (x % 2) == (y % 2);\n" };
+	Functor compare_modulo_two = { ctx, {},{ "x", "y" }, "        return (x % 2) == (y % 2);\n" };
 	int x[6] = { 1, 2, 3, 4, 5, 6 };
 	int y[6] = { 7, 8, 9, 10, 11, 12 };
 	DVVector dx(ctx, "int32_t", 6, x);

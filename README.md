@@ -60,38 +60,13 @@ trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
 A = trtc.device_vector_from_list(ctx, [1, -3, 2, -1], 'int32_t')
-trtc.Replace_If(ctx, A, trtc.Functor( {}, ['x'], 'ret', '        ret = x<0;\n'), trtc.DVInt32(0))
+trtc.Replace_If(ctx, A, trtc.Functor( ctx, {}, ['x'], '        return x<0;\n'), trtc.DVInt32(0))
 
 # A contains [1, 0, 2, 0]
 ```
 
-There are several differences between ThrustRTC and Thrust C++:
-
-* ThrustRTC does not include the iterators. All operations explicitly work on vectors types.
-  Funtion simliar to "fancy iterators" of Thrust are implemented through a group of "fake-vector" classes
-
-* Functors in ThrustRTC are implemented as "do{...} while(false);" blocks, so "return" is not supported.
-  User need to specify a variable name for the return value and assign to it. "break" is supported though
-
-In verbose mode we can see the full code of the CUDA kerenel looks like:
-
-```cpp
-#define DEVICE_ONLY
-#include "DVVector.h"
-#include "cstdint"
-extern "C" __global__
-void saxpy(VectorView<int32_t> _view_vec, int32_t _new_value, size_t _begin, size_t _end)
-{
-      size_t _idx = threadIdx.x + blockIdx.x*blockDim.x + _begin;
-      if (_idx>=_end) return;
-      bool ret;
-      do{
-          auto x = _view_vec[_idx];
-          ret = x<0;
-      } while(false);
-      if (ret) _view_vec[_idx] = _new_value;
-}
-```
+A significant difference between ThrustRTC and Thrust C++ is that ThrustRTC does not include the iterators. 
+All operations explicitly work on vectors types. 
 
 * We may not be able to port all the Thrust algorithms. (but hopefully most of them!)
 

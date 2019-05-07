@@ -3,9 +3,9 @@ import ThrustRTC as trtc
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
-negate = trtc.Functor( {}, ['x'], 'ret',
+negate = trtc.Functor( ctx, {}, ['x'],
 '''
-         ret = -x;
+         return -x;
 ''')
 
 dinput = trtc.device_vector_from_list(ctx, [3, 7, 2, 5], 'int32_t')

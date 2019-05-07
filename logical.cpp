@@ -2,35 +2,33 @@
 
 bool TRTC_All_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
 {
-	ret = true;
-	DVVector dvres(ctx, "bool", 1, &ret);
-	std::vector<TRTCContext::AssignedParam> arg_map = pred.arg_map;
-	arg_map.push_back({ "_view_vec", &vec });
-	arg_map.push_back({ "_view_res", &dvres });
-
+	static TRTC_For s_for({ "view_vec", "view_res", "pred" }, "idx",
+		"    if (!pred(view_vec[idx])) view_res[0]=false;\n"
+	);
 	if (end == (size_t)(-1)) end = vec.size();
 	ret = false;
 	if (end - begin < 1) return true;
-	if (!ctx.launch_for(begin, end, arg_map, "_idx",
-		(pred.generate_code("bool", { "_view_vec[_idx]" }) +
-			"     if(!" + pred.functor_ret + ")  _view_res[0]=false;\n").c_str())) return false;
+	ret = true;
+	DVVector dvres(ctx, "bool", 1, &ret);
+	const DeviceViewable* args[] = { &vec, &dvres, &pred };
+	if (!s_for.launch(ctx, begin, end, args)) return false;
 	dvres.to_host(&ret);
 	return true;
 }
 
 bool TRTC_Any_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
 {
-	ret = false;
-	DVVector dvres(ctx, "bool", 1, &ret);
-	std::vector<TRTCContext::AssignedParam> arg_map = pred.arg_map;
-	arg_map.push_back({ "_view_vec", &vec });
-	arg_map.push_back({ "_view_res", &dvres });
+	static TRTC_For s_for({ "view_vec", "view_res", "pred" }, "idx",
+		"    if (pred(view_vec[idx])) view_res[0]=true;\n"
+	);
 
 	if (end == (size_t)(-1)) end = vec.size();
+	ret = false;
 	if (end - begin < 1) return true;
-	if (!ctx.launch_for(begin, end, arg_map, "_idx",
-		(pred.generate_code("bool", { "_view_vec[_idx]" }) +
-			"     if(" + pred.functor_ret + ")  _view_res[0]=true;\n").c_str())) return false;
+
+	DVVector dvres(ctx, "bool", 1, &ret);
+	const DeviceViewable* args[] = { &vec, &dvres, &pred };
+	if (!s_for.launch(ctx, begin, end, args)) return false;
 	dvres.to_host(&ret);
 	return true;
 }
@@ -38,17 +36,17 @@ bool TRTC_Any_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred,
 
 bool TRTC_None_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
 {
-	ret = true;
-	DVVector dvres(ctx, "bool", 1, &ret);
-	std::vector<TRTCContext::AssignedParam> arg_map = pred.arg_map;
-	arg_map.push_back({ "_view_vec", &vec });
-	arg_map.push_back({ "_view_res", &dvres });
+	static TRTC_For s_for({ "view_vec", "view_res", "pred" }, "idx",
+		"    if (pred(view_vec[idx])) view_res[0]=false;\n"
+	);
 
 	if (end == (size_t)(-1)) end = vec.size();
+	ret = true;
 	if (end - begin < 1) return true;
-	if (!ctx.launch_for(begin, end, arg_map, "_idx",
-		(pred.generate_code("bool", { "_view_vec[_idx]" }) +
-			"     if(" + pred.functor_ret + ")  _view_res[0]=false;\n").c_str())) return false;
+
+	DVVector dvres(ctx, "bool", 1, &ret);
+	const DeviceViewable* args[] = { &vec, &dvres, &pred };
+	if (!s_for.launch(ctx, begin, end, args)) return false;
 	dvres.to_host(&ret);
 	return true;
 }

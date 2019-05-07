@@ -3,10 +3,11 @@
 
 bool TRTC_For_Each(TRTCContext& ctx, DVVectorLike& vec, const Functor& f, size_t begin, size_t end)
 {
-	std::vector<TRTCContext::AssignedParam> arg_map = f.arg_map;
-	arg_map.push_back({ "_view_vec", &vec });
+	static TRTC_For s_for({ "view_vec", "f"}, "idx",
+		"    f(view_vec[idx]);\n"
+	);
 
 	if (end == (size_t)(-1)) end = vec.size();
-
-	return ctx.launch_for(begin, end, arg_map, "_idx", f.generate_code(nullptr, {"_view_vec[_idx]"}).c_str());
+	const DeviceViewable* args[] = { &vec, &f };
+	return s_for.launch(ctx, begin, end, args);
 }

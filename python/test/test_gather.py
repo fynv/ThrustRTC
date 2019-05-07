@@ -3,9 +3,9 @@ import ThrustRTC as trtc
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
-is_even = trtc.Functor( {}, ['x'], 'ret',
+is_even = trtc.Functor( ctx, {}, ['x'], 
 '''
-         ret = ((x % 2) == 0);
+         return ((x % 2) == 0);
 ''')
 
 dvalues = trtc.device_vector_from_list(ctx, [1, 0, 1, 0, 1, 0, 1, 0, 1, 0], 'int32_t')

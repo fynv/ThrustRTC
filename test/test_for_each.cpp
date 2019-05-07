@@ -8,7 +8,7 @@ int main()
 	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
-	Functor printf_functor = { {}, { "x" }, nullptr, "        printf(\"%d\\n\", x);\n" };
+	Functor printf_functor = {ctx, {}, { "x" }, "        printf(\"%d\\n\", x);\n" };
 
 	int hvec[5] = { 1, 2, 3, 1, 2 };
 	DVVector vec(ctx, "int32_t", 5, hvec);

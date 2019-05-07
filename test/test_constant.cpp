@@ -9,7 +9,7 @@ int main()
 	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
-	Functor plus = { {},{ "x", "y" }, "ret", "        ret = x + y;\n" };
+	Functor plus = { ctx, {},  { "x", "y" }, "        return x + y;\n" };
 
 	int hvalues[4] = { 3, 7, 2, 5 };
 	DVVector vec(ctx, "int32_t", 4, hvalues);

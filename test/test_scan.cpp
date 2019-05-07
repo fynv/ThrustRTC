@@ -44,7 +44,7 @@ int main()
 	{
 		int data[10] = { -5, 0, 2, -3, 2, 4, 0, -1, 2, 8 };
 		DVVector d_data(ctx, "int32_t", 10, data);
-		Functor max_value = { {},{ "x", "y" }, "ret", "        ret = x < y? y : x;\n" };
+		Functor max_value = { ctx, {},{ "x", "y" }, "        return x < y? y : x;\n" };
 		TRTC_Inclusive_Scan(ctx, d_data, d_data, max_value);
 		d_data.to_host(data);
 		printf("%d %d %d %d %d ", data[0], data[1], data[2], data[3], data[4]);
@@ -70,7 +70,7 @@ int main()
 	{
 		int data[10] = { -5, 0, 2, -3, 2, 4, 0, -1, 2, 8 };
 		DVVector d_data(ctx, "int32_t", 10, data);
-		Functor max_value = { {},{ "x", "y" }, "ret", "        ret = x < y? y : x;\n" };
+		Functor max_value = { ctx, {},{ "x", "y" }, "        return x < y? y : x;\n" };
 		TRTC_Exclusive_Scan(ctx, d_data, d_data, DVInt32(1), max_value);
 		d_data.to_host(data);
 		printf("%d %d %d %d %d ", data[0], data[1], data[2], data[3], data[4]);

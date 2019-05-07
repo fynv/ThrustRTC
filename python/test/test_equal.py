@@ -3,9 +3,9 @@ import ThrustRTC as trtc
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
-compare_modulo_two = trtc.Functor( {}, ['x','y'], 'ret',
+compare_modulo_two = trtc.Functor( ctx, {}, ['x','y'],
 '''
-         ret = (x % 2) == (y % 2);
+         return (x % 2) == (y % 2);
 ''')
 
 darr1 = trtc.device_vector_from_list(ctx, [ 3, 1, 4, 1, 5, 9, 3], 'int32_t')

@@ -3,14 +3,14 @@ import ThrustRTC as trtc
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
-negate = trtc.Functor( {}, ['x'], 'ret',
+negate = trtc.Functor( ctx, {}, ['x'],
 '''
-         ret = -x;
+         return -x;
 ''')
 
-square_root = trtc.Functor( {}, ['x'], 'ret',
+square_root = trtc.Functor( ctx, {}, ['x'], 
 '''
-         ret = sqrtf(x);
+         return sqrtf(x);
 ''')
 
 dvalues = trtc.device_vector_from_list(ctx, [1.0, 4.0, 9.0, 16.0], 'float')

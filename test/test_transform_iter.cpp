@@ -9,8 +9,8 @@ int main()
 	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
-	Functor negate = { {}, { "x" }, "ret", "        ret = -x;\n" };
-	Functor square_root{ {}, { "x" }, "ret", "        ret = sqrtf(x);\n" };
+	Functor negate = { ctx, {}, { "x" }, "        return -x;\n" };
+	Functor square_root{ ctx, {}, { "x" }, "        return sqrtf(x);\n" };
 
 	float hvalues[8] = { 1.0f, 4.0f, 9.0f, 16.0f };
 	DVVector dvalues(ctx, "float", 4, hvalues);

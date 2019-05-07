@@ -3,7 +3,7 @@ import ThrustRTC as trtc
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
-printf_functor =  trtc.Functor( {}, ['x'], None,
+printf_functor =  trtc.Functor( ctx, {}, ['x'],
 '''
          printf("%d\\n", x);
 ''')

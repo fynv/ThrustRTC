@@ -2,7 +2,6 @@
 #include "TRTCContext.h"
 #include "reduce.h"
 #include "viewbuf_to_python.hpp"
-#include "functor.hpp"
 
 static PyObject* n_reduce(PyObject* self, PyObject* args)
 {
@@ -13,13 +12,10 @@ static PyObject* n_reduce(PyObject* self, PyObject* args)
 	if (pyinit != Py_None)
 		init = (DeviceViewable*)PyLong_AsVoidPtr(pyinit);
 	PyObject* py_binary_op = PyTuple_GetItem(args, 3);
-	bool have_op = false;
-	Functor binary_op;
+	Functor* binary_op = nullptr;
 	if (py_binary_op != Py_None)
-	{
-		binary_op = PyFunctor_AsFunctor(py_binary_op);
-		have_op = true;
-	}
+		binary_op = (Functor*)PyLong_AsVoidPtr(py_binary_op);
+
 	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
 	size_t end = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
 	ViewBuf ret;
@@ -29,7 +25,7 @@ static PyObject* n_reduce(PyObject* self, PyObject* args)
 			return PyValue_FromViewBuf(ret, vec->name_elem_cls().c_str());
 		Py_RETURN_NONE;
 	}
-	else if (!have_op)
+	else if (binary_op == nullptr)
 	{
 		if (TRTC_Reduce(*ctx, *vec, *init, ret, begin, end))
 			return PyValue_FromViewBuf(ret, vec->name_elem_cls().c_str());
@@ -37,7 +33,7 @@ static PyObject* n_reduce(PyObject* self, PyObject* args)
 	}
 	else
 	{
-		if (TRTC_Reduce(*ctx, *vec, *init, binary_op, ret, begin, end))
+		if (TRTC_Reduce(*ctx, *vec, *init, *binary_op, ret, begin, end))
 			return PyValue_FromViewBuf(ret, vec->name_elem_cls().c_str());
 		Py_RETURN_NONE;
 	}

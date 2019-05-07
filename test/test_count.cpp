@@ -19,7 +19,7 @@ int main()
 	printf("%d\n", (int)c);
 
 	TRTC_Sequence(ctx, din);
-	Functor op = { {},{ "x" }, "ret", "        ret = (x%100)==47;\n" };
+	Functor op = {ctx, {},{ "x" }, "        return (x%100)==47;\n" };
 	TRTC_Count_If(ctx, din, op, c);
 	printf("%d\n", (int)c);
 

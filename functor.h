@@ -3,14 +3,18 @@
 
 #include "TRTCContext.h"
 
-struct Functor
+class THRUST_RTC_API Functor : public DeviceViewable
 {
-	std::vector<TRTCContext::AssignedParam> arg_map;
-	std::vector<const char*> functor_params;
-	const char* functor_ret;
-	const char* code_body;
+public:
+	Functor(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>& arg_map, const std::vector<const char*>& functor_params, const char* code_body);
 
-	std::string THRUST_RTC_API generate_code(const char* type_ret, const std::vector<const char*>& args) const;
+	virtual std::string name_view_cls() const;
+	virtual ViewBuf view() const;
+
+private:
+	std::string m_name_view_cls;
+	std::vector<ViewBuf> m_view_args;
+	size_t m_size_view;
 };
 
 #endif

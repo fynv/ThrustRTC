@@ -8,7 +8,7 @@ int main()
 	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
-	Functor is_less_than_zero = { {}, { "x" }, "ret", "        ret = x<0;\n" };
+	Functor is_less_than_zero = { ctx, {}, { "x" }, "        return x<0;\n" };
 	
 	// replace
 	int hvec1[5] = { 1,2,3,1,2 };

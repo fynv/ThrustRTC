@@ -3,24 +3,24 @@ import ThrustRTC as trtc
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
-identity = trtc.Functor( {}, ['x'], 'ret',
+identity = trtc.Functor( ctx, {}, ['x'], 
 '''
-         ret = x;
+         return x;
 ''')
 
-negate = trtc.Functor( {}, ['x'], 'ret',
+negate = trtc.Functor( ctx, {}, ['x'], 
 '''
-         ret = -x;
+         return -x;
 ''')
 
-plus = trtc.Functor( {}, ['x', 'y'], 'ret',
+plus = trtc.Functor( ctx, {}, ['x', 'y'], 
 '''
-         ret = x + y;
+         return x + y;
 ''')
 
-is_odd = trtc.Functor( {}, ['x'], 'ret',
+is_odd = trtc.Functor( ctx, {}, ['x'], 
 '''
-         ret = x % 2;
+         return x % 2;
 ''')
 
 darr = trtc.device_vector_from_list(ctx, [-5, 0, 2, -3, 2, 4, 0, -1, 2, 8], 'int32_t')

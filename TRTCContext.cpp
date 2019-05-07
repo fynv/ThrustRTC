@@ -84,7 +84,7 @@ void TRTCContext::set_ptx_cache(const char* path)
 	s_ptx_cache_path = _ptx_cache_path.c_str();
 }
 
-static inline int64_t s_get_hash(const char* source_code)
+static inline uint64_t s_get_hash(const char* source_code)
 {
 	uint64_t len = (uint64_t)strlen(source_code);
 	return crc64(0, (unsigned char*)source_code, len);
@@ -119,6 +119,7 @@ TRTCContext::TRTCContext()
 	this->add_inlcude_filename("fake_vectors/DVDiscard.h");
 	this->add_inlcude_filename("fake_vectors/DVPermutation.h");
 	this->add_inlcude_filename("fake_vectors/DVReverse.h");
+	this->add_inlcude_filename("fake_vectors/DVTransform.h");
 }
 
 TRTCContext::~TRTCContext()
@@ -136,9 +137,9 @@ void TRTCContext::set_verbose(bool verbose)
 	m_verbose = verbose;
 }
 
-static void print_code(const char* fullCode)
+static void print_code(const char* name, const char* fullCode)
 {
-	puts("saxpy.cu:");
+	printf("%s:\n", name);
 	const char* p = fullCode;
 	int line_num = 1;
 	while (true)
@@ -206,7 +207,11 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& p
 
 	if (result != NVRTC_SUCCESS)
 	{
-		if (!m_verbose)	print_code(src);
+		if (!m_verbose)
+		{
+			print_code(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
+			print_code("saxpy.cu", src);
+		}
 
 		std::vector<char> log(logSize);
 		nvrtcGetProgramLog(prog, log.data());
@@ -237,7 +242,11 @@ size_t TRTCContext::size_of(const char* cls)
 	saxpy += std::string("#include \"")+ m_name_header_of_structs + "\"\n";
 	saxpy += std::string("__device__ ") + cls + " _test;\n";
 
-	if (m_verbose) print_code(saxpy.c_str());
+	if (m_verbose)
+	{
+		print_code(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
+		print_code("saxpy.cu", saxpy.c_str());
+	}
 
 	int compute_cap = s_get_compute_capability();
 	uint64_t hash;
@@ -323,7 +332,10 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 	saxpy += "\n}\n";
 
 	if (m_verbose)
-		print_code(saxpy.c_str());
+	{
+		print_code(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
+		print_code("saxpy.cu", saxpy.c_str());
+	}
 
 	int64_t hash = s_get_hash(saxpy.c_str());
 
@@ -492,6 +504,8 @@ std::string TRTCContext::add_struct(const char* struct_body)
 	struct_def += std::string("struct ") + name + "\n{\n" + struct_body + "};\n";
 	m_header_of_structs += struct_def;
 	m_content_built_in_headers[0] = m_header_of_structs.c_str();
+
+	m_known_structs.insert(hash);
 
 	return name;
 }

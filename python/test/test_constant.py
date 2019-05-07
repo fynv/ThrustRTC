@@ -3,9 +3,9 @@ import ThrustRTC as trtc
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
-plus = trtc.Functor( {}, ['x', 'y'], 'ret',
+plus = trtc.Functor( ctx, {}, ['x', 'y'], 
 '''
-         ret = x + y;
+         return x + y;
 ''')
 
 

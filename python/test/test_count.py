@@ -3,9 +3,9 @@ import ThrustRTC as trtc
 trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
-op = trtc.Functor( {}, ['x'], 'ret',
+op = trtc.Functor( ctx, {}, ['x'], 
 '''
-         ret = x % 100;
+         return x % 100;
 ''')
 
 
@@ -14,9 +14,9 @@ trtc.Transform(ctx, trtc.DVCounter(ctx, trtc.DVInt32(0), 2000), darr, op)
 print(trtc.Count(ctx, darr, trtc.DVInt32(47)))
 
 
-op2 = trtc.Functor( {}, ['x'], 'ret',
+op2 = trtc.Functor(ctx, {}, ['x'],
 '''
-         ret = (x % 100)==47;
+         return (x % 100)==47;
 ''')
 
 trtc.Sequence(ctx, darr)

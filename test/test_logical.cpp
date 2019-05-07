@@ -8,7 +8,7 @@ int main()
 	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
-	Functor identity = { {},{ "x" }, "ret", "        ret = x;\n" };
+	Functor identity = { ctx, {},{ "x" }, "        return x;\n" };
 
 	bool A[3] = { true, true, false };
 	DVVector d_A(ctx, "bool", 3, A);

@@ -8,10 +8,10 @@ int main()
 	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
-	Functor identity = { {},{ "x" }, "ret", "        ret = x;\n" };
-	Functor negate = { {},{ "x" }, "ret", "        ret = -x;\n" };
-	Functor plus = { {},{ "x", "y" }, "ret", "        ret = x + y;\n" };
-	Functor is_odd = { {},{ "x" }, "ret", "        ret = x % 2;\n" };
+	Functor identity = { ctx, {},{ "x" }, "        return x;\n" };
+	Functor negate = { ctx, {},{ "x" }, "        return -x;\n" };
+	Functor plus = { ctx, {},{ "x", "y" }, "        return x + y;\n" };
+	Functor is_odd = { ctx, {},{ "x" }, "        return x % 2;\n" };
 
 	{
 		int hvalues[10] = { -5, 0, 2, -3, 2, 4, 0, -1, 2, 8 };

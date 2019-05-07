@@ -9,7 +9,7 @@ int main()
 	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
-	Functor negate = { {}, { "x" }, "ret", "        ret = -x;\n" };
+	Functor negate = { ctx, {}, { "x" }, "        return -x;\n" };
 
 	float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
 	DVVector dvalues(ctx, "float", 8, hvalues);
