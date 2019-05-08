@@ -40,6 +40,7 @@ public:
 	bool calc_optimal_block_size(const std::vector<AssignedParam>& arg_map, const char* code_body, int& sizeBlock, unsigned sharedMemBytes = 0);
 	bool launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes = 0);
 	bool launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& arg_map, const char* name_iter, const char* code_body);
+	bool launch_for_n(size_t n, const std::vector<TRTCContext::AssignedParam>& arg_map, const char* name_iter, const char* code_body);
 	
 	void add_include_dir(const char* path);
 	void add_built_in_header(const char* name, const char* content);
@@ -99,6 +100,7 @@ public:
 
 	TRTC_For(const std::vector<const char*>& param_names, const char* name_iter, const char* code_body);
 	bool launch(TRTCContext& ctx, size_t begin, size_t end, const DeviceViewable** args);
+	bool launch_n(TRTCContext& ctx, size_t n, const DeviceViewable** args);
 
 private:
 	std::vector<std::string> m_param_names;

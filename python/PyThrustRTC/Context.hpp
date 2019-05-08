@@ -169,6 +169,30 @@ static PyObject* n_context_launch_for(PyObject* self, PyObject* args)
 		Py_RETURN_NONE;
 }
 
+static PyObject* n_context_launch_for_n(PyObject* self, PyObject* args)
+{
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	size_t n = (size_t)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 1));
+
+	PyObject* pyArgMap = PyTuple_GetItem(args, 2);
+	ssize_t num_params = PyList_Size(pyArgMap);
+	std::vector<TRTCContext::AssignedParam> arg_map(num_params);
+	for (ssize_t i = 0; i < num_params; i++)
+	{
+		PyObject* pyAssignedParam = PyList_GetItem(pyArgMap, i);
+		arg_map[i].param_name = PyUnicode_AsUTF8(PyTuple_GetItem(pyAssignedParam, 0));
+		arg_map[i].arg = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(pyAssignedParam, 1));
+	}
+
+	const char* name_iter = PyUnicode_AsUTF8(PyTuple_GetItem(args, 3));
+	const char* code_body = PyUnicode_AsUTF8(PyTuple_GetItem(args, 4));
+
+	if (ctx->launch_for_n(n, arg_map, name_iter, code_body))
+		return PyLong_FromLong(0);
+	else
+		Py_RETURN_NONE;
+}
+
 static PyObject* n_kernel_create(PyObject* self, PyObject* args)
 {
 	PyObject* pyParamList = PyTuple_GetItem(args, 0);
@@ -346,7 +370,6 @@ static PyObject* n_for_num_params(PyObject* self, PyObject* args)
 	return PyLong_FromLong((long)cptr->num_params());
 }
 
-
 static PyObject* n_for_launch(PyObject* self, PyObject* args)
 {
 	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
@@ -388,6 +411,52 @@ static PyObject* n_for_launch(PyObject* self, PyObject* args)
 		}
 	}
 	if(cptr->launch(*ctx, begin, end, params.data()))
+		return PyLong_FromLong(0);
+	else
+		Py_RETURN_NONE;
+}
+
+
+static PyObject* n_for_launch_n(PyObject* self, PyObject* args)
+{
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTC_For* cptr = (TRTC_For*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	size_t num_params = cptr->num_params();
+	size_t n = (size_t)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 2));
+
+	PyObject* arg3 = PyTuple_GetItem(args, 3);
+	std::vector<const DeviceViewable*> params;
+	if (PyObject_TypeCheck(arg3, &PyList_Type))
+	{
+		ssize_t size = PyList_Size(arg3);
+		if ((ssize_t)num_params != size)
+		{
+			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
+			Py_RETURN_NONE;
+		}
+		params.resize(size);
+		for (ssize_t i = 0; i < size; i++)
+			params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg3, i));
+	}
+	else if (arg3 != Py_None)
+	{
+		if (num_params != 1)
+		{
+			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 1);
+			Py_RETURN_NONE;
+		}
+		params.resize(1);
+		params[0] = (DeviceViewable*)PyLong_AsVoidPtr(arg3);
+	}
+	else
+	{
+		if (num_params != 0)
+		{
+			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 0);
+			Py_RETURN_NONE;
+		}
+	}
+	if (cptr->launch_n(*ctx, n, params.data()))
 		return PyLong_FromLong(0);
 	else
 		Py_RETURN_NONE;

@@ -50,6 +50,14 @@ class Context:
             name_iter,
             code_body)
 
+    def launch_for_n(self, n, arg_map, name_iter, code_body):
+        native.n_context_launch_for_n(
+            self.m_cptr, 
+            n, 
+            [ (param_name, arg.m_cptr) for param_name, arg in arg_map.items()], 
+            name_iter,
+            code_body)
+
 class Kernel:
     def __init__(self, param_descs, body):
         self.m_cptr = native.n_kernel_create(param_descs, body)
@@ -88,3 +96,6 @@ class For:
 
     def launch(self, ctx, begin, end, args):
         native.n_for_launch(ctx.m_cptr, self.m_cptr, begin, end, [item.m_cptr for item in args])
+
+    def launch_n(self, ctx, n, args):
+        native.n_for_launch_n(ctx.m_cptr, self.m_cptr, n, [item.m_cptr for item in args])

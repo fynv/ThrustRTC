@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include "nvtrc_wrapper.h"
 #include "launch_calc.h"
-#include "TRTCContext.h"
 #include "crc64.h"
+#include "TRTCContext.h"
+#include "functor.h"
 #include "cuda_inline_headers.hpp"
 #include "cuda_inline_headers_global.hpp"
 
@@ -460,20 +461,33 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& _arg_map, const char* name_iter, const char* _body)
 {
 	DVSizeT dvbegin(begin), dvend(end);
-	std::vector<TRTCContext::AssignedParam> arg_map = _arg_map;
-	arg_map.push_back({ "_begin", &dvbegin });
-	arg_map.push_back({ "_end", &dvend });
-
-	std::string body = std::string("    size_t ") + name_iter + " = threadIdx.x + blockIdx.x*blockDim.x + _begin;\n"
-		"    if (" + name_iter + ">=_end) return; \n" + _body;
-
-	KernelId_t kid = _build_kernel(arg_map, body.c_str());
+	Functor func(*this, _arg_map, { name_iter }, _body);
+	std::vector<TRTCContext::AssignedParam> arg_map = { {"begin", &dvbegin}, {"end", &dvend}, {"func", &func} };
+	KernelId_t kid = _build_kernel(arg_map,
+		"    size_t tid =  threadIdx.x + blockIdx.x*blockDim.x + begin;\n"
+		"    if(tid>=end) return;\n"
+		"    func(tid);\n"
+	);
 	if (kid == (KernelId_t)(-1)) return false;
 	unsigned sizeBlock = (unsigned)_launch_calc(kid, 0);
 	unsigned numBlocks = (unsigned)((end - begin + sizeBlock - 1) / sizeBlock);
 	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
 }
 
+bool TRTCContext::launch_for_n(size_t n, const std::vector<TRTCContext::AssignedParam>& _arg_map, const char* name_iter, const char* _body)
+{
+	DVSizeT dv_n(n);
+	Functor func(*this, _arg_map, { name_iter }, _body);
+	std::vector<TRTCContext::AssignedParam> arg_map = { {"n", &dv_n}, {"func", &func} };
+	KernelId_t kid = _build_kernel(arg_map,
+		"    size_t tid =  threadIdx.x + blockIdx.x*blockDim.x;\n"
+		"    if(tid>=n) return;\n"
+		"    func(tid);\n"
+	);
+	unsigned sizeBlock = (unsigned)_launch_calc(kid, 0);
+	unsigned numBlocks = (unsigned)((n + sizeBlock - 1) / sizeBlock);
+	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
+}
 
 void TRTCContext::add_include_dir(const char* path)
 {
@@ -574,4 +588,16 @@ bool TRTC_For::launch(TRTCContext& ctx, size_t begin, size_t end, const DeviceVi
 		arg_map[i].arg = args[i];
 	}
 	return ctx.launch_for(begin, end, arg_map, m_name_iter.c_str(), m_code_body.c_str());
+}
+
+
+bool TRTC_For::launch_n(TRTCContext& ctx, size_t n, const DeviceViewable** args)
+{
+	std::vector<TRTCContext::AssignedParam> arg_map(m_param_names.size());
+	for (size_t i = 0; i < m_param_names.size(); i++)
+	{
+		arg_map[i].param_name = m_param_names[i].c_str();
+		arg_map[i].arg = args[i];
+	}
+	return ctx.launch_for_n(n, arg_map, m_name_iter.c_str(), m_code_body.c_str());
 }

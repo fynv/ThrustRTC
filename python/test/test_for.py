@@ -18,15 +18,15 @@ forLoop = trtc.For(['arr_in','arr_out','k'], "idx",
 	''')
 
 darr_out = trtc.device_vector(ctx, 'float', 5)
-forLoop.launch(ctx, 0, 5, [darr, darr_out, trtc.DVFloat(10.0)])
+forLoop.launch_n(ctx, 5, [darr, darr_out, trtc.DVFloat(10.0)])
 print (darr_out.to_host())
 
 darr_out = trtc.device_vector(ctx, 'int32_t', 5)
-forLoop.launch(ctx, 0, 5, [darr2, darr_out, trtc.DVInt32(5)])
+forLoop.launch_n(ctx, 5, [darr2, darr_out, trtc.DVInt32(5)])
 print (darr_out.to_host())
 
 # test Context.launch_once interface, the kernel is used only once
-ctx.launch_for(0, 5, {'arr': darr_out}, "idx",
+ctx.launch_for_n(5, {'arr': darr_out}, "idx",
 	'''
 	arr[idx]*=100.0f;
 	''')
