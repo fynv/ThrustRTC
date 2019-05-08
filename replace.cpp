@@ -25,27 +25,29 @@ bool TRTC_Replace_If(TRTCContext& ctx, DVVectorLike& vec, const Functor& pred, c
 bool TRTC_Replace_Copy(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const DeviceViewable& old_value, const DeviceViewable& new_value, size_t begin_in, size_t end_in, size_t begin_out)
 {
 	static TRTC_For s_for(
-	{ "view_vec_in", "view_vec_out" , "old_value", "new_value", "delta" }, "idx",
-	"    auto value = view_vec_in[idx];\n"
-	"    view_vec_out[idx+delta] = value == (decltype(view_vec_in)::value_t)old_value ?  (decltype(view_vec_out)::value_t)new_value :  (decltype(view_vec_out)::value_t)value;\n"
+	{ "view_vec_in", "view_vec_out" , "old_value", "new_value", "begin_in", "begin_out" }, "idx",
+	"    auto value = view_vec_in[idx + begin_in];\n"
+	"    view_vec_out[idx + begin_out] = value == (decltype(view_vec_in)::value_t)old_value ?  (decltype(view_vec_out)::value_t)new_value :  (decltype(view_vec_out)::value_t)value;\n"
 	);
 
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
-	DVInt32 dvdelta((int)begin_out - (int)begin_in);
-	const DeviceViewable* args[] = { &vec_in, &vec_out, &old_value, &new_value, &dvdelta };
-	return s_for.launch(ctx, begin_in, end_in, args);
+	DVSizeT dvbegin_in(begin_in);
+	DVSizeT dvbegin_out(begin_out);
+	const DeviceViewable* args[] = { &vec_in, &vec_out, &old_value, &new_value,  &dvbegin_in, &dvbegin_out };
+	return s_for.launch_n(ctx, end_in - begin_in, args);
 }
 
 bool TRTC_Replace_Copy_If(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& pred, const DeviceViewable& new_value, size_t begin_in, size_t end_in, size_t begin_out)
 {
 	static TRTC_For s_for(
-		{ "view_vec_in", "view_vec_out" , "pred", "new_value", "delta" }, "idx",
-		"    auto value = view_vec_in[idx];\n"
-		"    view_vec_out[idx+delta] = pred(value) ?  (decltype(view_vec_out)::value_t)new_value :  (decltype(view_vec_out)::value_t)value;\n"
+		{ "view_vec_in", "view_vec_out" , "pred", "new_value", "begin_in", "begin_out" }, "idx",
+		"    auto value = view_vec_in[idx + begin_in];\n"
+		"    view_vec_out[idx + begin_out] = pred(value) ?  (decltype(view_vec_out)::value_t)new_value :  (decltype(view_vec_out)::value_t)value;\n"
 	);
 	
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
-	DVInt32 dvdelta((int)begin_out - (int)begin_in);
-	const DeviceViewable* args[] = { &vec_in, &vec_out, &pred, &new_value, &dvdelta };
-	return s_for.launch(ctx, begin_in, end_in, args);
+	DVSizeT dvbegin_in(begin_in);
+	DVSizeT dvbegin_out(begin_out);
+	const DeviceViewable* args[] = { &vec_in, &vec_out, &pred, &new_value, &dvbegin_in, &dvbegin_out };
+	return s_for.launch_n(ctx, end_in - begin_in, args);
 }
