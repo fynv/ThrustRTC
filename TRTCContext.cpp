@@ -343,76 +343,73 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<AssignedParam>& arg_map,
 
 	int64_t hash = s_get_hash(saxpy.c_str());
 	KernelId_t kid = (KernelId_t)(-1);
-	do
+
 	{
+		decltype(m_kernel_id_map)::iterator it = m_kernel_id_map.find(hash);
+		if (it != m_kernel_id_map.end())
 		{
-			decltype(m_kernel_id_map)::iterator it = m_kernel_id_map.find(hash);
-			if (it != m_kernel_id_map.end())
+			kid = it->second;
+			return kid;
+		}
+	}
+
+	std::vector<char> ptx;
+	{
+		int compute_cap = s_get_compute_capability();
+
+		/// Try finding an existing ptx in cache
+		if (s_ptx_cache_path != nullptr)
+		{
+			char fn[2048];
+			sprintf(fn, "%s/%016llx_%d.ptx", s_ptx_cache_path, hash, compute_cap);
+			FILE* fp = fopen(fn, "rb");
+			if (fp)
 			{
-				kid = it->second;
-				break;
+				fseek(fp, 0, SEEK_END);
+				size_t ptx_size = (size_t)ftell(fp) + 1;
+				fseek(fp, 0, SEEK_SET);
+				ptx.resize(ptx_size);
+				fread(ptx.data(), 1, ptx_size - 1, fp);
+				fclose(fp);
+				ptx[ptx_size - 1] = 0;
 			}
 		}
-
-		std::vector<char> ptx;
+		if (ptx.size() < 1)
 		{
-			int compute_cap = s_get_compute_capability();
+			size_t ptx_size;
+			if (!_src_to_ptx(saxpy.c_str(), ptx, ptx_size)) return kid;
 
-			/// Try finding an existing ptx in cache
 			if (s_ptx_cache_path != nullptr)
 			{
 				char fn[2048];
 				sprintf(fn, "%s/%016llx_%d.ptx", s_ptx_cache_path, hash, compute_cap);
-				FILE* fp = fopen(fn, "rb");
+				FILE* fp = fopen(fn, "wb");
 				if (fp)
 				{
-					fseek(fp, 0, SEEK_END);
-					size_t ptx_size = (size_t)ftell(fp) + 1;
-					fseek(fp, 0, SEEK_SET);
-					ptx.resize(ptx_size);
-					fread(ptx.data(), 1, ptx_size - 1, fp);
+					fwrite(ptx.data(), 1, ptx_size - 1, fp);
 					fclose(fp);
-					ptx[ptx_size - 1] = 0;
 				}
 			}
-			if (ptx.size() < 1)
-			{
-				size_t ptx_size;
-				if (!_src_to_ptx(saxpy.c_str(), ptx, ptx_size)) break;
-
-				if (s_ptx_cache_path != nullptr)
-				{
-					char fn[2048];
-					sprintf(fn, "%s/%016llx_%d.ptx", s_ptx_cache_path, hash, compute_cap);
-					FILE* fp = fopen(fn, "wb");
-					if (fp)
-					{
-						fwrite(ptx.data(), 1, ptx_size - 1, fp);
-						fclose(fp);
-					}
-				}
-			}
-
 		}
+	}
 
-		Kernel* kernel = new Kernel;
+	Kernel* kernel = new Kernel;
 
-		{
-			cuModuleLoadDataEx(&kernel->module, ptx.data(), 0, 0, 0);
-			cuModuleGetFunction(&kernel->func, kernel->module, "saxpy");
-		}
-		for (size_t i = 0; i < m_constants.size(); i++)
-		{
-			CUdeviceptr dptr;
-			size_t size;
-			cuModuleGetGlobal(&dptr, &size, kernel->module, m_constants[i].first.c_str());
-			if (size > m_constants[i].second.size()) size = m_constants[i].second.size();
-			cuMemcpyHtoD(dptr, m_constants[i].second.data(), size);
-		}
-		m_kernel_cache.push_back(kernel);
-		kid = (unsigned)m_kernel_cache.size() - 1;
-		m_kernel_id_map[hash] = kid;
-	} while (false);
+	{
+		cuModuleLoadDataEx(&kernel->module, ptx.data(), 0, 0, 0);
+		cuModuleGetFunction(&kernel->func, kernel->module, "saxpy");
+	}
+	for (size_t i = 0; i < m_constants.size(); i++)
+	{
+		CUdeviceptr dptr;
+		size_t size;
+		cuModuleGetGlobal(&dptr, &size, kernel->module, m_constants[i].first.c_str());
+		if (size > m_constants[i].second.size()) size = m_constants[i].second.size();
+		cuMemcpyHtoD(dptr, m_constants[i].second.data(), size);
+	}
+	m_kernel_cache.push_back(kernel);
+	kid = (unsigned)m_kernel_cache.size() - 1;
+	m_kernel_id_map[hash] = kid;
 	return kid;
 }
 
