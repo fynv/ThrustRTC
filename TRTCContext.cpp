@@ -442,7 +442,7 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 }
 
 
-bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& _arg_map, const char* name_iter, const char* _body, unsigned sharedMemBytes)
+bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& _arg_map, const char* name_iter, const char* _body)
 {
 	DVSizeT dvbegin(begin), dvend(end);
 	std::vector<TRTCContext::AssignedParam> arg_map = _arg_map;
@@ -453,7 +453,7 @@ bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<TRTCCon
 		"    if (" + name_iter + ">=_end) return; \n" + _body;
 
 	unsigned num_blocks = (unsigned)((end - begin + 127) / 128);
-	return launch_kernel({ num_blocks, 1, 1 }, { 128, 1, 1 }, arg_map, body.c_str(), sharedMemBytes);
+	return launch_kernel({ num_blocks, 1, 1 }, { 128, 1, 1 }, arg_map, body.c_str());
 }
 
 
@@ -536,7 +536,7 @@ m_param_names(param_names.size()), m_name_iter(name_iter), m_code_body(code_body
 		m_param_names[i] = param_names[i];
 }
 
-bool TRTC_For::launch(TRTCContext& ctx, size_t begin, size_t end, const DeviceViewable** args, unsigned sharedMemBytes)
+bool TRTC_For::launch(TRTCContext& ctx, size_t begin, size_t end, const DeviceViewable** args)
 {
 	std::vector<TRTCContext::AssignedParam> arg_map(m_param_names.size());
 	for (size_t i = 0; i < m_param_names.size(); i++)
@@ -544,5 +544,5 @@ bool TRTC_For::launch(TRTCContext& ctx, size_t begin, size_t end, const DeviceVi
 		arg_map[i].param_name = m_param_names[i].c_str();
 		arg_map[i].arg = args[i];
 	}
-	return ctx.launch_for(begin, end, arg_map, m_name_iter.c_str(), m_code_body.c_str(), sharedMemBytes);
+	return ctx.launch_for(begin, end, arg_map, m_name_iter.c_str(), m_code_body.c_str());
 }

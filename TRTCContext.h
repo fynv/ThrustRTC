@@ -38,7 +38,7 @@ public:
 	};
 
 	bool launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes = 0);
-	bool launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& arg_map, const char* name_iter, const char* code_body, unsigned sharedMemBytes = 0);
+	bool launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& arg_map, const char* name_iter, const char* code_body);
 	
 	void add_include_dir(const char* path);
 	void add_built_in_header(const char* name, const char* content);
@@ -93,7 +93,7 @@ public:
 	size_t num_params() const { return m_param_names.size(); }
 
 	TRTC_For(const std::vector<const char*>& param_names, const char* name_iter, const char* code_body);
-	bool launch(TRTCContext& ctx, size_t begin, size_t end, const DeviceViewable** args, unsigned sharedMemBytes = 0);
+	bool launch(TRTCContext& ctx, size_t begin, size_t end, const DeviceViewable** args);
 
 private:
 	std::vector<std::string> m_param_names;

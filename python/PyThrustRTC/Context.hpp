@@ -139,9 +139,8 @@ static PyObject* n_context_launch_for(PyObject* self, PyObject* args)
 
 	const char* name_iter = PyUnicode_AsUTF8(PyTuple_GetItem(args, 4));
 	const char* code_body = PyUnicode_AsUTF8(PyTuple_GetItem(args, 5));
-	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 6));
 
-	bool res =  ctx->launch_for(begin, end, arg_map, name_iter, code_body, sharedMemBytes);
+	bool res =  ctx->launch_for(begin, end, arg_map, name_iter, code_body);
 
 	return PyBool_FromLong(res ? 1 : 0);
 }
@@ -316,7 +315,6 @@ static PyObject* n_for_launch(PyObject* self, PyObject* args)
 			Py_RETURN_NONE;
 		}
 	}
-	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 5));
-	bool res = cptr->launch(*ctx, begin, end, params.data(), sharedMemBytes);
+	bool res = cptr->launch(*ctx, begin, end, params.data());
 	return PyBool_FromLong(res ? 1 : 0);
 }
