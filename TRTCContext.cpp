@@ -3,11 +3,13 @@
 #include <string.h>
 #include <stdio.h>
 #include "nvtrc_wrapper.h"
+#include "launch_calc.h"
 #include "TRTCContext.h"
-#include "Timing.h"
 #include "crc64.h"
 #include "cuda_inline_headers.hpp"
 #include "cuda_inline_headers_global.hpp"
+
+static int s_max_gflops_device = 0;
 
 static bool s_cuda_init(int& cap)
 {
@@ -18,7 +20,6 @@ static bool s_cuda_init(int& cap)
 	}
 	cuInit(0);
 
-	int max_gflops_device = 0;
 	int max_gflops = 0;
 
 	int device_count;
@@ -42,13 +43,13 @@ static bool s_cuda_init(int& cap)
 			if (gflops > max_gflops)
 			{
 				max_gflops = gflops;
-				max_gflops_device = current_device;
+				s_max_gflops_device = current_device;
 				cap = major;
 			}
 		}
 	}
 	CUdevice cuDevice;
-	cuDeviceGet(&cuDevice, max_gflops_device);
+	cuDeviceGet(&cuDevice, s_max_gflops_device);
 	CUcontext cuContext;
 	cuCtxCreate(&cuContext, 0, cuDevice);
 	return true;
@@ -94,6 +95,8 @@ struct TRTCContext::Kernel
 {
 	CUmodule module;
 	CUfunction func;
+	unsigned sharedMemBytes_cached = -1;
+	int sizeBlock = -1;
 };
 
 
@@ -297,7 +300,7 @@ size_t TRTCContext::size_of(const char* cls)
 	return size;
 }
 
-bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes)
+KernelId_t TRTCContext::_build_kernel(const std::vector<AssignedParam>& arg_map, const char* code_body)
 {
 	std::string saxpy;
 	for (size_t i = 0; i < m_code_blocks.size(); i++)
@@ -338,7 +341,6 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 	}
 
 	int64_t hash = s_get_hash(saxpy.c_str());
-
 	KernelId_t kid = (KernelId_t)(-1);
 	do
 	{
@@ -353,9 +355,6 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 
 		std::vector<char> ptx;
 		{
-#ifdef TIMING
-			double t1 = GetTime();
-#endif
 			int compute_cap = s_get_compute_capability();
 
 			/// Try finding an existing ptx in cache
@@ -393,24 +392,13 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 				}
 			}
 
-#ifdef TIMING
-			double t2 = GetTime();
-			printf("Compile Time: %f\n", t2 - t1);
-#endif
 		}
 
 		Kernel* kernel = new Kernel;
 
 		{
-#ifdef TIMING
-			double t1 = GetTime();
-#endif
 			cuModuleLoadDataEx(&kernel->module, ptx.data(), 0, 0, 0);
 			cuModuleGetFunction(&kernel->func, kernel->module, "saxpy");
-#ifdef TIMING
-			double t2 = GetTime();
-			printf("Load Time: %f\n", t2 - t1);
-#endif
 		}
 		for (size_t i = 0; i < m_constants.size(); i++)
 		{
@@ -424,10 +412,23 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 		kid = (unsigned)m_kernel_cache.size() - 1;
 		m_kernel_id_map[hash] = kid;
 	} while (false);
+	return kid;
+}
 
-	if (kid == (KernelId_t)(-1)) return false;
-
+int TRTCContext::_launch_calc(KernelId_t kid, unsigned sharedMemBytes)
+{
 	Kernel *kernel = m_kernel_cache[kid];
+	if (sharedMemBytes == kernel->sharedMemBytes_cached)
+		return kernel->sizeBlock;
+	launch_calc(s_max_gflops_device, kernel->func, sharedMemBytes, kernel->sizeBlock);
+	kernel->sharedMemBytes_cached = sharedMemBytes;
+	return kernel->sizeBlock;
+}
+
+bool TRTCContext::_launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, unsigned sharedMemBytes)
+{
+	Kernel *kernel = m_kernel_cache[kid];
+	size_t num_params = arg_map.size();
 	std::vector<ViewBuf> argbufs(num_params);
 	std::vector<void*> converted_args(num_params);
 
@@ -436,11 +437,25 @@ bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::
 		argbufs[i] = arg_map[i].arg->view();
 		converted_args[i] = argbufs[i].data();
 	}
-	CUresult res= cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
+	CUresult res = cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
 
 	return res == CUDA_SUCCESS;
 }
 
+bool TRTCContext::calc_optimal_block_size(const std::vector<AssignedParam>& arg_map, const char* code_body, int& sizeBlock, unsigned sharedMemBytes)
+{
+	KernelId_t kid = _build_kernel(arg_map, code_body);
+	if (kid == (KernelId_t)(-1)) return false;
+	sizeBlock = _launch_calc(kid, sharedMemBytes);
+	return true;
+}
+
+bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes)
+{
+	KernelId_t kid = _build_kernel(arg_map, code_body);
+	if (kid == (KernelId_t)(-1)) return false;
+	return _launch_kernel(kid, gridDim, blockDim, arg_map, sharedMemBytes);
+}
 
 bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& _arg_map, const char* name_iter, const char* _body)
 {
@@ -452,8 +467,11 @@ bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<TRTCCon
 	std::string body = std::string("    size_t ") + name_iter + " = threadIdx.x + blockIdx.x*blockDim.x + _begin;\n"
 		"    if (" + name_iter + ">=_end) return; \n" + _body;
 
-	unsigned num_blocks = (unsigned)((end - begin + 127) / 128);
-	return launch_kernel({ num_blocks, 1, 1 }, { 128, 1, 1 }, arg_map, body.c_str());
+	KernelId_t kid = _build_kernel(arg_map, body.c_str());
+	if (kid == (KernelId_t)(-1)) return false;
+	unsigned sizeBlock = (unsigned)_launch_calc(kid, 0);
+	unsigned numBlocks = (unsigned)((end - begin + sizeBlock - 1) / sizeBlock);
+	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
 }
 
 
@@ -516,6 +534,17 @@ m_param_names(param_names.size()), m_code_body(code_body)
 {
 	for (size_t i = 0; i < param_names.size(); i++)
 		m_param_names[i] = param_names[i];
+}
+
+bool TRTC_Kernel::calc_optimal_block_size(TRTCContext& ctx, const DeviceViewable** args, int& sizeBlock, unsigned sharedMemBytes)
+{
+	std::vector<TRTCContext::AssignedParam> arg_map(m_param_names.size());
+	for (size_t i = 0; i < m_param_names.size(); i++)
+	{
+		arg_map[i].param_name = m_param_names[i].c_str();
+		arg_map[i].arg = args[i];
+	}
+	return ctx.calc_optimal_block_size(arg_map, m_code_body.c_str(), sizeBlock, sharedMemBytes);
 }
 
 bool TRTC_Kernel::launch(TRTCContext& ctx, dim_type gridDim, dim_type blockDim, const DeviceViewable** args, unsigned sharedMemBytes)

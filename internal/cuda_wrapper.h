@@ -120,6 +120,13 @@ typedef enum CUdevice_attribute_enum {
 	CU_DEVICE_ATTRIBUTE_MAX
 } CUdevice_attribute;
 
+typedef enum CUfunc_cache_enum {
+	CU_FUNC_CACHE_PREFER_NONE = 0x00, /**< no preference for shared memory or L1 (default) */
+	CU_FUNC_CACHE_PREFER_SHARED = 0x01, /**< prefer larger shared memory and smaller L1 cache */
+	CU_FUNC_CACHE_PREFER_L1 = 0x02, /**< prefer larger L1 cache and smaller shared memory */
+	CU_FUNC_CACHE_PREFER_EQUAL = 0x03  /**< prefer equal sized L1 cache and shared memory */
+} CUfunc_cache;
+
 typedef enum CUjit_option_enum
 {
 	CU_JIT_MAX_REGISTERS = 0,
@@ -145,6 +152,19 @@ typedef enum CUjit_option_enum
 	CU_JIT_NUM_OPTIONS
 } CUjit_option;
 
+typedef enum CUfunction_attribute_enum {
+	CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK = 0,
+	CU_FUNC_ATTRIBUTE_SHARED_SIZE_BYTES = 1,
+	CU_FUNC_ATTRIBUTE_CONST_SIZE_BYTES = 2,
+	CU_FUNC_ATTRIBUTE_LOCAL_SIZE_BYTES = 3,
+	CU_FUNC_ATTRIBUTE_NUM_REGS = 4,
+	CU_FUNC_ATTRIBUTE_PTX_VERSION = 5,
+	CU_FUNC_ATTRIBUTE_BINARY_VERSION = 6,
+	CU_FUNC_ATTRIBUTE_CACHE_MODE_CA = 7,
+	CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES = 8,
+	CU_FUNC_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT = 9,
+	CU_FUNC_ATTRIBUTE_MAX
+} CUfunction_attribute;
 
 typedef enum cudaError_enum {
 	CUDA_SUCCESS = 0,
@@ -228,10 +248,12 @@ extern CUresult (*cuDeviceGetCount)(int *count);
 extern CUresult (*cuDeviceGet)(CUdevice *device, int ordinal);
 extern CUresult (*cuDeviceGetAttribute)(int *pi, CUdevice_attribute attrib, CUdevice dev);
 extern CUresult (*cuCtxCreate)(CUcontext *pctx, unsigned int flags, CUdevice dev);
+extern CUresult (*cuCtxGetCacheConfig)(CUfunc_cache *pconfig);
 extern CUresult (*cuModuleLoadDataEx)(CUmodule *module, const void *image, unsigned int numOptions, CUjit_option *options, void **optionValues);
 extern CUresult (*cuModuleUnload)(CUmodule hmod);
 extern CUresult (*cuModuleGetGlobal)(CUdeviceptr *dptr, size_t *bytes, CUmodule hmod, const char *name);
 extern CUresult (*cuModuleGetFunction)(CUfunction *hfunc, CUmodule hmod, const char *name);
+extern CUresult (*cuFuncGetAttribute)(int *pi, CUfunction_attribute attrib, CUfunction hfunc);
 extern CUresult (*cuMemAlloc)(CUdeviceptr *dptr, size_t bytesize);
 extern CUresult (*cuMemFree)(CUdeviceptr dptr);
 extern CUresult (*cuMemsetD8)(CUdeviceptr dstDevice, unsigned char uc, size_t N);

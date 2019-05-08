@@ -25,6 +25,13 @@ class Context:
     def add_constant_object(self, name, dv):
         native.n_context_add_constant_object(self.m_cptr, name, dv.m_cptr)
 
+    def calc_optimal_block_size(self, arg_map, code_body, sharedMemBytes=0):
+        return native.n_context_calc_optimal_block_size(
+            self.m_cptr,
+            [ (param_name, arg.m_cptr) for param_name, arg in arg_map.items()], 
+            code_body, 
+            sharedMemBytes)
+
     def launch_kernel(self, gridDim, blockDim, arg_map, code_body, sharedMemBytes=0):
         native.n_context_launch_kernel(
             self.m_cptr, 
@@ -53,8 +60,21 @@ class Kernel:
     def num_params(self):
         return native.n_kernel_num_params(self.m_cptr)
 
+    def calc_optimal_block_size(self, ctx, args, sharedMemBytes=0):
+        return native.n_kernel_calc_optimal_block_size(
+            ctx.m_cptr,
+            self.m_cptr, 
+            [item.m_cptr for item in args], 
+            sharedMemBytes)
+
     def launch(self, ctx, gridDim, blockDim, args, sharedMemBytes=0):
-        native.n_kernel_launch(ctx.m_cptr, self.m_cptr, gridDim, blockDim, [item.m_cptr for item in args], sharedMemBytes)
+        native.n_kernel_launch(
+            ctx.m_cptr, 
+            self.m_cptr, 
+            gridDim, 
+            blockDim, 
+            [item.m_cptr for item in args], 
+            sharedMemBytes)
 
 class For:
     def __init__(self, param_descs, name_iter, body):
