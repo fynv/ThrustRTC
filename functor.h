@@ -14,7 +14,7 @@ public:
 private:
 	std::string m_name_view_cls;
 	std::vector<ViewBuf> m_view_args;
-	size_t m_size_view;
+	std::vector<size_t> m_offsets;
 };
 
 #endif

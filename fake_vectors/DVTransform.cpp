@@ -8,6 +8,7 @@ DVTransform::DVTransform(TRTCContext& ctx, const DVVectorLike& vec_in, const cha
 	m_name_view_cls = std::string("TransformView<") + elem_cls + "," + vec_in.name_view_cls() + "," + op.name_view_cls() + ">";
 	m_view_in = vec_in.view();
 	m_view_op = op.view();
+	ctx.query_struct(m_name_view_cls.c_str(), { "_view_vec_in", "_view_op" }, m_offsets);
 }
 
 std::string DVTransform::name_view_cls() const
@@ -17,9 +18,8 @@ std::string DVTransform::name_view_cls() const
 
 ViewBuf DVTransform::view() const
 {
-	size_t total = m_view_in.size() + m_view_op.size();
-	ViewBuf buf(total);
-	memcpy(buf.data(), m_view_in.data(), m_view_in.size());
-	memcpy(buf.data() + m_view_in.size(), m_view_op.data(), m_view_op.size());
+	ViewBuf buf(m_offsets[2]);
+	memcpy(buf.data() + m_offsets[0], m_view_in.data(), m_view_in.size());
+	memcpy(buf.data() + m_offsets[1], m_view_op.data(), m_view_op.size());
 	return buf;
 }

@@ -3,13 +3,12 @@
 
 #include "DVVector.h"
 
-#pragma pack(1)
 template<class _T>
 struct CounterView
 {
 	typedef _T value_t;
-	value_t _value_init;
 	size_t _size;
+	value_t _value_init;
 
 #ifdef DEVICE_ONLY
 	__device__ size_t size() const
@@ -37,6 +36,7 @@ public:
 
 private:
 	ViewBuf m_value_init;
+	size_t m_offsets[3];
 };
 
 #endif 

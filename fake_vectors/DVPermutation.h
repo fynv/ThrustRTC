@@ -3,7 +3,6 @@
 
 #include "DVVector.h"
 
-#pragma pack(1)
 template<class _TVVALUE, class _TVINDEX>
 struct PermutationView
 {
@@ -44,6 +43,8 @@ private:
 	ViewBuf m_view_value;
 	std::string m_cls_index;
 	ViewBuf m_view_index;
+
+	size_t m_offsets[3];
 };
 
 #endif 

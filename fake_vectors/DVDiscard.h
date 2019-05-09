@@ -14,7 +14,6 @@ struct _Sink
 #endif
 };
 
-#pragma pack(1)
 template<class _T>
 struct DiscardView
 {

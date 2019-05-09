@@ -29,7 +29,9 @@ public:
 
 	void set_verbose(bool verbose = true);
 
-	size_t size_of(const char* cls); // reflect the size of the class in the current context
+	// reflection 
+	size_t size_of(const char* cls);
+	bool query_struct(const char* name_struct, const std::vector<const char*>& name_members, size_t* offsets);
 
 	struct AssignedParam
 	{
@@ -70,6 +72,7 @@ private:
 	std::unordered_set<int64_t> m_known_structs;
 
 	std::unordered_map<std::string, size_t> m_size_of_types;
+	std::unordered_map<std::string, std::vector<size_t>> m_offsets_of_structs;
 
 	struct Kernel;
 	std::vector<Kernel*> m_kernel_cache;

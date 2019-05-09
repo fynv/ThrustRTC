@@ -3,7 +3,6 @@
 
 #include "DVVector.h"
 
-#pragma pack(1)
 template<class _TVVALUE>
 struct ReverseView
 {
@@ -37,6 +36,7 @@ public:
 	virtual ViewBuf view() const;
 
 private:
+	std::string m_name_view_cls;
 	std::string m_cls_value;
 	ViewBuf m_view_value;
 };

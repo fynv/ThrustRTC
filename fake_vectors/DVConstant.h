@@ -3,13 +3,13 @@
 
 #include "DVVector.h"
 
-#pragma pack(1)
 template<class _T>
 struct ConstantView
 {
 	typedef _T value_t;
-	value_t _value;
+
 	size_t _size;
+	value_t _value;
 
 #ifdef DEVICE_ONLY
 	__device__ size_t size() const
@@ -37,6 +37,7 @@ public:
 
 private:
 	ViewBuf m_value;
+	size_t m_offsets[3];
 };
 
 #endif 

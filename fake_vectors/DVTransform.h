@@ -3,7 +3,6 @@
 
 #include "DVVector.h"
 
-#pragma pack(1)
 template<class _T, class _T_VIN, class _T_OP>
 struct TransformView
 {
@@ -39,6 +38,7 @@ private:
 	std::string m_name_view_cls;
 	ViewBuf m_view_in;
 	ViewBuf m_view_op;
+	size_t m_offsets[3];
 };
 
 #endif 
