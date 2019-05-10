@@ -86,10 +86,10 @@ void TRTCContext::set_ptx_cache(const char* path)
 	s_ptx_cache_path = _ptx_cache_path.c_str();
 }
 
-static inline uint64_t s_get_hash(const char* source_code)
+static inline unsigned long long s_get_hash(const char* source_code)
 {
 	uint64_t len = (uint64_t)strlen(source_code);
-	return crc64(0, (unsigned char*)source_code, len);
+	return (unsigned long long)crc64(0, (unsigned char*)source_code, len);
 }
 
 struct TRTCContext::Kernel
@@ -253,7 +253,7 @@ size_t TRTCContext::size_of(const char* cls)
 	}
 
 	int compute_cap = s_get_compute_capability();
-	uint64_t hash;
+	unsigned long long hash;
 
 	size_t size=(size_t)(-1);
 
@@ -303,6 +303,19 @@ size_t TRTCContext::size_of(const char* cls)
 
 bool TRTCContext::query_struct(const char* name_struct, const std::vector<const char*>& name_members, size_t* offsets)
 {
+	// handle simple cases
+	if (name_members.size() == 0)
+	{
+		offsets[0] = 1;
+		return true;
+	}
+	else if (name_members.size() == 1)
+	{
+		offsets[0] = 0;
+		offsets[1] = size_of(name_struct);
+		return offsets[1] != (size_t)(-1);
+	}
+
 	// try to find in the context cache first
 	decltype(m_offsets_of_structs)::iterator it = m_offsets_of_structs.find(name_struct);
 	if (it != m_offsets_of_structs.end())
@@ -319,19 +332,17 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 		saxpy += m_code_blocks[i];
 	saxpy += std::string("#include \"") + m_name_header_of_structs + "\"\n";
 	saxpy += std::string("__device__ ") + name_struct + " _test;\n";
-	saxpy += "\n";
-	saxpy += "extern \"C\" __global__\n";
-	saxpy += "void saxpy(size_t* d_res)\n{\n";
+
+	char line[1024];
+	sprintf(line, "__device__ size_t _res[%u] = {", (unsigned)name_members.size()+1);
+	saxpy += line;
+
 	for (size_t i = 0; i < name_members.size(); i++)
 	{
-		char line[1024];
-		sprintf(line, "    d_res[%d] = (char*)&_test.%s - (char*)&_test;\n", (int)i, name_members[i]);
+		sprintf(line, "(char*)&_test.%s - (char*)&_test, ", name_members[i]);
 		saxpy += line;
 	}
-	char line[1024];
-	sprintf(line, "    d_res[%d] = sizeof(_test);\n", (int)name_members.size());
-	saxpy += line;
-	saxpy += "}\n";
+	saxpy += "sizeof(_test)};\n";
 
 	if (m_verbose)
 	{
@@ -340,7 +351,7 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 	}
 
 	int compute_cap = s_get_compute_capability();
-	uint64_t hash;
+	unsigned long long hash;
 
 	bool loaded = false;
 
@@ -365,25 +376,13 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 		size_t ptx_size;
 		if (!_src_to_ptx(saxpy.data(), ptx, ptx_size)) return false;
 
-		size_t* d_res;
-		cuMemAlloc((CUdeviceptr*)&d_res, sizeof(size_t)* res.size());
-
 		CUmodule module;
 		cuModuleLoadDataEx(&module, ptx.data(), 0, 0, 0);
-		CUfunction func;
-		cuModuleGetFunction(&func, module, "saxpy");
-
-		void* params[1] = { &d_res };
-		CUresult suc = cuLaunchKernel(func, 1, 1, 1, 1, 1, 1, 0, 0, params, 0);
-		if (suc != CUDA_SUCCESS)
-		{
-			cuModuleUnload(module);
-			cuMemFree((CUdeviceptr)d_res);
-			return false;
-		}
+		size_t size_res;
+		CUdeviceptr dptr_res;
+		cuModuleGetGlobal(&dptr_res, &size_res, module, "_res");
+		cuMemcpyDtoH(res.data(), dptr_res, size_res);
 		cuModuleUnload(module);
-		cuMemcpyDtoH(res.data(), (CUdeviceptr)d_res, sizeof(size_t)* res.size());
-		cuMemFree((CUdeviceptr)d_res);
 
 		if (s_ptx_cache_path != nullptr)
 		{
@@ -444,7 +443,7 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<AssignedParam>& arg_map,
 		print_code("saxpy.cu", saxpy.c_str());
 	}
 
-	int64_t hash = s_get_hash(saxpy.c_str());
+	unsigned long long hash = s_get_hash(saxpy.c_str());
 	KernelId_t kid = (KernelId_t)(-1);
 
 	{
@@ -623,7 +622,7 @@ void TRTCContext::add_constant_object(const char* name, const DeviceViewable& ob
 
 std::string TRTCContext::add_struct(const char* struct_body)
 {
-	int64_t hash = s_get_hash(struct_body);
+	unsigned long long hash = s_get_hash(struct_body);
 	decltype(m_known_structs)::iterator it = m_known_structs.find(hash);
 
 	char name[32];
