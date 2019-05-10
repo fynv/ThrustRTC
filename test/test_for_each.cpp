@@ -5,7 +5,6 @@
 
 int main()
 {
-	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
 	Functor printf_functor = {ctx, {}, { "x" }, "        printf(\"%d\\n\", x);\n" };

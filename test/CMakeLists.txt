@@ -121,5 +121,3 @@ test_reverse
 test_transform_iter
 
 RUNTIME DESTINATION test_cpp)
-
-install(DIRECTORY DESTINATION test_cpp/__ptx_cache__)

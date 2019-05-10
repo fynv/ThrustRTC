@@ -8,13 +8,6 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 	return PyLong_FromLong(0);
 }
 
-static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
-{
-	const char* path = PyUnicode_AsUTF8(PyTuple_GetItem(args, 0));
-	TRTCContext::set_ptx_cache(path);
-	return PyLong_FromLong(0);
-}
-
 #include "Context.hpp"
 #include "DeviceViewable.hpp"
 #include "DVVector.hpp"
@@ -47,7 +40,6 @@ static PyObject* n_set_ptx_cache(PyObject* self, PyObject* args)
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
-	{ "n_set_ptx_cache", n_set_ptx_cache, METH_VARARGS, "" },
 	{ "n_context_create", n_context_create, METH_VARARGS, "" },
 	{ "n_context_destroy", n_context_destroy, METH_VARARGS, "" },
 	{ "n_context_set_verbose", n_context_set_verbose, METH_VARARGS, "" },

@@ -5,7 +5,6 @@
 
 int main()
 {
-	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
 	Functor is_less_than_zero = { ctx, {}, { "x" }, "        return x<0;\n" };

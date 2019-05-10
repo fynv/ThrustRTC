@@ -5,7 +5,6 @@
 
 int main()
 {
-	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
 	int harr1[8] = { 10, 20, 30, 40, 50, 60, 70, 80 };

@@ -1,6 +1,5 @@
 import ThrustRTC as trtc
 
-trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
 darr1 = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 5.0], 'float')

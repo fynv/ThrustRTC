@@ -25,7 +25,6 @@ public:
 	~TRTCContext();
 
 	static void set_libnvrtc_path(const char* path);
-	static void set_ptx_cache(const char* path);
 
 	void set_verbose(bool verbose = true);
 
@@ -58,7 +57,6 @@ private:
 	bool _launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, unsigned sharedMemBytes);
 
 	static const char* s_libnvrtc_path;
-	static const char* s_ptx_cache_path;
 
 	bool m_verbose;
 	std::vector<std::string> m_include_dirs;

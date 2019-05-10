@@ -4,7 +4,6 @@
 
 int main()
 {
-	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
 	TRTC_For f({ "arr_in", "arr_out", "k" }, "idx",

@@ -2,6 +2,7 @@
 #include <string>
 #include <string.h>
 #include <stdio.h>
+#include <unqlite.h>
 #include "nvtrc_wrapper.h"
 #include "launch_calc.h"
 #include "crc64.h"
@@ -10,6 +11,7 @@
 #include "cuda_inline_headers.hpp"
 #include "cuda_inline_headers_global.hpp"
 
+static char s_name_db[] = "__ptx_cache__.db";
 static int s_max_gflops_device = 0;
 
 static bool s_cuda_init(int& cap)
@@ -72,18 +74,11 @@ static int s_get_compute_capability()
 }
 
 const char* TRTCContext::s_libnvrtc_path = nullptr;
-const char* TRTCContext::s_ptx_cache_path = nullptr;
 
 void TRTCContext::set_libnvrtc_path(const char* path)
 {
 	static std::string _libnvrtc_path = path;
 	s_libnvrtc_path = _libnvrtc_path.c_str();
-}
-
-void TRTCContext::set_ptx_cache(const char* path)
-{
-	static std::string _ptx_cache_path = path;
-	s_ptx_cache_path = _ptx_cache_path.c_str();
 }
 
 static inline unsigned long long s_get_hash(const char* source_code)
@@ -258,16 +253,16 @@ size_t TRTCContext::size_of(const char* cls)
 	size_t size=(size_t)(-1);
 
 	/// Try finding an existing ptx in disk cache
-	if (s_ptx_cache_path != nullptr)
 	{
 		hash = s_get_hash(saxpy.c_str());
-		char fn[2048];
-		sprintf(fn, "%s/%016llx_%d.size", s_ptx_cache_path, hash, compute_cap);
-		FILE* fp = fopen(fn, "rb");
-		if (fp)
+		char key[64];
+		sprintf(key, "%016llx_%d", hash, compute_cap);
+		unqlite *pDb;
+		if (UNQLITE_OK == unqlite_open(&pDb, s_name_db, UNQLITE_OPEN_CREATE))
 		{
-			fread(&size, 1, sizeof(size_t), fp);
-			fclose(fp);
+			unqlite_int64 nBytes = sizeof(size_t);
+			unqlite_kv_fetch(pDb, key, -1, &size, &nBytes);
+			unqlite_close(pDb);
 		}
 	}
 
@@ -282,15 +277,14 @@ size_t TRTCContext::size_of(const char* cls)
 		cuModuleGetGlobal(&dptr, &size, module, "_test");
 		cuModuleUnload(module);
 
-		if (s_ptx_cache_path != nullptr)
 		{
-			char fn[2048];
-			sprintf(fn, "%s/%016llx_%d.size", s_ptx_cache_path, hash, compute_cap);
-			FILE* fp = fopen(fn, "wb");
-			if (fp)
+			char key[64];
+			sprintf(key, "%016llx_%d", hash, compute_cap);
+			unqlite *pDb;
+			if (UNQLITE_OK == unqlite_open(&pDb, s_name_db, UNQLITE_OPEN_CREATE))
 			{
-				fwrite(&size, 1, sizeof(size_t), fp);
-				fclose(fp);
+				unqlite_kv_store(pDb, key, -1, &size, sizeof(size_t));
+				unqlite_close(pDb);
 			}
 		}
 	}
@@ -356,17 +350,17 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 	bool loaded = false;
 
 	/// Try finding an existing ptx in disk cache
-	if (s_ptx_cache_path != nullptr)
 	{
 		hash = s_get_hash(saxpy.c_str());
-		char fn[2048];
-		sprintf(fn, "%s/%016llx_%d.offsets", s_ptx_cache_path, hash, compute_cap);
-		FILE* fp = fopen(fn, "rb");
-		if (fp)
+		char key[64];
+		sprintf(key, "%016llx_%d", hash, compute_cap);
+		unqlite *pDb;
+		if (UNQLITE_OK == unqlite_open(&pDb, s_name_db, UNQLITE_OPEN_CREATE))
 		{
-			fread(res.data(), res.size(), sizeof(size_t), fp);
-			fclose(fp);
-			loaded = true;
+			unqlite_int64 nBytes = res.size() * sizeof(size_t);
+			if (UNQLITE_OK == unqlite_kv_fetch(pDb, key, -1, res.data(), &nBytes))
+				loaded = true;
+			unqlite_close(pDb);
 		}
 	}
 
@@ -384,15 +378,14 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 		cuMemcpyDtoH(res.data(), dptr_res, size_res);
 		cuModuleUnload(module);
 
-		if (s_ptx_cache_path != nullptr)
 		{
-			char fn[2048];
-			sprintf(fn, "%s/%016llx_%d.offsets", s_ptx_cache_path, hash, compute_cap);
-			FILE* fp = fopen(fn, "wb");
-			if (fp)
+			char key[64];
+			sprintf(key, "%016llx_%d", hash, compute_cap);
+			unqlite *pDb;
+			if (UNQLITE_OK == unqlite_open(&pDb, s_name_db, UNQLITE_OPEN_CREATE))
 			{
-				fwrite(res.data(), res.size(), sizeof(size_t), fp);
-				fclose(fp);
+				unqlite_kv_store(pDb, key, -1, res.data(), res.size()*sizeof(size_t));
+				unqlite_close(pDb);
 			}
 		}
 	}
@@ -460,20 +453,21 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<AssignedParam>& arg_map,
 		int compute_cap = s_get_compute_capability();
 
 		/// Try finding an existing ptx in cache
-		if (s_ptx_cache_path != nullptr)
 		{
-			char fn[2048];
-			sprintf(fn, "%s/%016llx_%d.ptx", s_ptx_cache_path, hash, compute_cap);
-			FILE* fp = fopen(fn, "rb");
-			if (fp)
+			char key[64];
+			sprintf(key, "%016llx_%d", hash, compute_cap);
+			unqlite *pDb;
+			if (UNQLITE_OK == unqlite_open(&pDb, s_name_db, UNQLITE_OPEN_CREATE))
 			{
-				fseek(fp, 0, SEEK_END);
-				size_t ptx_size = (size_t)ftell(fp) + 1;
-				fseek(fp, 0, SEEK_SET);
-				ptx.resize(ptx_size);
-				fread(ptx.data(), 1, ptx_size - 1, fp);
-				fclose(fp);
-				ptx[ptx_size - 1] = 0;
+				unqlite_int64 nBytes;
+				if (UNQLITE_OK == unqlite_kv_fetch(pDb, key, -1, NULL, &nBytes))
+				{
+					size_t ptx_size = nBytes + 1;
+					ptx.resize(ptx_size);
+					unqlite_kv_fetch(pDb, key, -1, ptx.data(), &nBytes);
+					ptx[ptx_size - 1] = 0;
+				}
+				unqlite_close(pDb);
 			}
 		}
 		if (ptx.size() < 1)
@@ -481,15 +475,14 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<AssignedParam>& arg_map,
 			size_t ptx_size;
 			if (!_src_to_ptx(saxpy.c_str(), ptx, ptx_size)) return kid;
 
-			if (s_ptx_cache_path != nullptr)
 			{
-				char fn[2048];
-				sprintf(fn, "%s/%016llx_%d.ptx", s_ptx_cache_path, hash, compute_cap);
-				FILE* fp = fopen(fn, "wb");
-				if (fp)
+				char key[64];
+				sprintf(key, "%016llx_%d", hash, compute_cap);
+				unqlite *pDb;
+				if (UNQLITE_OK == unqlite_open(&pDb, s_name_db, UNQLITE_OPEN_CREATE))
 				{
-					fwrite(ptx.data(), 1, ptx_size - 1, fp);
-					fclose(fp);
+					unqlite_kv_store(pDb, key, -1, ptx.data(), ptx_size - 1);
+					unqlite_close(pDb);
 				}
 			}
 		}

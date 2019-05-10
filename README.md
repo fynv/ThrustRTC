@@ -56,7 +56,6 @@ ThrustRTC, Python (host) + C++ (device):
 ```python
 import ThrustRTC as trtc
 
-trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
 A = trtc.device_vector_from_list(ctx, [1, -3, 2, -1], 'int32_t')

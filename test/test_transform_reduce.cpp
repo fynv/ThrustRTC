@@ -5,7 +5,6 @@
 
 int main()
 {
-	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
 	Functor absolute_value = { ctx, {},{ "x" }, "        return x<(decltype(x))0 ? -x : x;\n" };

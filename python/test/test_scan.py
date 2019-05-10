@@ -1,6 +1,5 @@
 import ThrustRTC as trtc
 
-trtc.set_ptx_cache('__ptx_cache__')
 ctx = trtc.Context()
 
 maximum = trtc.Functor( ctx, {}, ['x','y'], 

@@ -4,7 +4,6 @@
 
 int main()
 {
-	TRTCContext::set_ptx_cache("__ptx_cache__");
 	TRTCContext ctx;
 
 	// kernel with auto parameters, launched twice with different types
