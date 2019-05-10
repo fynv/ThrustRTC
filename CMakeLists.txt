@@ -9,8 +9,7 @@ SOURCES internal/pack_headers.cpp
 )
 
 set(LIB_SOURCES
-
-internal/crc64.cpp
+thirdparty/crc64/crc64.cpp
 internal/launch_calc.cpp
 internal/cuda_wrapper.cpp
 internal/nvtrc_wrapper.cpp
@@ -84,8 +83,8 @@ fake_vectors/DVTransform.h
 )
 
 set(INTERNAL_HEADERS
+thirdparty/crc64/crc64.h
 internal/Timing.h
-internal/crc64.h
 internal/launch_calc.h
 internal/cuda_wrapper.h
 internal/nvtrc_wrapper.h
