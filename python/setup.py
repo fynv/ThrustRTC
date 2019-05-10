@@ -6,7 +6,7 @@ import os
 import platform
 
 lib_dirs = ['../install/lib']
-libs = ['ThrustRTC_static']
+libs = ['ThrustRTC_static', 'unqlite']
 
 here = os.path.abspath(os.path.dirname(__file__))
 

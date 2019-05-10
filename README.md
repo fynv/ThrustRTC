@@ -76,6 +76,7 @@ All operations explicitly work on vectors types.
 
 CUDA SDK is NOT required anymore. At build time, we only need:
 
+* UnQLite source code, as submodule: thirdparty/unqlite
 * CMake 3.x
 * C libraries of Python 3 is required to build the Python binding part of the code.
 

@@ -68,7 +68,7 @@ set_target_properties(PyThrustRTC PROPERTIES SUFFIX ".so")
 set_target_properties(PyThrustRTC PROPERTIES PREFIX "")
 endif()
 
-target_link_libraries(PyThrustRTC ${PYTHON_LIBRARIES} ThrustRTC_static)
+target_link_libraries(PyThrustRTC ${PYTHON_LIBRARIES} ThrustRTC_static unqlite)
 
 
 if (WIN32) 

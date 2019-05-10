@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.0)
 
+add_subdirectory(thirdparty/unqlite)
+
 add_executable(PackHeaders internal/pack_headers.cpp)
 add_custom_target(Run_PackHeaders
 COMMAND PackHeaders
@@ -93,6 +95,8 @@ internal/general_scan.h
 )
 
 set (INCLUDE_DIR 
+./thirdparty/crc64
+./thirdparty/unqlite
 .
 ./internal
 )
@@ -117,11 +121,12 @@ SET(CMAKE_INSTALL_RPATH ../lib)
 add_library (ThrustRTC_static ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
 add_library (ThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
 
+target_link_libraries(ThrustRTC unqlite)
+
 if (WIN32) 
 else()
-target_link_libraries(ThrustRTC -ldl)
+target_link_libraries(ThrustRTC dl)
 endif()
-
 
 add_dependencies(Run_PackHeaders PackHeaders)
 add_dependencies(ThrustRTC_static Run_PackHeaders)
