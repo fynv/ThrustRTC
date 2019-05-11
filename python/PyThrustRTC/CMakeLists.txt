@@ -8,12 +8,14 @@ Context.hpp
 viewbuf_to_python.hpp
 DeviceViewable.hpp
 DVVector.hpp
+DVTuple.hpp
 DVConstant.hpp
 DVCounter.hpp
 DVDiscard.hpp
 DVPermutation.hpp
 DVReverse.hpp
 DVTransform.hpp
+DVZipped.hpp
 fill.hpp
 functor.hpp
 replace.hpp

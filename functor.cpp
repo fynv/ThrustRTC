@@ -41,8 +41,7 @@ Functor::Functor(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>
 	m_name_view_cls = ctx.add_struct(struct_body.c_str());
 
 	m_offsets.resize(arg_map.size()+1);
-	std::string name_struct = name_view_cls();
-	ctx.query_struct(name_struct.c_str(), members, m_offsets.data());
+	ctx.query_struct(m_name_view_cls.c_str(), members, m_offsets.data());
 }
 
 std::string Functor::name_view_cls() const

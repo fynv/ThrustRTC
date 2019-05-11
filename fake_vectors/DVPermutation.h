@@ -7,6 +7,7 @@ template<class _TVVALUE, class _TVINDEX>
 struct PermutationView
 {
 	typedef typename _TVVALUE::value_t value_t;
+	typedef typename _TVVALUE::ref_t ref_t;
 	_TVVALUE _view_vec_value;
 	_TVINDEX _view_vec_index;
 
@@ -16,7 +17,7 @@ struct PermutationView
 		return _view_vec_index.size();
 	}
 
-	__device__ value_t& operator [](size_t idx)
+	__device__ ref_t operator [](size_t idx)
 	{
 		return _view_vec_value[_view_vec_index[idx]];
 	}
@@ -37,6 +38,7 @@ public:
 	DVPermutation(TRTCContext& ctx, const DVVectorLike& vec_value, const DVVectorLike& vec_index );
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
+	virtual bool is_writable() const { return true; }
 
 private:
 	std::string m_cls_value;

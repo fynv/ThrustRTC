@@ -227,36 +227,16 @@ static PyObject* n_kernel_calc_optimal_block_size(PyObject* self, PyObject* args
 
 	PyObject* arg2 = PyTuple_GetItem(args, 2);
 	std::vector<const DeviceViewable*> params;
-	if (PyObject_TypeCheck(arg2, &PyList_Type))
+	ssize_t size = PyList_Size(arg2);
+	if ((ssize_t)num_params != size)
 	{
-		ssize_t size = PyList_Size(arg2);
-		if ((ssize_t)num_params != size)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
-			Py_RETURN_NONE;
-		}
-		params.resize(size);
-		for (ssize_t i = 0; i < size; i++)
-			params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg2, i));
+		PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
+		Py_RETURN_NONE;
 	}
-	else if (arg2 != Py_None)
-	{
-		if (num_params != 1)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 1);
-			Py_RETURN_NONE;
-		}
-		params.resize(1);
-		params[0] = (DeviceViewable*)PyLong_AsVoidPtr(arg2);
-	}
-	else
-	{
-		if (num_params != 0)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 0);
-			Py_RETURN_NONE;
-		}
-	}
+	params.resize(size);
+	for (ssize_t i = 0; i < size; i++)
+		params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg2, i));
+	
 	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 3));
 	int sizeBlock;
 	if (cptr->calc_optimal_block_size(*ctx, params.data(), sizeBlock, sharedMemBytes))
@@ -305,36 +285,16 @@ static PyObject* n_kernel_launch(PyObject* self, PyObject* args)
 
 	PyObject* arg4 = PyTuple_GetItem(args, 4);
 	std::vector<const DeviceViewable*> params;
-	if (PyObject_TypeCheck(arg4, &PyList_Type))
+	ssize_t size = PyList_Size(arg4);
+	if ((ssize_t)num_params != size)
 	{
-		ssize_t size = PyList_Size(arg4);
-		if ((ssize_t)num_params != size)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
-			Py_RETURN_NONE;
-		}
-		params.resize(size);
-		for (ssize_t i = 0; i < size; i++)
-			params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg4, i));
+		PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
+		Py_RETURN_NONE;
 	}
-	else if (arg4 != Py_None)
-	{
-		if (num_params != 1)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 1);
-			Py_RETURN_NONE;
-		}
-		params.resize(1);
-		params[0] = (DeviceViewable*)PyLong_AsVoidPtr(arg4);
-	}
-	else
-	{
-		if (num_params != 0)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 0);
-			Py_RETURN_NONE;
-		}
-	}
+	params.resize(size);
+	for (ssize_t i = 0; i < size; i++)
+		params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg4, i));
+	
 	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 5));
 	if(cptr->launch(*ctx, gridDim, blockDim, params.data(), sharedMemBytes))
 		return PyLong_FromLong(0);
@@ -380,36 +340,16 @@ static PyObject* n_for_launch(PyObject* self, PyObject* args)
 
 	PyObject* arg4 = PyTuple_GetItem(args, 4);
 	std::vector<const DeviceViewable*> params;
-	if (PyObject_TypeCheck(arg4, &PyList_Type))
+	ssize_t size = PyList_Size(arg4);
+	if ((ssize_t)num_params != size)
 	{
-		ssize_t size = PyList_Size(arg4);
-		if ((ssize_t)num_params != size)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
-			Py_RETURN_NONE;
-		}
-		params.resize(size);
-		for (ssize_t i = 0; i < size; i++)
-			params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg4, i));
+		PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
+		Py_RETURN_NONE;
 	}
-	else if (arg4 != Py_None)
-	{
-		if (num_params != 1)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 1);
-			Py_RETURN_NONE;
-		}
-		params.resize(1);
-		params[0] = (DeviceViewable*)PyLong_AsVoidPtr(arg4);
-	}
-	else
-	{
-		if (num_params != 0)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 0);
-			Py_RETURN_NONE;
-		}
-	}
+	params.resize(size);
+	for (ssize_t i = 0; i < size; i++)
+		params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg4, i));	
+
 	if(cptr->launch(*ctx, begin, end, params.data()))
 		return PyLong_FromLong(0);
 	else
@@ -426,36 +366,15 @@ static PyObject* n_for_launch_n(PyObject* self, PyObject* args)
 
 	PyObject* arg3 = PyTuple_GetItem(args, 3);
 	std::vector<const DeviceViewable*> params;
-	if (PyObject_TypeCheck(arg3, &PyList_Type))
+	ssize_t size = PyList_Size(arg3);
+	if ((ssize_t)num_params != size)
 	{
-		ssize_t size = PyList_Size(arg3);
-		if ((ssize_t)num_params != size)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
-			Py_RETURN_NONE;
-		}
-		params.resize(size);
-		for (ssize_t i = 0; i < size; i++)
-			params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg3, i));
+		PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
+		Py_RETURN_NONE;
 	}
-	else if (arg3 != Py_None)
-	{
-		if (num_params != 1)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 1);
-			Py_RETURN_NONE;
-		}
-		params.resize(1);
-		params[0] = (DeviceViewable*)PyLong_AsVoidPtr(arg3);
-	}
-	else
-	{
-		if (num_params != 0)
-		{
-			PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, 0);
-			Py_RETURN_NONE;
-		}
-	}
+	params.resize(size);
+	for (ssize_t i = 0; i < size; i++)
+		params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg3, i));
 	if (cptr->launch_n(*ctx, n, params.data()))
 		return PyLong_FromLong(0);
 	else

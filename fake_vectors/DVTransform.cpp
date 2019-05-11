@@ -3,7 +3,7 @@
 #include "DVTransform.h"
 
 DVTransform::DVTransform(TRTCContext& ctx, const DVVectorLike& vec_in, const char* elem_cls, const Functor& op)
-	: DVVectorLike(ctx, elem_cls, vec_in.size())
+	: DVVectorLike(ctx, elem_cls, elem_cls, vec_in.size())
 {
 	m_name_view_cls = std::string("TransformView<") + elem_cls + "," + vec_in.name_view_cls() + "," + op.name_view_cls() + ">";
 	m_view_in = vec_in.view();

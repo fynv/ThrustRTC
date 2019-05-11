@@ -2,7 +2,7 @@
 #include "fake_vectors/DVConstant.h"
 
 DVConstant::DVConstant(TRTCContext& ctx, const DeviceViewable& dvobj, size_t size) :
-	DVVectorLike(ctx, dvobj.name_view_cls().c_str(), size)
+	DVVectorLike(ctx, dvobj.name_view_cls().c_str(), (std::string("const ") + dvobj.name_view_cls() + "&").c_str(), size)
 {
 	m_value = dvobj.view();
 	

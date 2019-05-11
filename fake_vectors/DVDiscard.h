@@ -18,8 +18,9 @@ template<class _T>
 struct DiscardView
 {
 	typedef _T value_t;
+	typedef _Sink<_T>& ref_t;
 	size_t _size;
-	_Sink<value_t> _sink;
+	_Sink<_T> _sink;
 
 #ifdef DEVICE_ONLY
 	__device__ size_t size() const
@@ -27,7 +28,7 @@ struct DiscardView
 		return _size;
 	}
 
-	__device__ _Sink<value_t>& operator [](size_t)
+	__device__ ref_t operator [](size_t)
 	{
 		return _sink;
 	}
@@ -42,6 +43,8 @@ public:
 	DVDiscard(TRTCContext& ctx, const char* elem_cls, size_t size = (size_t)(-1));
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
+	virtual bool is_readable() const { return false; }
+	virtual bool is_writable() const { return true; }
 
 };
 

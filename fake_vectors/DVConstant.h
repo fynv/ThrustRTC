@@ -7,6 +7,7 @@ template<class _T>
 struct ConstantView
 {
 	typedef _T value_t;
+	typedef const _T& ref_t;
 
 	size_t _size;
 	value_t _value;
@@ -17,7 +18,7 @@ struct ConstantView
 		return _size;
 	}
 
-	__device__ const value_t& operator [](size_t)
+	__device__ ref_t operator [](size_t)
 	{
 		return _value;
 	}

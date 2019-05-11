@@ -18,12 +18,14 @@ internal/general_scan.cpp
 
 TRTCContext.cpp
 DVVector.cpp
+DVTuple.cpp
 fake_vectors/DVConstant.cpp
 fake_vectors/DVCounter.cpp
 fake_vectors/DVDiscard.cpp
 fake_vectors/DVPermutation.cpp
 fake_vectors/DVReverse.cpp
 fake_vectors/DVTransform.cpp
+fake_vectors/DVZipped.cpp
 functor.cpp
 fill.cpp
 replace.cpp
@@ -51,6 +53,7 @@ TRTC_api.h
 DeviceViewable.h
 TRTCContext.h
 DVVector.h
+DVTuple.h
 functor.h
 fill.h
 replace.h
@@ -80,6 +83,7 @@ fake_vectors/DVDiscard.h
 fake_vectors/DVPermutation.h
 fake_vectors/DVReverse.h
 fake_vectors/DVTransform.h
+fake_vectors/DVZipped.h
 )
 
 set(INTERNAL_HEADERS

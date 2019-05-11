@@ -2,7 +2,6 @@
 #include "TRTCContext.h"
 #include "transform_reduce.h"
 #include "viewbuf_to_python.hpp"
-#include "functor.hpp"
 
 static PyObject* n_transform_reduce(PyObject* self, PyObject* args)
 {

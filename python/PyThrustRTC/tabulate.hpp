@@ -1,7 +1,6 @@
 #include <Python.h>
 #include "TRTCContext.h"
 #include "tabulate.h"
-#include "functor.hpp"
 
 static PyObject* n_tabulate(PyObject* self, PyObject* args)
 {

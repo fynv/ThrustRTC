@@ -7,6 +7,7 @@ template<class _TVVALUE>
 struct ReverseView
 {
 	typedef typename _TVVALUE::value_t value_t;
+	typedef typename _TVVALUE::ref_t ref_t;
 	_TVVALUE _view_vec_value;
 
 #ifdef DEVICE_ONLY
@@ -34,6 +35,7 @@ public:
 	DVReverse(TRTCContext& ctx, const DVVectorLike& vec_value);
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
+	virtual bool is_writable() const { return true; }
 
 private:
 	std::string m_name_view_cls;

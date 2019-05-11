@@ -7,6 +7,7 @@ template<class _T, class _T_VIN, class _T_OP>
 struct TransformView
 {
 	typedef _T value_t;
+	typedef _T ref_t;
 	_T_VIN _view_vec_in;
 	_T_OP _view_op;
 
@@ -16,7 +17,7 @@ struct TransformView
 		return _view_vec_in.size();
 	}
 
-	__device__ value_t operator [](size_t idx)
+	__device__ ref_t operator [](size_t idx)
 	{
 		return _view_op(_view_vec_in[idx]);
 	}

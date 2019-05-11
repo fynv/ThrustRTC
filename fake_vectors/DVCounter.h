@@ -7,6 +7,7 @@ template<class _T>
 struct CounterView
 {
 	typedef _T value_t;
+	typedef _T ref_t;
 	size_t _size;
 	value_t _value_init;
 
@@ -16,7 +17,7 @@ struct CounterView
 		return _size;
 	}
 
-	__device__ value_t operator [](size_t idx)
+	__device__ ref_t operator [](size_t idx)
 	{
 		return _value_init+(value_t)idx;
 	}

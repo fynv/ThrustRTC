@@ -1,6 +1,3 @@
-#ifndef _functor_hpp_
-#define _functor_hpp_
-
 #include <Python.h>
 #include "functor.h"
 
@@ -26,5 +23,3 @@ static PyObject* n_functor_create(PyObject* self, PyObject* args)
 	const char* code_body = PyUnicode_AsUTF8(py_code_body);
 	return PyLong_FromVoidPtr(new Functor(*ctx, arg_map, functor_params, code_body));
 }
-
-#endif

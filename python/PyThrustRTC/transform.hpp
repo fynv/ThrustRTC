@@ -1,7 +1,6 @@
 #include <Python.h>
 #include "TRTCContext.h"
 #include "transform.h"
-#include "functor.hpp"
 
 static PyObject* n_transform(PyObject* self, PyObject* args)
 {

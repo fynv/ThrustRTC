@@ -11,6 +11,7 @@ template<class _T>
 struct VectorView
 {
 	typedef _T value_t;
+	typedef _T& ref_t;
 
 	value_t* _data;
 	size_t _size;
@@ -21,7 +22,7 @@ struct VectorView
 		return _size;
 	}
 
-	__device__ value_t& operator [](size_t idx)
+	__device__ ref_t operator [](size_t idx)
 	{
 		return _data[idx];
 	}
@@ -35,14 +36,18 @@ class THRUST_RTC_API DVVectorLike : public DeviceViewable
 {
 public:
 	std::string name_elem_cls() const { return m_elem_cls; }
+	std::string name_ref_type() const { return m_ref_type; }
 	size_t elem_size() const { return m_elem_size; }
 	size_t size() const { return m_size; }
 
-	DVVectorLike(TRTCContext& ctx, const char* elem_cls, size_t size);
+	DVVectorLike(TRTCContext& ctx, const char* elem_cls, const char* ref_type, size_t size);
 	virtual ~DVVectorLike() {}
+	virtual bool is_readable() const { return true; }
+	virtual bool is_writable() const { return false; }
 
 protected:
 	std::string m_elem_cls;
+	std::string m_ref_type;
 	size_t m_elem_size;
 	size_t m_size;
 };
@@ -54,6 +59,7 @@ public:
 
 	DVVector(TRTCContext& ctx, const char* elem_cls, size_t size, void* hdata=nullptr);
 	~DVVector();
+	virtual bool is_writable() const { return true; }
 
 	void to_host(void* hdata);		
 	virtual std::string name_view_cls() const;

@@ -2,7 +2,7 @@
 #include "DVPermutation.h"
 
 DVPermutation::DVPermutation(TRTCContext& ctx, const DVVectorLike& vec_value, const DVVectorLike& vec_index)
-	: DVVectorLike(ctx, vec_value.name_elem_cls().c_str(), vec_index.size())
+	: DVVectorLike(ctx, vec_value.name_elem_cls().c_str(), vec_value.name_ref_type().c_str(), vec_index.size())
 {
 	m_cls_value = vec_value.name_view_cls();
 	m_view_value = vec_value.view();

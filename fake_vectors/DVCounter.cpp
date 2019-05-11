@@ -2,7 +2,7 @@
 #include "fake_vectors/DVCounter.h"
 
 DVCounter::DVCounter(TRTCContext& ctx, const DeviceViewable& dvobj_init, size_t size) :
-	DVVectorLike(ctx, dvobj_init.name_view_cls().c_str(), size)
+	DVVectorLike(ctx, dvobj_init.name_view_cls().c_str(), dvobj_init.name_view_cls().c_str(), size)
 {
 	m_value_init = dvobj_init.view();
 

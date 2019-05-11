@@ -11,12 +11,14 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "Context.hpp"
 #include "DeviceViewable.hpp"
 #include "DVVector.hpp"
+#include "DVTuple.hpp"
 #include "DVConstant.hpp"
 #include "DVCounter.hpp"
 #include "DVDiscard.hpp"
 #include "DVPermutation.hpp"
 #include "DVReverse.hpp"
 #include "DVTransform.hpp"
+#include "DVZipped.hpp"
 #include "functor.hpp"
 #include "fill.hpp"
 #include "replace.hpp"
@@ -71,12 +73,14 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvvector_create", n_dvvector_create, METH_VARARGS, "" },
 	{ "n_dvvector_to_host", n_dvvector_to_host, METH_VARARGS, "" },
 	{ "n_dvvector_from_dvs", n_dvvector_from_dvs, METH_VARARGS, "" },
+	{ "n_dvtuple_create", n_dvtuple_create, METH_VARARGS, "" },
 	{ "n_dvconstant_create", n_dvconstant_create, METH_VARARGS, "" },
 	{ "n_dvcounter_create", n_dvcounter_create, METH_VARARGS, "" },
 	{ "n_dvdiscard_create", n_dvdiscard_create, METH_VARARGS, "" },
 	{ "n_dvpermutation_create", n_dvpermutation_create, METH_VARARGS, "" },
 	{ "n_dvreverse_create", n_dvreverse_create, METH_VARARGS, "" },
 	{ "n_dvtransform_create", n_dvtransform_create, METH_VARARGS, "" },
+	{ "n_dvzipped_create", n_dvzipped_create, METH_VARARGS, "" },
 	{ "n_functor_create", n_functor_create, METH_VARARGS, "" },
 	{ "n_fill", n_fill, METH_VARARGS, "" },
 	{ "n_replace", n_replace, METH_VARARGS, "" },

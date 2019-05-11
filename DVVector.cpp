@@ -1,16 +1,16 @@
 #include "cuda_wrapper.h"
 #include "DVVector.h"
 
-DVVectorLike::DVVectorLike(TRTCContext& ctx, const char* elem_cls, size_t size)
+DVVectorLike::DVVectorLike(TRTCContext& ctx, const char* elem_cls, const char* ref_type, size_t size)
 {
 	m_elem_cls = elem_cls;
+	m_ref_type = ref_type;
 	m_elem_size = ctx.size_of(elem_cls);
 	m_size = size;
 }
 
-
 DVVector::DVVector(TRTCContext& ctx, const char* elem_cls, size_t size, void* hdata)
-	: DVVectorLike(ctx, elem_cls, size)
+	: DVVectorLike(ctx, elem_cls, (std::string(elem_cls)+"&").c_str(), size)
 {
 	CUdeviceptr dptr;
 	cuMemAlloc(&dptr, m_elem_size*m_size);
