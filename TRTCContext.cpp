@@ -624,7 +624,9 @@ std::string TRTCContext::add_struct(const char* struct_body)
 	if (it != m_known_structs.end())
 		return name;
 
-	std::string struct_def = std::string("struct ") + name + "\n{\n" + struct_body + "};\n";
+	std::string struct_def = std::string("struct ") + name + "\n{\n" 
+		"    typedef "+name+" CurType;\n" + 
+		struct_body + "};\n";
 	m_header_of_structs += struct_def;
 	m_content_built_in_headers[0] = m_header_of_structs.c_str();
 
