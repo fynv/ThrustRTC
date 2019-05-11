@@ -35,9 +35,12 @@ public:
 	DVReverse(TRTCContext& ctx, const DVVectorLike& vec_value);
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
-	virtual bool is_writable() const { return true; }
+	virtual bool is_readable() const { return m_readable; }
+	virtual bool is_writable() const { return m_writable; }
 
 private:
+	bool m_readable;
+	bool m_writable;
 	std::string m_name_view_cls;
 	std::string m_cls_value;
 	ViewBuf m_view_value;

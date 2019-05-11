@@ -4,6 +4,8 @@
 DVPermutation::DVPermutation(TRTCContext& ctx, const DVVectorLike& vec_value, const DVVectorLike& vec_index)
 	: DVVectorLike(ctx, vec_value.name_elem_cls().c_str(), vec_value.name_ref_type().c_str(), vec_index.size())
 {
+	m_readable = vec_value.is_readable();
+	m_writable = vec_value.is_writable();
 	m_cls_value = vec_value.name_view_cls();
 	m_view_value = vec_value.view();
 	m_cls_index = vec_index.name_view_cls();
