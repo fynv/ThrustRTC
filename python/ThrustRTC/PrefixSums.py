@@ -14,3 +14,11 @@ def Exclusive_Scan(ctx, vec_in, vec_out, value_init = None, binary_op = None, be
 	if binary_op!=None:
 		cptr_binary_op = binary_op.m_cptr
 	native.n_exclusive_scan(ctx.m_cptr, vec_in.m_cptr, vec_out.m_cptr, cptr_init, cptr_binary_op, begin_in, end_in, begin_out)
+
+def Transform_Inclusive_Scan(ctx, vec_in, vec_out, unary_op, binary_op, begin_in = 0, end_in = -1, begin_out = 0):
+	native.n_transform_inclusive_scan(ctx.m_cptr, vec_in.m_cptr, vec_out.m_cptr, unary_op.m_cptr, binary_op.m_cptr, begin_in, end_in, begin_out)
+
+def Transform_Exclusive_Scan(ctx, vec_in, vec_out, unary_op, value_init, binary_op, begin_in = 0, end_in = -1, begin_out = 0):
+	native.n_transform_exclusive_scan(ctx.m_cptr, vec_in.m_cptr, vec_out.m_cptr, unary_op.m_cptr, value_init.m_cptr, binary_op.m_cptr, begin_in, end_in, begin_out)
+
+	

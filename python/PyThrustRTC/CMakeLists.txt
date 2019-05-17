@@ -36,6 +36,7 @@ inner_product.hpp
 transform_reduce.hpp
 logical.hpp
 scan.hpp
+transform_scan.hpp
 )
 
 set (INCLUDE_DIR 

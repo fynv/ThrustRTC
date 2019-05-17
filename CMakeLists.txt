@@ -46,6 +46,7 @@ inner_product.cpp
 transform_reduce.cpp
 logical.cpp
 scan.cpp
+transform_scan.cpp
 )
 
 set(LIB_HEADERS
@@ -74,6 +75,7 @@ inner_product.h
 transform_reduce.h
 logical.h
 scan.h
+transform_scan.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS

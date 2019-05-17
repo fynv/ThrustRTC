@@ -39,6 +39,7 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "transform_reduce.hpp"
 #include "logical.hpp"
 #include "scan.hpp"
+#include "transform_scan.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -116,6 +117,8 @@ static PyMethodDef s_Methods[] = {
 	{ "n_none_of", n_none_of, METH_VARARGS, "" },
 	{ "n_inclusive_scan", n_inclusive_scan, METH_VARARGS, "" },
 	{ "n_exclusive_scan", n_exclusive_scan, METH_VARARGS, "" },
+	{ "n_transform_inclusive_scan", n_transform_inclusive_scan, METH_VARARGS, "" },
+	{ "n_transform_exclusive_scan", n_transform_exclusive_scan, METH_VARARGS, "" },
 	0
 };
 

@@ -38,6 +38,7 @@ set(PYTHON_TEST
 	test/test_transform_reduce.py
 	test/test_logical.py
 	test/test_scan.py
+	test/test_transform_scan.py
 
 	test/test_constant.py
 	test/test_counter.py
