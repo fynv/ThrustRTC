@@ -37,6 +37,7 @@ transform_reduce.hpp
 logical.hpp
 scan.hpp
 transform_scan.hpp
+remove.hpp
 )
 
 set (INCLUDE_DIR 

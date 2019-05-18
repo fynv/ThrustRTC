@@ -205,6 +205,19 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_scan.cpp
   * python/test/test_scan.py
 
+* transform_scan
+  * test/test_transform_scan.cpp
+  * python/test/test_transform_scan.py
+
+* scan_by_key
+  * test/test_scan_by_key.cpp
+  * python/test/test_scan_by_key.py
+
+* remove
+  * test/test_remove.cpp
+  * python/test/test_remove.py
+
+
 Thrust fancy-iterators are being ported progressively (as "fake-vectors").
 The following examples shows the use of the ported fake-vector classes:
 
@@ -231,6 +244,10 @@ The following examples shows the use of the ported fake-vector classes:
 * DVTransform (transform_iterator)
   * test/test_transform_iter.cpp
   * python/test/test_transform_iter.py
+
+* DVZipped (zip_iterator)
+  * test/test_zipped.cpp
+  * python/test/test_zipped.py
 
 ## License 
 
