@@ -1,3 +1,5 @@
+#include <memory>
+#include <vector>
 #include "general_scan_by_key.h"
 #include "fill.h"
 
