@@ -14,7 +14,7 @@ class DVVector(DVVectorLike):
 	def __init__(self, cptr):
 		self.m_cptr = cptr
 
-	def to_host(self):
+	def to_host(self, begin = 0, end = -1):
 		elem_cls = self.name_elem_cls()
 		if elem_cls=='int8_t':
 			nptype = np.int8
@@ -38,8 +38,10 @@ class DVVector(DVVectorLike):
 			nptype = np.float64
 		elif elem_cls=='bool':
 			nptype = np.bool
-		ret = np.empty(self.size(), dtype=nptype)
-		native.n_dvvector_to_host(self.m_cptr, ret.__array_interface__['data'][0])
+		if end == -1:
+			end = self.size()
+		ret = np.empty(end - begin, dtype=nptype)
+		native.n_dvvector_to_host(self.m_cptr, ret.__array_interface__['data'][0], begin, end)
 		return ret
 
 def device_vector(ctx, elem_cls, size, ptr_host_data=None):

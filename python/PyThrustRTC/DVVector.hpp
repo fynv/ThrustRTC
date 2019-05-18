@@ -35,7 +35,9 @@ static PyObject* n_dvvector_to_host(PyObject* self, PyObject* args)
 {
 	DVVector* dvvec = (DVVector*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
 	void* ptr = PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	dvvec->to_host(ptr);
+	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 2));
+	size_t end = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
+	dvvec->to_host(ptr, begin, end);
 	return PyLong_FromLong(0);
 }
 

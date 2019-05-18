@@ -26,9 +26,11 @@ DVVector::~DVVector()
 	cuMemFree((CUdeviceptr)m_data);
 }
 
-void DVVector::to_host(void* hdata)
+void DVVector::to_host(void* hdata, size_t begin, size_t end)
 {
-	cuMemcpyDtoH(hdata, (CUdeviceptr)m_data, m_elem_size*m_size);
+	if (end == (size_t)(-1) || end > m_size) end = m_size;
+	size_t n = end - begin;
+	cuMemcpyDtoH(hdata, (CUdeviceptr)((char*)m_data + begin* m_elem_size), m_elem_size*n);
 }
 
 std::string DVVector::name_view_cls() const

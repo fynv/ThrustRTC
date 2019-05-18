@@ -121,6 +121,8 @@ static PyMethodDef s_Methods[] = {
 	{ "n_transform_exclusive_scan", n_transform_exclusive_scan, METH_VARARGS, "" },
 	{ "n_inclusive_scan_by_key", n_inclusive_scan_by_key, METH_VARARGS, "" },
 	{ "n_exclusive_scan_by_key", n_exclusive_scan_by_key, METH_VARARGS, "" },
+	{ "n_copy_if", n_copy_if, METH_VARARGS, "" },
+	{ "n_copy_if_stencil", n_copy_if_stencil, METH_VARARGS, "" },
 	0
 };
 

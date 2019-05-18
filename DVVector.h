@@ -61,7 +61,7 @@ public:
 	~DVVector();
 	virtual bool is_writable() const { return true; }
 
-	void to_host(void* hdata);		
+	void to_host(void* hdata, size_t begin=0, size_t end = (size_t)(-1));
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 

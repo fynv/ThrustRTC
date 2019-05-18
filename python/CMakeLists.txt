@@ -12,6 +12,7 @@ set(PYTHON
 	ThrustRTC/Copying.py
 	ThrustRTC/Reductions.py
 	ThrustRTC/PrefixSums.py
+	ThrustRTC/Reordering.py
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
