@@ -22,6 +22,7 @@ add_executable(test_transform_reduce test_transform_reduce.cpp)
 add_executable(test_logical test_logical.cpp)
 add_executable(test_scan test_scan.cpp)
 add_executable(test_transform_scan test_transform_scan.cpp)
+add_executable(test_scan_by_key test_scan_by_key.cpp)
 
 add_executable(test_constant test_constant.cpp)
 add_executable(test_counter test_counter.cpp)
@@ -55,6 +56,7 @@ target_compile_definitions(test_transform_reduce PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_logical PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_scan PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_transform_scan PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_scan_by_key PUBLIC THRUST_RTC_DLL_IMPORT)
 
 target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_counter PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -88,6 +90,7 @@ target_link_libraries(test_transform_reduce ThrustRTC)
 target_link_libraries(test_logical ThrustRTC)
 target_link_libraries(test_scan ThrustRTC)
 target_link_libraries(test_transform_scan ThrustRTC)
+target_link_libraries(test_scan_by_key ThrustRTC)
 
 target_link_libraries(test_constant ThrustRTC)
 target_link_libraries(test_counter ThrustRTC)
@@ -120,6 +123,7 @@ test_transform_reduce
 test_logical
 test_scan
 test_transform_scan
+test_scan_by_key
 
 test_constant
 test_counter

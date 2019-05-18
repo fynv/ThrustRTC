@@ -15,6 +15,7 @@ internal/cuda_wrapper.cpp
 internal/nvtrc_wrapper.cpp
 internal/general_reduce.cpp
 internal/general_scan.cpp
+internal/general_scan_by_key.cpp
 
 TRTCContext.cpp
 DVVector.cpp
@@ -47,6 +48,7 @@ transform_reduce.cpp
 logical.cpp
 scan.cpp
 transform_scan.cpp
+scan_by_key.cpp
 )
 
 set(LIB_HEADERS
@@ -96,6 +98,7 @@ internal/cuda_wrapper.h
 internal/nvtrc_wrapper.h
 internal/general_reduce.h
 internal/general_scan.h
+internal/general_scan_by_key.h
 )
 
 set (INCLUDE_DIR 

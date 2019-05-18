@@ -119,6 +119,8 @@ static PyMethodDef s_Methods[] = {
 	{ "n_exclusive_scan", n_exclusive_scan, METH_VARARGS, "" },
 	{ "n_transform_inclusive_scan", n_transform_inclusive_scan, METH_VARARGS, "" },
 	{ "n_transform_exclusive_scan", n_transform_exclusive_scan, METH_VARARGS, "" },
+	{ "n_inclusive_scan_by_key", n_inclusive_scan_by_key, METH_VARARGS, "" },
+	{ "n_exclusive_scan_by_key", n_exclusive_scan_by_key, METH_VARARGS, "" },
 	0
 };
 

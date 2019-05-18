@@ -39,6 +39,7 @@ set(PYTHON_TEST
 	test/test_logical.py
 	test/test_scan.py
 	test/test_transform_scan.py
+	test/test_scan_by_key.py
 
 	test/test_constant.py
 	test/test_counter.py
