@@ -38,6 +38,7 @@ logical.hpp
 scan.hpp
 transform_scan.hpp
 remove.hpp
+unique.hpp
 )
 
 set (INCLUDE_DIR 

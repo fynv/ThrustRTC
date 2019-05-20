@@ -41,6 +41,7 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "scan.hpp"
 #include "transform_scan.hpp"
 #include "remove.hpp"
+#include "unique.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -130,6 +131,10 @@ static PyMethodDef s_Methods[] = {
 	{ "n_remove_copy_if", n_remove_copy_if, METH_VARARGS, "" },
 	{ "n_remove_if_stencil", n_remove_if_stencil, METH_VARARGS, "" },
 	{ "n_remove_copy_if_stencil", n_remove_copy_if_stencil, METH_VARARGS, "" },
+	{ "n_unique", n_unique, METH_VARARGS, "" },
+	{ "n_unique_copy", n_unique_copy, METH_VARARGS, "" },
+	{ "n_unique_by_key", n_unique_by_key, METH_VARARGS, "" },
+	{ "n_unique_by_key_copy", n_unique_by_key_copy, METH_VARARGS, "" },
 	0
 };
 

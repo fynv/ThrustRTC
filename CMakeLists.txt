@@ -51,6 +51,7 @@ scan.cpp
 transform_scan.cpp
 scan_by_key.cpp
 remove.cpp
+unique.cpp
 )
 
 set(LIB_HEADERS
@@ -81,6 +82,7 @@ logical.h
 scan.h
 transform_scan.h
 remove.h
+unique.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS
