@@ -26,7 +26,7 @@ DVVector::~DVVector()
 	cuMemFree((CUdeviceptr)m_data);
 }
 
-void DVVector::to_host(void* hdata, size_t begin, size_t end)
+void DVVector::to_host(void* hdata, size_t begin, size_t end) const
 {
 	if (end == (size_t)(-1) || end > m_size) end = m_size;
 	size_t n = end - begin;
