@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <memory.h>
 
 typedef std::vector<char> ViewBuf;
 
@@ -20,7 +21,7 @@ public:
 class THRUST_RTC_API BuiltIn : public DeviceViewable
 {
 public:
-	BuiltIn(const char* name_view_cls, void* data_view = "", size_t size_view = 1)
+	BuiltIn(const char* name_view_cls, const void* data_view = "", size_t size_view = 1)
 	{
 		m_name_view_cls = name_view_cls;
 		m_view_buf.resize(size_view);
