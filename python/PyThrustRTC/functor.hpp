@@ -23,3 +23,9 @@ static PyObject* n_functor_create(PyObject* self, PyObject* args)
 	const char* code_body = PyUnicode_AsUTF8(py_code_body);
 	return PyLong_FromVoidPtr(new Functor(*ctx, arg_map, functor_params, code_body));
 }
+
+static PyObject* n_built_in_functor_create(PyObject* self, PyObject* args)
+{
+	const char* name_built_in_view_cls = PyUnicode_AsUTF8(PyTuple_GetItem(args, 0));
+	return PyLong_FromVoidPtr(new Functor(name_built_in_view_cls));
+}

@@ -57,13 +57,12 @@ int main()
 		printf("%d %d %d %d %d\n", h_values[5], h_values[6], h_values[7], h_values[8], h_values[9]);
 	}
 
-	Functor equal(ctx, {}, { "x", "y" }, "        return x==y;\n");
 	{
 		int h_keys[10] = { 0, 0, 0, 1, 1, 2, 3, 3, 3, 3 };
 		int h_values[10] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 		DVVector d_keys(ctx, "int32_t", 10, h_keys);
 		DVVector d_values(ctx, "int32_t", 10, h_values);
-		TRTC_Exclusive_Scan_By_Key(ctx, d_keys, d_values, d_values, DVInt32(5), equal);
+		TRTC_Exclusive_Scan_By_Key(ctx, d_keys, d_values, d_values, DVInt32(5), Functor("EqualTo"));
 		d_values.to_host(h_values);
 		printf("%d %d %d %d %d ", h_values[0], h_values[1], h_values[2], h_values[3], h_values[4]);
 		printf("%d %d %d %d %d\n", h_values[5], h_values[6], h_values[7], h_values[8], h_values[9]);

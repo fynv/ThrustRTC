@@ -8,8 +8,6 @@ int main()
 {
 	TRTCContext ctx;
 
-	Functor negate = { ctx, {}, { "x" }, "        return -x;\n" };
-
 	float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
 	DVVector dvalues(ctx, "float", 8, hvalues);
 
@@ -21,7 +19,7 @@ int main()
 
 	DVPermutation perm(ctx, dvalues, dindices);
 
-	TRTC_Transform(ctx, perm, doutput, negate);
+	TRTC_Transform(ctx, perm, doutput, Functor("Negate"));
 	doutput.to_host(houtput);
 	printf("%f %f %f %f\n", houtput[0], houtput[1], houtput[2], houtput[3]);
 

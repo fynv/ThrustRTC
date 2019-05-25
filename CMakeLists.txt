@@ -57,6 +57,7 @@ unique.cpp
 set(LIB_HEADERS
 TRTC_api.h
 DeviceViewable.h
+built_in.h
 TRTCContext.h
 DVVector.h
 DVTuple.h

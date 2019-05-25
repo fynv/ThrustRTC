@@ -9,9 +9,4 @@ absolute_value = trtc.Functor( ctx, {}, ['x'],
          return x<(decltype(x))0 ? -x : x;
 ''')
 
-maximum_value = trtc.Functor( ctx, {}, ['x', 'y'], 
-'''
-         return x<y ? y : x;
-''')
-
-print(trtc.Transform_Reduce(ctx, darr, absolute_value, trtc.DVInt32(0), maximum_value))
+print(trtc.Transform_Reduce(ctx, darr, absolute_value, trtc.DVInt32(0), trtc.Maximum()))

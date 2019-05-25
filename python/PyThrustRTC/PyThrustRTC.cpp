@@ -85,6 +85,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvtransform_create", n_dvtransform_create, METH_VARARGS, "" },
 	{ "n_dvzipped_create", n_dvzipped_create, METH_VARARGS, "" },
 	{ "n_functor_create", n_functor_create, METH_VARARGS, "" },
+	{ "n_built_in_functor_create", n_built_in_functor_create, METH_VARARGS, "" },
 	{ "n_fill", n_fill, METH_VARARGS, "" },
 	{ "n_replace", n_replace, METH_VARARGS, "" },
 	{ "n_replace_if", n_replace_if, METH_VARARGS, "" },

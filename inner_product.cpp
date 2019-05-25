@@ -9,7 +9,7 @@ bool TRTC_Inner_Product(TRTCContext& ctx, const DVVectorLike& vec1, const DVVect
 
 	Functor src(ctx, { {"vec1", &vec1}, {"vec2", &vec2}, {"begin1", &dvbegin1}, {"begin2", &dvbegin2}, {"init", &init} }, { "idx" },
 		"        return idx>0 ? vec1[idx - 1 + begin1] * vec2[idx - 1 + begin2] : init;\n");
-	Functor op(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor op("Plus");
 
 	if (end1 == (size_t)(-1)) end1 = vec1.size();
 	end1++;

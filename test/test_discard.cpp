@@ -9,11 +9,9 @@ int main()
 	TRTCContext ctx;
 	ctx.set_verbose();
 
-	Functor negate = { ctx, {}, { "x" }, "        return -x;\n" };
-
 	// just to verify that it compiles
 	DVDiscard sink(ctx, "int32_t");
-	TRTC_Transform(ctx, DVCounter(ctx, DVInt32(5), 10), sink, negate);	
+	TRTC_Transform(ctx, DVCounter(ctx, DVInt32(5), 10), sink, Functor("Negate"));
 
 	return 0;
 }

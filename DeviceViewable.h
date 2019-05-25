@@ -17,23 +17,36 @@ public:
 	virtual ViewBuf view() const = 0;
 };
 
+class THRUST_RTC_API BuiltIn : public DeviceViewable
+{
+public:
+	BuiltIn(const char* name_view_cls, void* data_view = "", size_t size_view = 1)
+	{
+		m_name_view_cls = name_view_cls;
+		m_view_buf.resize(size_view);
+		memcpy(m_view_buf.data(), data_view, size_view);
+	}
+
+	virtual std::string name_view_cls() const
+	{
+		return m_name_view_cls;
+	}
+
+	virtual ViewBuf view() const
+	{
+		return m_view_buf;
+	}
+
+private:
+	std::string m_name_view_cls;
+	ViewBuf m_view_buf;
+};
+
 #define DECLAR_DV_BASIC(clsname, type)\
-class clsname : public DeviceViewable\
+class clsname : public BuiltIn\
 {\
 public:\
-	clsname(type in) : m_value(in) {}\
-	virtual std::string name_view_cls() const\
-	{\
-		return #type;\
-	}\
-	virtual ViewBuf view() const\
-	{\
-		ViewBuf buf(sizeof(type));\
-		*(type*)buf.data() = m_value;\
-		return buf;\
-	}\
-private:\
-	type m_value;\
+	clsname(type in) : BuiltIn(#type, &in, sizeof(type)) {}\
 };
 
 DECLAR_DV_BASIC(DVChar, char)

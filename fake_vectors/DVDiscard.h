@@ -3,40 +3,6 @@
 
 #include "DVVector.h"
 
-template<class _T>
-struct _Sink
-{
-#ifdef DEVICE_ONLY
-	__device__ const _T& operator = (const _T& in)
-	{
-		return in;
-	}
-#endif
-};
-
-template<class _T>
-struct DiscardView
-{
-	typedef _T value_t;
-	typedef _Sink<_T>& ref_t;
-	size_t _size;
-	_Sink<_T> _sink;
-
-#ifdef DEVICE_ONLY
-	__device__ size_t size() const
-	{
-		return _size;
-	}
-
-	__device__ ref_t operator [](size_t)
-	{
-		return _sink;
-	}
-#endif
-};
-
-#ifndef DEVICE_ONLY
-
 class THRUST_RTC_API DVDiscard : public DVVectorLike
 {
 public:
@@ -47,7 +13,5 @@ public:
 	virtual bool is_writable() const { return true; }
 
 };
-
-#endif 
 
 #endif

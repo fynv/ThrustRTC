@@ -1,36 +1,9 @@
 #ifndef _DVVector_h
 #define _DVVector_h
 
-#ifndef DEVICE_ONLY
 #include "TRTC_api.h"
 #include "DeviceViewable.h"
 #include "TRTCContext.h"
-#endif
-
-template<class _T>
-struct VectorView
-{
-	typedef _T value_t;
-	typedef _T& ref_t;
-
-	value_t* _data;
-	size_t _size;
-
-#ifdef DEVICE_ONLY
-	__device__ size_t size() const
-	{
-		return _size;
-	}
-
-	__device__ ref_t operator [](size_t idx)
-	{
-		return _data[idx];
-	}
-#endif
-};
-
-
-#ifndef DEVICE_ONLY
 
 class THRUST_RTC_API DVVectorLike : public DeviceViewable
 {
@@ -68,7 +41,6 @@ public:
 private:
 	void* m_data;
 };
-#endif
 
 #endif
 

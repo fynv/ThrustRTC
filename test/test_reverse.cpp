@@ -8,8 +8,6 @@ int main()
 {
 	TRTCContext ctx;
 
-	Functor negate = { ctx, {}, { "x" }, "        return -x;\n" };
-
 	int hinput[4] = { 3, 7, 2, 5 };
 	DVVector dinput(ctx, "int32_t", 4, hinput);
 
@@ -18,7 +16,7 @@ int main()
 
 	DVReverse dreverse(ctx, dinput);
 
-	TRTC_Transform(ctx, dreverse, doutput, negate);
+	TRTC_Transform(ctx, dreverse, doutput, Functor("Negate"));
 	doutput.to_host(houtput);
 	printf("%d %d %d %d\n", houtput[0], houtput[1], houtput[2], houtput[3]);
 

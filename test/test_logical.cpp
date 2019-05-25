@@ -7,7 +7,7 @@ int main()
 {
 	TRTCContext ctx;
 
-	Functor identity = { ctx, {},{ "x" }, "        return x;\n" };
+	Functor identity("Identity");
 
 	bool A[3] = { true, true, false };
 	DVVector d_A(ctx, "bool", 3, A);

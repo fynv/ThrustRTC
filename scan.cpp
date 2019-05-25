@@ -8,7 +8,7 @@ bool TRTC_Inclusive_Scan(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorL
 	DVSizeT dvbegin_in(begin_in);
 	Functor src(ctx, { {"vec_in", &vec_in}, {"begin_in", &dvbegin_in } }, { "idx" },
 		"        return vec_in[idx + begin_in];\n");
-	Functor plus(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor plus("Plus");
 
 	return general_scan(ctx, n, src, vec_out, plus, begin_out);
 }
@@ -31,7 +31,7 @@ bool TRTC_Exclusive_Scan(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorL
 	DVSizeT dvbegin_in(begin_in);
 	Functor src(ctx, { {"vec_in", &vec_in}, {"begin_in", &dvbegin_in } }, { "idx" },
 		"        return idx>0? vec_in[idx - 1 + begin_in] : (decltype(vec_in)::value_t) 0;\n");
-	Functor plus(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor plus("Plus");
 	return general_scan(ctx, n, src, vec_out, plus, begin_out);
 }
 
@@ -42,7 +42,7 @@ bool TRTC_Exclusive_Scan(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorL
 	DVSizeT dvbegin_in(begin_in);
 	Functor src(ctx, { {"vec_in", &vec_in}, {"begin_in", &dvbegin_in }, {"init", &init} }, { "idx" },
 		"        return idx>0? vec_in[idx - 1 + begin_in] : (decltype(vec_in)::value_t)init;\n");
-	Functor plus(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor plus("Plus");
 	return general_scan(ctx, n, src, vec_out, plus, begin_out);
 }
 

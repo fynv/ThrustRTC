@@ -3,30 +3,6 @@
 
 #include "DVVector.h"
 
-template<class _TVVALUE, class _TVINDEX>
-struct PermutationView
-{
-	typedef typename _TVVALUE::value_t value_t;
-	typedef typename _TVVALUE::ref_t ref_t;
-	_TVVALUE _view_vec_value;
-	_TVINDEX _view_vec_index;
-
-#ifdef DEVICE_ONLY
-	__device__ size_t size() const
-	{
-		return _view_vec_index.size();
-	}
-
-	__device__ ref_t operator [](size_t idx)
-	{
-		return _view_vec_value[_view_vec_index[idx]];
-	}
-#endif
-};
-
-
-#ifndef DEVICE_ONLY
-
 class THRUST_RTC_API DVPermutation : public DVVectorLike
 {
 public:
@@ -51,7 +27,5 @@ private:
 
 	size_t m_offsets[3];
 };
-
-#endif 
 
 #endif

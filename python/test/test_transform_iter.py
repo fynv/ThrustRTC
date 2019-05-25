@@ -2,11 +2,6 @@ import ThrustRTC as trtc
 
 ctx = trtc.Context()
 
-negate = trtc.Functor( ctx, {}, ['x'],
-'''
-         return -x;
-''')
-
 square_root = trtc.Functor( ctx, {}, ['x'], 
 '''
          return sqrtf(x);
@@ -17,6 +12,6 @@ doutput = trtc.device_vector(ctx, 'float', 4)
 
 dtrans = trtc.DVTransform(ctx, dvalues, 'float', square_root)
 
-trtc.Transform(ctx, dtrans, doutput, negate)
+trtc.Transform(ctx, dtrans, doutput, trtc.Negate())
 print (doutput.to_host())
 
