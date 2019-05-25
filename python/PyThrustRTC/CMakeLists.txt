@@ -39,6 +39,7 @@ scan.hpp
 transform_scan.hpp
 remove.hpp
 unique.hpp
+partition.hpp
 )
 
 set (INCLUDE_DIR 

@@ -100,7 +100,7 @@ TRTCContext::TRTCContext()
 {
 	int v=s_get_compute_capability();
 
-	m_name_header_of_structs = "header_of_strcts.h";
+	m_name_header_of_structs = "header_of_structs.h";
 	this->add_built_in_header(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
 
 	m_verbose = false;
