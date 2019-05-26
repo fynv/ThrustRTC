@@ -43,6 +43,7 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "remove.hpp"
 #include "unique.hpp"
 #include "partition.hpp"
+#include "find.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -55,6 +56,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_context_add_code_block", n_context_add_code_block, METH_VARARGS, "" },
 	{ "n_context_add_constant_object", n_context_add_constant_object, METH_VARARGS, "" },
 	{ "n_context_calc_optimal_block_size", n_context_calc_optimal_block_size, METH_VARARGS, "" },
+	{ "n_context_calc_number_blocks", n_context_calc_number_blocks, METH_VARARGS, "" },
 	{ "n_context_launch_kernel", n_context_launch_kernel, METH_VARARGS, "" },
 	{ "n_context_launch_for", n_context_launch_for, METH_VARARGS, "" },
 	{ "n_context_launch_for_n", n_context_launch_for_n, METH_VARARGS, "" },
@@ -62,6 +64,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_kernel_destroy", n_kernel_destroy, METH_VARARGS, "" },
 	{ "n_kernel_num_params", n_kernel_num_params, METH_VARARGS, "" },
 	{ "n_kernel_calc_optimal_block_size", n_kernel_calc_optimal_block_size, METH_VARARGS, "" },
+	{ "n_kernel_calc_number_blocks", n_kernel_calc_number_blocks, METH_VARARGS, "" },
 	{ "n_kernel_launch", n_kernel_launch, METH_VARARGS, "" },
 	{ "n_for_create", n_for_create, METH_VARARGS, "" },
 	{ "n_for_destroy", n_for_destroy, METH_VARARGS, "" },
@@ -141,6 +144,9 @@ static PyMethodDef s_Methods[] = {
 	{ "n_partition_stencil", n_partition_stencil, METH_VARARGS, "" },
 	{ "n_partition_copy", n_partition_copy, METH_VARARGS, "" },
 	{ "n_partition_copy_stencil", n_partition_copy_stencil, METH_VARARGS, "" },
+	{ "n_find", n_find, METH_VARARGS, "" },
+	{ "n_find_if", n_find_if, METH_VARARGS, "" },
+	{ "n_find_if_not", n_find_if_not, METH_VARARGS, "" },
 	0
 };
 

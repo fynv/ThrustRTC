@@ -56,11 +56,30 @@ void launch_calc(int dev_id, CUfunction func, unsigned sharedMemBytes, int& size
 	cudaOccDeviceState occ_state;
 	occ_state.cacheConfig = (cudaOccCacheConfig)cacheConfig;
 
-	int          min_grid_size = 0;
-	cudaOccError occ_status = cudaOccMaxPotentialOccupancyBlockSize(&min_grid_size,
+	int min_grid_size = 0;
+	cudaOccMaxPotentialOccupancyBlockSize(&min_grid_size,
 		&sizeBlock,
 		&occ_prop,
 		&occ_attrib,
 		&occ_state,
 		0, size_t(sharedMemBytes));	
+}
+
+void persist_calc(int dev_id, CUfunction func, unsigned sharedMemBytes, int sizeBlock, int& numBlocks)
+{
+	cudaOccDeviceProp occ_prop;
+	s_get_occ_device_properties(occ_prop, dev_id);
+	cudaOccFuncAttributes occ_attrib;
+	s_get_occ_func_attributes(occ_attrib, func);
+
+	CUfunc_cache cacheConfig;
+	cuCtxGetCacheConfig(&cacheConfig);
+
+	cudaOccDeviceState occ_state;
+	occ_state.cacheConfig = (cudaOccCacheConfig)cacheConfig;
+
+	cudaOccResult result;
+	cudaOccMaxActiveBlocksPerMultiprocessor(&result, &occ_prop, &occ_attrib, &occ_state, sizeBlock, (size_t)sharedMemBytes);
+	   
+	numBlocks = result.activeBlocksPerMultiprocessor * occ_prop.numSms;
 }
