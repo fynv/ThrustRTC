@@ -46,6 +46,7 @@ set(PYTHON_TEST
 	test/test_unique.py
 	test/test_partition.py
 	test/test_find.py
+	test/test_mismatch.py
 
 	test/test_constant.py
 	test/test_counter.py
