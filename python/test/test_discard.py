@@ -3,9 +3,4 @@ import ThrustRTC as trtc
 ctx = trtc.Context()
 ctx.set_verbose()
 
-negate = trtc.Functor( ctx, {}, ['x'],
-'''
-         return -x;
-''')
-
-trtc.Transform(ctx, trtc.DVCounter(ctx, trtc.DVInt32(5), 10), trtc.DVDiscard(ctx, "int32_t"), negate)
+trtc.Transform(ctx, trtc.DVCounter(ctx, trtc.DVInt32(5), 10), trtc.DVDiscard(ctx, "int32_t"), trtc.Negate())

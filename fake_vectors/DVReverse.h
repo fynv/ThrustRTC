@@ -3,29 +3,6 @@
 
 #include "DVVector.h"
 
-template<class _TVVALUE>
-struct ReverseView
-{
-	typedef typename _TVVALUE::value_t value_t;
-	typedef typename _TVVALUE::ref_t ref_t;
-	_TVVALUE _view_vec_value;
-
-#ifdef DEVICE_ONLY
-	__device__ size_t size() const
-	{
-		return _view_vec_value.size();
-	}
-
-	__device__ value_t& operator [](size_t idx)
-	{
-		return _view_vec_value[size()-1-idx];
-	}
-#endif
-};
-
-
-#ifndef DEVICE_ONLY
-
 class THRUST_RTC_API DVReverse : public DVVectorLike
 {
 public:
@@ -46,6 +23,5 @@ private:
 	ViewBuf m_view_value;
 };
 
-#endif 
 
 #endif

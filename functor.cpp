@@ -30,7 +30,7 @@ Functor::Functor(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>
 	for (size_t i = 0; i < functor_params.size(); i++)
 	{
 		char param[64];
-		sprintf(param, "_T%d %s", (int)i, functor_params[i]);
+		sprintf(param, "const _T%d& %s", (int)i, functor_params[i]);
 		struct_body += param;
 		if (i < functor_params.size() - 1)
 			struct_body += ",";
@@ -42,6 +42,13 @@ Functor::Functor(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>
 
 	m_offsets.resize(arg_map.size()+1);
 	ctx.query_struct(m_name_view_cls.c_str(), members, m_offsets.data());
+}
+
+Functor::Functor(const char* name_built_in_view_cls)
+{
+	m_name_view_cls = name_built_in_view_cls;
+	m_offsets.resize(1);
+	m_offsets[0] = 1;
 }
 
 std::string Functor::name_view_cls() const

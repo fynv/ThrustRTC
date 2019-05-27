@@ -93,6 +93,7 @@ struct TRTCContext::Kernel
 	CUfunction func;
 	unsigned sharedMemBytes_cached = -1;
 	int sizeBlock = -1;
+	int numBlocks = -1;
 };
 
 
@@ -100,7 +101,7 @@ TRTCContext::TRTCContext()
 {
 	int v=s_get_compute_capability();
 
-	m_name_header_of_structs = "header_of_strcts.h";
+	m_name_header_of_structs = "header_of_structs.h";
 	this->add_built_in_header(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
 
 	m_verbose = false;
@@ -112,13 +113,7 @@ TRTCContext::TRTCContext()
 
 	this->add_code_block("#define DEVICE_ONLY\n");
 	this->add_inlcude_filename("cstdint");
-	this->add_inlcude_filename("DVVector.h");
-	this->add_inlcude_filename("fake_vectors/DVConstant.h");
-	this->add_inlcude_filename("fake_vectors/DVCounter.h");	
-	this->add_inlcude_filename("fake_vectors/DVDiscard.h");
-	this->add_inlcude_filename("fake_vectors/DVPermutation.h");
-	this->add_inlcude_filename("fake_vectors/DVReverse.h");
-	this->add_inlcude_filename("fake_vectors/DVTransform.h");
+	this->add_inlcude_filename("built_in.h");
 }
 
 TRTCContext::~TRTCContext()
@@ -518,6 +513,17 @@ int TRTCContext::_launch_calc(KernelId_t kid, unsigned sharedMemBytes)
 	return kernel->sizeBlock;
 }
 
+int TRTCContext::_persist_calc(KernelId_t kid, int sizeBlock, unsigned sharedMemBytes)
+{
+	Kernel *kernel = m_kernel_cache[kid];
+	if (sharedMemBytes == kernel->sharedMemBytes_cached && sizeBlock == kernel->sizeBlock)
+		return kernel->numBlocks;
+	persist_calc(s_max_gflops_device, kernel->func, sharedMemBytes, sizeBlock, kernel->numBlocks);
+	kernel->sharedMemBytes_cached = sharedMemBytes;
+	kernel->sizeBlock = sizeBlock;
+	return kernel->numBlocks;
+}
+
 bool TRTCContext::_launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, unsigned sharedMemBytes)
 {
 	Kernel *kernel = m_kernel_cache[kid];
@@ -540,6 +546,14 @@ bool TRTCContext::calc_optimal_block_size(const std::vector<AssignedParam>& arg_
 	KernelId_t kid = _build_kernel(arg_map, code_body);
 	if (kid == (KernelId_t)(-1)) return false;
 	sizeBlock = _launch_calc(kid, sharedMemBytes);
+	return true;
+}
+
+bool TRTCContext::calc_number_blocks(const std::vector<AssignedParam>& arg_map, const char* code_body, int sizeBlock, int& numBlocks, unsigned sharedMemBytes)
+{
+	KernelId_t kid = _build_kernel(arg_map, code_body);
+	if (kid == (KernelId_t)(-1)) return false;
+	numBlocks = _persist_calc(kid, sizeBlock, sharedMemBytes);
 	return true;
 }
 
@@ -652,6 +666,17 @@ bool TRTC_Kernel::calc_optimal_block_size(TRTCContext& ctx, const DeviceViewable
 		arg_map[i].arg = args[i];
 	}
 	return ctx.calc_optimal_block_size(arg_map, m_code_body.c_str(), sizeBlock, sharedMemBytes);
+}
+
+bool TRTC_Kernel::calc_number_blocks(TRTCContext& ctx, const DeviceViewable** args, int sizeBlock, int& numBlocks, unsigned sharedMemBytes)
+{
+	std::vector<TRTCContext::AssignedParam> arg_map(m_param_names.size());
+	for (size_t i = 0; i < m_param_names.size(); i++)
+	{
+		arg_map[i].param_name = m_param_names[i].c_str();
+		arg_map[i].arg = args[i];
+	}
+	return ctx.calc_number_blocks(arg_map, m_code_body.c_str(), sizeBlock, numBlocks, sharedMemBytes);
 }
 
 bool TRTC_Kernel::launch(TRTCContext& ctx, dim_type gridDim, dim_type blockDim, const DeviceViewable** args, unsigned sharedMemBytes)

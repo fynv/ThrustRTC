@@ -7,13 +7,10 @@
 int main()
 {
 	TRTCContext ctx;
-
-	Functor negate = { ctx, {}, { "x" }, "        return -x;\n" };
-
 	int hvalues[10];
 	DVVector vec(ctx, "int32_t", 10);
 	TRTC_Sequence(ctx, vec);
-	TRTC_tabulate(ctx, vec, negate);
+	TRTC_tabulate(ctx, vec, Functor("Negate"));
 	vec.to_host(hvalues);
 	printf("%d %d %d %d %d ", hvalues[0], hvalues[1], hvalues[2], hvalues[3], hvalues[4]);
 	printf("%d %d %d %d %d\n", hvalues[5], hvalues[6], hvalues[7], hvalues[8], hvalues[9]);

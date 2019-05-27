@@ -39,6 +39,7 @@ public:
 	};
 
 	bool calc_optimal_block_size(const std::vector<AssignedParam>& arg_map, const char* code_body, int& sizeBlock, unsigned sharedMemBytes = 0);
+	bool calc_number_blocks(const std::vector<AssignedParam>& arg_map, const char* code_body, int sizeBlock, int& numBlocks, unsigned sharedMemBytes = 0);
 	bool launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes = 0);
 	bool launch_for(size_t begin, size_t end, const std::vector<TRTCContext::AssignedParam>& arg_map, const char* name_iter, const char* code_body);
 	bool launch_for_n(size_t n, const std::vector<TRTCContext::AssignedParam>& arg_map, const char* name_iter, const char* code_body);
@@ -54,6 +55,7 @@ private:
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
 	KernelId_t _build_kernel(const std::vector<AssignedParam>& arg_map, const char* code_body);
 	int _launch_calc(KernelId_t kid, unsigned sharedMemBytes);
+	int _persist_calc(KernelId_t kid, int numBlocks, unsigned sharedMemBytes);
 	bool _launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, unsigned sharedMemBytes);
 
 	static const char* s_libnvrtc_path;
@@ -85,6 +87,7 @@ public:
 
 	TRTC_Kernel(const std::vector<const char*>& param_names, const char* code_body);
 	bool calc_optimal_block_size(TRTCContext& ctx, const DeviceViewable** args, int& sizeBlock, unsigned sharedMemBytes = 0);
+	bool calc_number_blocks(TRTCContext& ctx, const DeviceViewable** args, int sizeBlock, int& numBlocks, unsigned sharedMemBytes = 0);
 	bool launch(TRTCContext& ctx, dim_type gridDim, dim_type blockDim, const DeviceViewable** args, unsigned sharedMemBytes = 0);
 
 private:

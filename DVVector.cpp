@@ -1,5 +1,6 @@
 #include "cuda_wrapper.h"
 #include "DVVector.h"
+#include "built_in.h"
 
 DVVectorLike::DVVectorLike(TRTCContext& ctx, const char* elem_cls, const char* ref_type, size_t size)
 {

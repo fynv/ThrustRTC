@@ -2,29 +2,6 @@
 #define _DVTransform_h
 
 #include "DVVector.h"
-
-template<class _T, class _T_VIN, class _T_OP>
-struct TransformView
-{
-	typedef _T value_t;
-	typedef _T ref_t;
-	_T_VIN _view_vec_in;
-	_T_OP _view_op;
-
-#ifdef DEVICE_ONLY
-	__device__ size_t size() const
-	{
-		return _view_vec_in.size();
-	}
-
-	__device__ ref_t operator [](size_t idx)
-	{
-		return _view_op(_view_vec_in[idx]);
-	}
-#endif
-};
-
-#ifndef DEVICE_ONLY
 #include "functor.h"
 
 class THRUST_RTC_API DVTransform : public DVVectorLike
@@ -41,7 +18,5 @@ private:
 	ViewBuf m_view_op;
 	size_t m_offsets[3];
 };
-
-#endif 
 
 #endif

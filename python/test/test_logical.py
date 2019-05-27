@@ -2,10 +2,7 @@ import ThrustRTC as trtc
 
 ctx = trtc.Context()
 
-identity = trtc.Functor( ctx, {}, ['x'], 
-'''
-         return x;
-''')
+identity = trtc.Identity()
 
 darr = trtc.device_vector_from_list(ctx, [True, True, False], 'bool')
 

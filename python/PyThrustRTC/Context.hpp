@@ -87,7 +87,28 @@ static PyObject* n_context_calc_optimal_block_size(PyObject* self, PyObject* arg
 		return PyLong_FromLong((long)sizeBlock);
 	else
 		Py_RETURN_NONE;
+}
 
+static PyObject* n_context_calc_number_blocks(PyObject* self, PyObject* args)
+{
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	PyObject* pyArgMap = PyTuple_GetItem(args, 1);
+	ssize_t num_params = PyList_Size(pyArgMap);
+	std::vector<TRTCContext::AssignedParam> arg_map(num_params);
+	for (ssize_t i = 0; i < num_params; i++)
+	{
+		PyObject* pyAssignedParam = PyList_GetItem(pyArgMap, i);
+		arg_map[i].param_name = PyUnicode_AsUTF8(PyTuple_GetItem(pyAssignedParam, 0));
+		arg_map[i].arg = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(pyAssignedParam, 1));
+	}
+	const char* code_body = PyUnicode_AsUTF8(PyTuple_GetItem(args, 2));
+	int sizeBlock = PyLong_AsLongLong(PyTuple_GetItem(args, 3));
+	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 4));
+	int numBlocks;
+	if (ctx->calc_number_blocks(arg_map, code_body, sizeBlock, numBlocks, sharedMemBytes))
+		return PyLong_FromLong((long)numBlocks);
+	else
+		Py_RETURN_NONE;
 }
 
 static PyObject* n_context_launch_kernel(PyObject* self, PyObject* args)
@@ -241,6 +262,33 @@ static PyObject* n_kernel_calc_optimal_block_size(PyObject* self, PyObject* args
 	int sizeBlock;
 	if (cptr->calc_optimal_block_size(*ctx, params.data(), sizeBlock, sharedMemBytes))
 		return PyLong_FromLong((long)sizeBlock);
+	else
+		Py_RETURN_NONE;
+}
+
+static PyObject* n_kernel_calc_number_blocks(PyObject* self, PyObject* args)
+{
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	TRTC_Kernel* cptr = (TRTC_Kernel*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
+	size_t num_params = cptr->num_params();
+
+	PyObject* arg2 = PyTuple_GetItem(args, 2);
+	std::vector<const DeviceViewable*> params;
+	ssize_t size = PyList_Size(arg2);
+	if ((ssize_t)num_params != size)
+	{
+		PyErr_Format(PyExc_ValueError, "Wrong number of arguments received. %d required, %d received.", num_params, size);
+		Py_RETURN_NONE;
+	}
+	params.resize(size);
+	for (ssize_t i = 0; i < size; i++)
+		params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg2, i));
+
+	int sizeBlock = PyLong_AsLongLong(PyTuple_GetItem(args, 3));
+	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 4));
+	int numBlocks;
+	if (cptr->calc_number_blocks(*ctx, params.data(), sizeBlock, numBlocks, sharedMemBytes))
+		return PyLong_FromLong((long)numBlocks);
 	else
 		Py_RETURN_NONE;
 }

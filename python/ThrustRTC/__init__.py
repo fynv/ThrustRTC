@@ -15,3 +15,4 @@ from .Copying import *
 from .Reductions import *
 from .PrefixSums import *
 from .Reordering import *
+from .Searching import *

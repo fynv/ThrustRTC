@@ -7,8 +7,6 @@ int main()
 {
 	TRTCContext ctx;
 
-	Functor plus = { ctx, {}, { "lhs", "rhs" }, "            return lhs + rhs;\n" };
-
 	int hvec1[8] = { 1, 2, 1, 2, 1, 2, 1, 2 };
 	DVVector vec1_in(ctx, "int32_t", 8, hvec1);
 	DVVector vec1_out(ctx, "int32_t", 8);
@@ -19,7 +17,7 @@ int main()
 	int hvec2[8] = { 1, 2, 1, 2, 1, 2, 1, 2 };
 	DVVector vec2_in(ctx, "int32_t", 8, hvec2);
 	DVVector vec2_out(ctx, "int32_t", 8);
-	TRTC_Adjacent_Difference(ctx, vec2_in, vec2_out, plus);
+	TRTC_Adjacent_Difference(ctx, vec2_in, vec2_out, Functor("Plus"));
 	vec2_out.to_host(hvec2);
 	printf("%d %d %d %d %d %d %d %d\n", hvec2[0], hvec2[1], hvec2[2], hvec2[3], hvec2[4], hvec2[5], hvec2[6], hvec2[7]);
 }

@@ -3,30 +3,6 @@
 
 #include "DVVector.h"
 
-template<class _T>
-struct CounterView
-{
-	typedef _T value_t;
-	typedef _T ref_t;
-	size_t _size;
-	value_t _value_init;
-
-#ifdef DEVICE_ONLY
-	__device__ size_t size() const
-	{
-		return _size;
-	}
-
-	__device__ ref_t operator [](size_t idx)
-	{
-		return _value_init+(value_t)idx;
-	}
-#endif
-};
-
-
-#ifndef DEVICE_ONLY
-
 class THRUST_RTC_API DVCounter : public DVVectorLike
 {
 public:
@@ -39,7 +15,5 @@ private:
 	ViewBuf m_value_init;
 	size_t m_offsets[3];
 };
-
-#endif 
 
 #endif

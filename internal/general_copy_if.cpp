@@ -4,7 +4,7 @@
 uint32_t general_copy_if(TRTCContext& ctx, size_t n, const Functor& src_scan, const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_in, size_t begin_out)
 {
 	DVVector inds(ctx, "uint32_t", n);
-	Functor plus(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor plus("Plus");
 	if (!general_scan(ctx, n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
 
 	uint32_t ret;
@@ -25,7 +25,7 @@ uint32_t general_copy_if(TRTCContext& ctx, size_t n, const Functor& src_scan, co
 	DVVectorLike& vec_out1, DVVectorLike& vec_out2, size_t begin_in1, size_t begin_in2, size_t begin_out1, size_t begin_out2)
 {
 	DVVector inds(ctx, "uint32_t", n);
-	Functor plus(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor plus("Plus");
 	if (!general_scan(ctx, n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
 
 	uint32_t ret;

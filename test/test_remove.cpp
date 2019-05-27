@@ -52,7 +52,7 @@ int main()
 		puts("");
 	}
 
-	Functor identity = { ctx, {},{ "x" }, "        return x;\n" };
+	Functor identity("Identity");
 
 	{
 		int h_value[6] = { 1, 4, 2, 8, 5, 7 };

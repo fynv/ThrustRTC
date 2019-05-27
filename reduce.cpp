@@ -9,7 +9,7 @@ bool TRTC_Reduce(TRTCContext& ctx, const DVVectorLike& vec, ViewBuf& ret, size_t
 	Functor src(ctx, { {"vec_in", &vec}, {"begin", &dvbegin } }, { "idx" },
 		"        return vec_in[idx + begin];\n");
 
-	Functor op(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor op("Plus");
 
 	if (end == (size_t)(-1)) end = vec.size();
 
@@ -27,7 +27,7 @@ bool TRTC_Reduce(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable
 	Functor src(ctx, { {"vec_in", &vec}, {"begin", &dvbegin }, {"init", &init} }, { "idx" },
 		"        return idx>0 ? vec_in[idx - 1 + begin] : (decltype(vec_in)::value_t)init;\n");
 
-	Functor op(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor op("Plus");
 
 	if (end == (size_t)(-1)) end = vec.size();
 	end++;

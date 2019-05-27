@@ -39,6 +39,9 @@ scan.hpp
 transform_scan.hpp
 remove.hpp
 unique.hpp
+partition.hpp
+find.hpp
+mismatch.hpp
 )
 
 set (INCLUDE_DIR 

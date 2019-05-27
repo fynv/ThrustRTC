@@ -1,5 +1,6 @@
 #include "extrema.h"
 #include "general_reduce.h"
+#include "built_in.h"
 
 bool TRTC_Min_Element(TRTCContext& ctx, const DVVectorLike& vec, size_t& id_min, size_t begin, size_t end)
 {
@@ -69,63 +70,41 @@ bool TRTC_Max_Element(TRTCContext& ctx, const DVVectorLike& vec, const Functor& 
 
 bool TRTC_MinMax_Element(TRTCContext& ctx, const DVVectorLike& vec, size_t& id_min, size_t& id_max, size_t begin, size_t end)
 {
-	struct MinMaxIds
-	{
-		size_t id_min;
-		size_t id_max;
-	};
-
-	std::string d_MinMaxIds = ctx.add_struct(
-		"    size_t id_min;\n"
-		"    size_t id_max;\n"
-	);
-
 	DVSizeT dvbegin(begin);
 
 	Functor src(ctx, { {"begin", &dvbegin } }, { "idx" }, 
-		(std::string("        return ")+ d_MinMaxIds+"({begin + idx, begin + idx});\n").c_str());
+		"        return Pair<size_t, size_t>({begin + idx, begin + idx});\n");
 	Functor op(ctx, { {"vec", &vec} }, { "i1", "i2" }, 
-		(std::string("        return ") + d_MinMaxIds+"({vec[i2.id_min]<vec[i1.id_min]?i2.id_min:i1.id_min, vec[i1.id_max]<vec[i2.id_max]?i2.id_max:i1.id_max });\n").c_str());
+		"        return Pair<size_t, size_t>({vec[i2.first]<vec[i1.first]?i2.first:i1.first, vec[i1.second]<vec[i2.second]?i2.second:i1.second });\n");
 
 	if (end == (size_t)(-1)) end = vec.size();
 	if (end - begin < 1) return true;
 
 	ViewBuf buf;
-	if (!general_reduce(ctx, end - begin, d_MinMaxIds.c_str(), src, op, buf)) return false;
-	MinMaxIds res = *(MinMaxIds*)buf.data();
-	id_min = res.id_min;
-	id_max = res.id_max;
+	if (!general_reduce(ctx, end - begin, "Pair<size_t, size_t>", src, op, buf)) return false;
+	Pair<size_t, size_t> res = *(Pair<size_t, size_t>*)buf.data();
+	id_min = res.first;
+	id_max = res.second;
 	return true;
 }
 
 bool TRTC_MinMax_Element(TRTCContext& ctx, const DVVectorLike& vec, const Functor& comp, size_t& id_min, size_t& id_max, size_t begin, size_t end)
 {
-	struct MinMaxIds
-	{
-		size_t id_min;
-		size_t id_max;
-	};
-
-	std::string d_MinMaxIds = ctx.add_struct(
-		"    size_t id_min;\n"
-		"    size_t id_max;\n"
-	);
-
 	DVSizeT dvbegin(begin);
 	Functor src(ctx, { {"begin", &dvbegin } }, { "idx" },
-		(std::string("        return ") + d_MinMaxIds + "({begin + idx, begin + idx});\n").c_str());
+		"        return Pair<size_t, size_t>({begin + idx, begin + idx});\n");
 
 	Functor op(ctx, { {"vec", &vec}, {"comp", &comp} }, { "i1", "i2" }, 
-		(std::string("        return ") + d_MinMaxIds + "({ comp(vec[i2.id_min],vec[i1.id_min])?i2.id_min:i1.id_min, comp(vec[i1.id_max],vec[i2.id_max])?i2.id_max:i1.id_max });\n").c_str());
+		"        return Pair<size_t, size_t>({ comp(vec[i2.frist],vec[i1.frist])?i2.frist:i1.frist, comp(vec[i1.second],vec[i2.second])?i2.second:i1.second });\n");
 
 	if (end == (size_t)(-1)) end = vec.size();
 	if (end - begin < 1) return true;
 
 	ViewBuf buf;
-	if (!general_reduce(ctx, end - begin, d_MinMaxIds.c_str(), src, op, buf)) return false;
-	MinMaxIds res = *(MinMaxIds*)buf.data();
-	id_min = res.id_min;
-	id_max = res.id_max;
+	if (!general_reduce(ctx, end - begin, "Pair<size_t, size_t>", src, op, buf)) return false;
+	Pair<size_t, size_t> res = *(Pair<size_t, size_t>*)buf.data();
+	id_min = res.first;
+	id_max = res.second;
 	return true;
 }
 

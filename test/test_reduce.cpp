@@ -17,8 +17,7 @@ int main()
 	TRTC_Reduce(ctx, darr, DVInt32(1), ret);
 	printf("%d\n", *(int*)ret.data());
 
-	Functor maximum = { ctx, {},{ "x", "y" }, "        return x>y?x:y;\n" };
-	TRTC_Reduce(ctx, darr, DVInt32(-1), maximum, ret);
+	TRTC_Reduce(ctx, darr, DVInt32(-1), Functor("Maximum"), ret);
 	printf("%d\n", *(int*)ret.data());
 
 	return 0;

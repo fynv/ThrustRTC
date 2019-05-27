@@ -32,6 +32,14 @@ class Context:
             code_body, 
             sharedMemBytes)
 
+    def calc_number_blocks(self, arg_map, code_body, size_block, sharedMemBytes=0):
+        return native.n_context_calc_number_blocks(
+            self.m_cptr,
+            [ (param_name, arg.m_cptr) for param_name, arg in arg_map.items()], 
+            code_body, 
+            size_block,
+            sharedMemBytes)
+
     def launch_kernel(self, gridDim, blockDim, arg_map, code_body, sharedMemBytes=0):
         native.n_context_launch_kernel(
             self.m_cptr, 
@@ -73,6 +81,14 @@ class Kernel:
             ctx.m_cptr,
             self.m_cptr, 
             [item.m_cptr for item in args], 
+            sharedMemBytes)
+
+    def calc_number_blocks(self, ctx, args, size_block, sharedMemBytes=0):
+        return native.n_kernel_calc_number_blocks(
+            ctx.m_cptr,
+            self.m_cptr, 
+            [item.m_cptr for item in args], 
+            size_block,
             sharedMemBytes)
 
     def launch(self, ctx, gridDim, blockDim, args, sharedMemBytes=0):

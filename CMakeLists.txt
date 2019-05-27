@@ -17,6 +17,7 @@ internal/general_reduce.cpp
 internal/general_scan.cpp
 internal/general_scan_by_key.cpp
 internal/general_copy_if.cpp
+internal/general_find.cpp
 
 TRTCContext.cpp
 DVVector.cpp
@@ -52,11 +53,15 @@ transform_scan.cpp
 scan_by_key.cpp
 remove.cpp
 unique.cpp
+partition.cpp
+find.cpp
+mismatch.cpp
 )
 
 set(LIB_HEADERS
 TRTC_api.h
 DeviceViewable.h
+built_in.h
 TRTCContext.h
 DVVector.h
 DVTuple.h
@@ -83,6 +88,9 @@ scan.h
 transform_scan.h
 remove.h
 unique.h
+partition.h
+find.h
+mismatch.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS
@@ -105,6 +113,7 @@ internal/general_reduce.h
 internal/general_scan.h
 internal/general_scan_by_key.h
 internal/general_copy_if.h
+internal/general_find.h
 )
 
 set (INCLUDE_DIR 

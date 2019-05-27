@@ -1,5 +1,6 @@
 #include "count.h"
 #include "general_reduce.h"
+#include "built_in.h"
 
 bool TRTC_Count(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable& value, size_t& ret, size_t begin, size_t end)
 {
@@ -8,7 +9,7 @@ bool TRTC_Count(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable&
 	Functor src(ctx, { {"vec_in", &vec}, {"eq_value", &value }, {"begin", &dvbegin} }, { "idx" },
 		"        return  (vec_in[idx + begin] == (decltype(vec_in)::value_t)eq_value)?1:0;\n");
 
-	Functor op(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor op("Plus");
 
 	if (end == (size_t)(-1)) end = vec.size();
 
@@ -27,7 +28,7 @@ bool TRTC_Count_If(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pre
 
 	Functor src(ctx, { {"vec_in", &vec}, {"pred", &pred }, {"begin", &dvbegin} }, { "idx" },
 		"        return pred(vec_in[idx + begin])?1:0;\n");
-	Functor op(ctx, {}, { "x", "y" }, "        return x+y;\n");
+	Functor op("Plus");
 
 	if (end == (size_t)(-1)) end = vec.size();
 

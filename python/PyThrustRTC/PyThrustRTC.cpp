@@ -42,6 +42,9 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "transform_scan.hpp"
 #include "remove.hpp"
 #include "unique.hpp"
+#include "partition.hpp"
+#include "find.hpp"
+#include "mismatch.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -54,6 +57,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_context_add_code_block", n_context_add_code_block, METH_VARARGS, "" },
 	{ "n_context_add_constant_object", n_context_add_constant_object, METH_VARARGS, "" },
 	{ "n_context_calc_optimal_block_size", n_context_calc_optimal_block_size, METH_VARARGS, "" },
+	{ "n_context_calc_number_blocks", n_context_calc_number_blocks, METH_VARARGS, "" },
 	{ "n_context_launch_kernel", n_context_launch_kernel, METH_VARARGS, "" },
 	{ "n_context_launch_for", n_context_launch_for, METH_VARARGS, "" },
 	{ "n_context_launch_for_n", n_context_launch_for_n, METH_VARARGS, "" },
@@ -61,6 +65,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_kernel_destroy", n_kernel_destroy, METH_VARARGS, "" },
 	{ "n_kernel_num_params", n_kernel_num_params, METH_VARARGS, "" },
 	{ "n_kernel_calc_optimal_block_size", n_kernel_calc_optimal_block_size, METH_VARARGS, "" },
+	{ "n_kernel_calc_number_blocks", n_kernel_calc_number_blocks, METH_VARARGS, "" },
 	{ "n_kernel_launch", n_kernel_launch, METH_VARARGS, "" },
 	{ "n_for_create", n_for_create, METH_VARARGS, "" },
 	{ "n_for_destroy", n_for_destroy, METH_VARARGS, "" },
@@ -85,6 +90,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvtransform_create", n_dvtransform_create, METH_VARARGS, "" },
 	{ "n_dvzipped_create", n_dvzipped_create, METH_VARARGS, "" },
 	{ "n_functor_create", n_functor_create, METH_VARARGS, "" },
+	{ "n_built_in_functor_create", n_built_in_functor_create, METH_VARARGS, "" },
 	{ "n_fill", n_fill, METH_VARARGS, "" },
 	{ "n_replace", n_replace, METH_VARARGS, "" },
 	{ "n_replace_if", n_replace_if, METH_VARARGS, "" },
@@ -135,6 +141,14 @@ static PyMethodDef s_Methods[] = {
 	{ "n_unique_copy", n_unique_copy, METH_VARARGS, "" },
 	{ "n_unique_by_key", n_unique_by_key, METH_VARARGS, "" },
 	{ "n_unique_by_key_copy", n_unique_by_key_copy, METH_VARARGS, "" },
+	{ "n_partition", n_partition, METH_VARARGS, "" },
+	{ "n_partition_stencil", n_partition_stencil, METH_VARARGS, "" },
+	{ "n_partition_copy", n_partition_copy, METH_VARARGS, "" },
+	{ "n_partition_copy_stencil", n_partition_copy_stencil, METH_VARARGS, "" },
+	{ "n_find", n_find, METH_VARARGS, "" },
+	{ "n_find_if", n_find_if, METH_VARARGS, "" },
+	{ "n_find_if_not", n_find_if_not, METH_VARARGS, "" },
+	{ "n_mismatch", n_mismatch, METH_VARARGS, "" },
 	0
 };
 

@@ -13,6 +13,7 @@ set(PYTHON
 	ThrustRTC/Reductions.py
 	ThrustRTC/PrefixSums.py
 	ThrustRTC/Reordering.py
+	ThrustRTC/Searching.py
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
@@ -43,6 +44,9 @@ set(PYTHON_TEST
 	test/test_scan_by_key.py
 	test/test_remove.py
 	test/test_unique.py
+	test/test_partition.py
+	test/test_find.py
+	test/test_mismatch.py
 
 	test/test_constant.py
 	test/test_counter.py
