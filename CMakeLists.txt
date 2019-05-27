@@ -56,6 +56,7 @@ unique.cpp
 partition.cpp
 find.cpp
 mismatch.cpp
+binary_search.cpp
 )
 
 set(LIB_HEADERS
@@ -91,6 +92,7 @@ unique.h
 partition.h
 find.h
 mismatch.h
+binary_search.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS

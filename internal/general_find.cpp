@@ -15,13 +15,15 @@ bool general_find(TRTCContext& ctx, size_t begin, size_t end, const Functor src,
 		"        atomicMin(&result[0], s_result);\n"
 	);
 
-	DVSizeT _dvbegin(begin);
-	DVSizeT _dvend(end);
 	result = (size_t)(-1);
 	DVVector dvresult(ctx, "unsigned long long", 1, &result);
-	const DeviceViewable* _args[] = { &src, &dvresult, &_dvbegin, &_dvend };
 	int numBlocks;
-	s_kernel.calc_number_blocks(ctx, _args, 128, numBlocks);
+	{
+		DVSizeT _dvbegin(begin);
+		DVSizeT _dvend(end);
+		const DeviceViewable* _args[] = { &src, &dvresult, &_dvbegin, &_dvend };
+		s_kernel.calc_number_blocks(ctx, _args, 128, numBlocks);
+	}
 	unsigned trunk_size = (unsigned)numBlocks * 128;
 	unsigned trunk_begin = (unsigned)begin;
 	while (trunk_begin < end)
