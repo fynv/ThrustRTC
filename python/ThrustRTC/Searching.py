@@ -32,3 +32,6 @@ def Binary_Search(ctx, vec, value, comp = None, begin = 0, end = -1):
 	if comp!=None:
 		cptr_comp = comp.m_cptr
 	return native.n_binary_search(ctx.m_cptr, vec.m_cptr, value.m_cptr, cptr_comp, begin, end)
+
+def Partition_Point(ctx, vec, pred, begin = 0, end = -1):
+	return native.n_partition_point(ctx.m_cptr, vec.m_cptr, pred.m_cptr, begin, end)

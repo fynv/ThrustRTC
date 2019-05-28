@@ -67,5 +67,13 @@ int main()
 		puts("");
 	}
 
+	{
+		int h_value[10] = { 2, 4, 6, 8, 10, 1, 3, 5, 7, 9 };
+		DVVector d_value(ctx, "int32_t", 10, h_value);
+		size_t pp;
+		TRTC_Partition_Point(ctx, d_value, is_even, pp);
+		printf("%d\n", pp);
+	}
+
 	return 0;
 }

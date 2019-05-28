@@ -120,3 +120,77 @@ uint32_t TRTC_Partition_Copy_Stencil(TRTCContext& ctx, const DVVectorLike& vec_i
 	return ret.first;
 }
 
+bool TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, size_t& result, size_t begin, size_t end)
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin) return false;
+
+	static TRTC_Kernel s_kernel(
+		{ "num_grps", "vec", "begin", "pred", "range_out", "size_grp", "div_id" },
+		"    size_t id = threadIdx.x+blockIdx.x*blockDim.x;\n"
+		"    if (id>=num_grps) return;"
+		"    size_t begin_grp = size_grp*id + begin;\n"
+		"    size_t end_grp = begin_grp + size_grp;\n"
+		"    if (id>=div_id)\n"
+		"    {\n"
+		"        begin_grp += id - div_id;\n"
+		"        end_grp = begin_grp + size_grp + 1;\n"
+		"    }\n"
+		"    if ( (id==0 || pred(vec[begin_grp-1])) && !pred(vec[end_grp-1]) )\n"
+		"    {\n"
+		"        range_out[0] = begin_grp;\n"
+		"        range_out[1] = end_grp;\n"
+		"    }\n"
+	);
+
+	size_t h_range_out[2];
+	DVVector dv_range_out(ctx, "size_t", 2);
+	int numBlocks;
+	{
+		DVSizeT _dv_num_grps(end - begin);
+		DVSizeT _dv_begin(begin);
+		DVSizeT _dv_size_grp(1);
+		DVSizeT _dv_div_id((size_t)(-1));
+		const DeviceViewable* _args[] = { &_dv_num_grps, &vec, &_dv_begin, &pred, &dv_range_out, &_dv_size_grp, &_dv_div_id };
+		s_kernel.calc_number_blocks(ctx, _args, 128, numBlocks);
+	}
+	size_t s_begin = begin;
+	size_t s_end = end;
+
+	do
+	{
+		size_t n = s_end - s_begin;
+		size_t size_grp = 1;
+		size_t div_id = (size_t)(-1);
+		size_t num_grps = 128 * numBlocks;
+		if (num_grps < n)
+		{
+			size_grp = n / num_grps;
+			div_id = (size_grp + 1) * num_grps - n;
+		}
+		else
+		{
+			num_grps = n;
+			numBlocks = (num_grps + 127) / 128;
+		}
+
+		DVSizeT dv_num_grps(num_grps);
+		DVSizeT dv_begin(s_begin);
+		DVSizeT dv_size_grp(size_grp);
+		DVSizeT dv_div_id(div_id);
+
+		h_range_out[0] = end;
+		h_range_out[1] = begin;
+		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2);
+
+		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &pred, &dv_range_out, &dv_size_grp, &dv_div_id };
+		if (!s_kernel.launch(ctx, { (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;
+		dv_range_out.to_host(h_range_out);
+		s_begin = h_range_out[0];
+		s_end = h_range_out[1];
+	} while (s_end > 0 && s_end > s_begin + 1);
+
+	result = s_begin;
+	return true;
+
+}

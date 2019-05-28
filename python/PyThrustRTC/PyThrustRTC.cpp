@@ -153,6 +153,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_lower_bound", n_lower_bound, METH_VARARGS, "" },
 	{ "n_upper_bound", n_upper_bound, METH_VARARGS, "" },
 	{ "n_binary_search", n_binary_search, METH_VARARGS, "" },
+	{ "n_partition_point", n_partition_point, METH_VARARGS, "" },
 	0
 };
 

@@ -30,3 +30,6 @@ d_odds = trtc.device_vector(ctx, 'int32_t', 10)
 count = trtc.Partition_Copy_Stencil(ctx, d_value, d_stencil, d_evens, d_odds, trtc.Identity())
 print (d_evens.to_host(0, count))
 print (d_odds.to_host(0, 10-count))
+
+d_value = trtc.device_vector_from_list(ctx, [ 2, 4, 6, 8, 10, 1, 3, 5, 7, 9 ], 'int32_t')
+print(trtc.Partition_Point(ctx, d_value, is_even))

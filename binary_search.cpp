@@ -21,7 +21,7 @@ bool TRTC_Lower_Bound(TRTCContext& ctx, const DVVectorLike& vec, const DeviceVie
 		"        begin_grp += id - div_id;\n"
 		"        end_grp = begin_grp + size_grp + 1;\n"
 		"    }\n"
-		"    if ( (begin_grp==0 || comp(vec[begin_grp-1],value)) && !comp(vec[end_grp-1], value) )\n"
+		"    if ( (id == 0 || comp(vec[begin_grp-1],value)) && !comp(vec[end_grp-1], value) )\n"
 		"    {\n"
 		"        range_out[0] = begin_grp;\n"
 		"        range_out[1] = end_grp;\n"
