@@ -45,6 +45,7 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "partition.hpp"
 #include "find.hpp"
 #include "mismatch.hpp"
+#include "binary_search.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -149,6 +150,9 @@ static PyMethodDef s_Methods[] = {
 	{ "n_find_if", n_find_if, METH_VARARGS, "" },
 	{ "n_find_if_not", n_find_if_not, METH_VARARGS, "" },
 	{ "n_mismatch", n_mismatch, METH_VARARGS, "" },
+	{ "n_lower_bound", n_lower_bound, METH_VARARGS, "" },
+	{ "n_upper_bound", n_upper_bound, METH_VARARGS, "" },
+	{ "n_binary_search", n_binary_search, METH_VARARGS, "" },
 	0
 };
 
