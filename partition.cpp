@@ -171,7 +171,7 @@ bool TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Funct
 		else
 		{
 			num_grps = n;
-			numBlocks = (num_grps + 127) / 128;
+			numBlocks = (int)((num_grps + 127) / 128);
 		}
 
 		DVSizeT dv_num_grps(num_grps);
