@@ -142,16 +142,16 @@ The following examples shows the use of the ported Thrust algorithms:
   * python/test/test_for_each.py
 
 * adjacent_difference
-  * test/adjacent_difference.cpp
-  * python/test/adjacent_difference.py
+  * test/test_adjacent_difference.cpp
+  * python/test/test_adjacent_difference.py
 
 * sequence
-  * test/sequence.cpp
-  * python/test/sequence.py
+  * test/test_sequence.cpp
+  * python/test/test_sequence.py
 
 * tabulate
-  * test/tabulate.cpp
-  * python/test/tabulate.py
+  * test/test_tabulate.cpp
+  * python/test/test_tabulate.py
 
 * transform
   * test/test_transform.cpp
@@ -177,7 +177,7 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_count.cpp
   * python/test/test_count.py
 
-* reduce (missing reduce_by_key)
+* reduce
   * test/test_reduce.cpp
   * python/test/test_reduce.py
 
@@ -217,6 +217,25 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_remove.cpp
   * python/test/test_remove.py
 
+* unique
+  * test/test_unique.cpp
+  * python/test/test_unique.py
+
+* partition
+  * test/test_partition.cpp
+  * python/test/test_partition.py
+
+* find
+  * test/test_find.cpp
+  * python/test/test_find.py
+
+* mismatch
+  * test/test_mismatch.cpp
+  * python/test/test_mismatch.py
+
+* binary_search
+  * test/test_binary_search.cpp
+  * python/test/test_binary_search.py
 
 Thrust fancy-iterators are being ported progressively (as "fake-vectors").
 The following examples shows the use of the ported fake-vector classes:
