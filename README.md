@@ -237,6 +237,10 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_binary_search.cpp
   * python/test/test_binary_search.py
 
+* merge
+  * test/test_merge.cpp
+  * python/test/test_merge.py
+
 Thrust fancy-iterators are being ported progressively (as "fake-vectors").
 The following examples shows the use of the ported fake-vector classes:
 

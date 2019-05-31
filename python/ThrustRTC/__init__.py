@@ -16,3 +16,4 @@ from .Reductions import *
 from .PrefixSums import *
 from .Reordering import *
 from .Searching import *
+from .Merging import *

@@ -43,6 +43,7 @@ partition.hpp
 find.hpp
 mismatch.hpp
 binary_search.hpp
+merge.hpp
 )
 
 set (INCLUDE_DIR 
