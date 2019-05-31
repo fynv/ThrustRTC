@@ -177,7 +177,7 @@ bool TRTC_Binary_Search(TRTCContext& ctx, const DVVectorLike& vec, const DeviceV
 	if (end == (size_t)(-1)) end = vec.size();
 	if (end <= begin)
 	{
-		result = (size_t)-1;
+		result = false;
 		return true;
 	}
 
@@ -194,13 +194,18 @@ bool TRTC_Binary_Search(TRTCContext& ctx, const DVVectorLike& vec, const DeviceV
 		"    }\n"
 		"    if ( !comp(value, vec[begin_grp]) && !comp(vec[end_grp-1], value) )\n"
 		"    {\n"
+		"        if (!comp(vec[begin_grp], value) || !comp(value, vec[end_grp-1]))\n"
+		"        {\n"
+		"              range_out[2] = 1;\n"
+		"              return;"
+		"        }\n"
 		"        range_out[0] = begin_grp;\n"
 		"        range_out[1] = end_grp;\n"
 		"    }\n"
 	);
 
-	size_t h_range_out[2];
-	DVVector dv_range_out(ctx, "size_t", 2);
+	size_t h_range_out[3];
+	DVVector dv_range_out(ctx, "size_t", 3);
 	int numBlocks;
 	{
 		DVSizeT _dv_num_grps(end - begin);
@@ -237,17 +242,19 @@ bool TRTC_Binary_Search(TRTCContext& ctx, const DVVectorLike& vec, const DeviceV
 
 		h_range_out[0] = (size_t)(-1);
 		h_range_out[1] = 0;
-		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2);
+		h_range_out[2] = 0;
+		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 3);
 
 		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &value, &comp, &dv_range_out, &dv_size_grp, &dv_div_id };
 		if (!s_kernel.launch(ctx, { (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;
 		dv_range_out.to_host(h_range_out);
+		if (h_range_out[2] != 0) break;
 		s_begin = h_range_out[0];
 		s_end = h_range_out[1];
 
 	} while (s_end - s_begin > 1);
 
-	result = s_begin!=(size_t)-1;
+	result = h_range_out[2] != 0;
 	return true;
 
 }
