@@ -192,5 +192,24 @@ bool TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Funct
 
 	result = s_begin;
 	return true;
-
 }
+
+bool TRTC_Is_Partitioned(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& result, size_t begin, size_t end)
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin + 1)
+	{
+		result = true;
+		return true;
+	}
+	static TRTC_For s_for({ "vec", "pred", "res" }, "idx",
+		"    if (!pred(vec[idx]) && pred(vec[idx+1])) res[0] = false;\n");
+
+	result = true;
+	DVVector dvres(ctx, "bool", 1, &result);
+	const DeviceViewable* args[] = { &vec, &pred, &dvres };
+	if (!s_for.launch(ctx, begin, end-1, args)) return false;
+	dvres.to_host(&result);
+	return true;
+}
+

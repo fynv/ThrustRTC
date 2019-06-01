@@ -283,9 +283,54 @@ bool TRTC_Sort_By_Key(TRTCContext& ctx, DVVectorLike& keys, DVVectorLike& values
 	return true;
 }
 
-
 bool TRTC_Sort_By_Key(TRTCContext& ctx, DVVectorLike& keys, DVVectorLike& values, size_t begin_keys , size_t end_keys, size_t begin_values)
 {
 	Functor comp("Less");
 	return TRTC_Sort_By_Key(ctx, keys, values, comp, begin_keys, end_keys, begin_values);
+}
+
+bool TRTC_Is_Sorted(TRTCContext& ctx, const DVVectorLike& vec, const Functor& comp, bool& result, size_t begin, size_t end)
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin + 1)
+	{
+		result = true;
+		return true;
+	}
+	static TRTC_For s_for({ "vec", "comp", "res" }, "idx",
+		"    if (comp(vec[idx+1], vec[idx])) res[0] = false;\n");
+
+	result = true;
+	DVVector dvres(ctx, "bool", 1, &result);
+	const DeviceViewable* args[] = { &vec, &comp, &dvres };
+	if (!s_for.launch(ctx, begin, end - 1, args)) return false;
+	dvres.to_host(&result);
+	return true;
+}
+
+bool TRTC_Is_Sorted(TRTCContext& ctx, const DVVectorLike& vec, bool& result, size_t begin, size_t end)
+{
+	Functor comp("Less");
+	return TRTC_Is_Sorted(ctx, vec, comp, result, begin, end);
+}
+
+#include "general_find.h"
+
+bool TRTC_Is_Sorted_Until(TRTCContext& ctx, const DVVectorLike& vec, const Functor& comp, size_t& result, size_t begin, size_t end)
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	size_t res_find = end - 1;
+	if (end - 1 > begin)
+	{
+		Functor src(ctx, { {"vec", &vec}, {"comp", &comp} }, { "id" }, "        return comp(vec[id+1], vec[id]);\n");
+		if (!general_find(ctx, begin, end - 1, src, res_find)) return false;
+	}
+	result = res_find == (size_t)(-1) ? end : res_find + 1;
+	return true;
+}
+
+bool TRTC_Is_Sorted_Until(TRTCContext& ctx, const DVVectorLike& vec, size_t& result, size_t begin, size_t end)
+{
+	Functor comp("Less");
+	return TRTC_Is_Sorted_Until(ctx, vec, comp, result, begin, end);
 }

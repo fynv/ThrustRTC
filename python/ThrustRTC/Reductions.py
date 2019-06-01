@@ -83,3 +83,13 @@ def Reduce_By_Key(ctx, key_in, value_in, key_out, value_out, binary_pred = None,
 	if binary_op!=None:
 		cptr_binary_op = binary_op.m_cptr
 	return native.n_reduce_by_key(ctx.m_cptr, key_in.m_cptr, value_in.m_cptr, key_out.m_cptr, value_out.m_cptr, cptr_binary_pred, cptr_binary_op, begin_key_in, end_key_in, begin_value_in, begin_key_out, begin_value_out)
+
+def Is_Partitioned(ctx, vec, pred, begin = 0, end = -1):
+	return native.n_is_partitioned(ctx.m_cptr, vec.m_cptr, pred.m_cptr, begin, end)
+
+def Is_Sorted(ctx, vec, comp = None, begin = 0, end = -1):
+	cptr_comp = None
+	if comp!=None:
+		cptr_comp = comp.m_cptr
+	return native.n_is_sorted(ctx.m_cptr, vec.m_cptr, cptr_comp, begin, end)
+

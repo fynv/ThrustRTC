@@ -11,17 +11,33 @@ int main()
 	{
 		int hvalues[6]= { 1, 4, 2, 8, 5, 7 };
 		DVVector dvalues(ctx, "int32_t", 6, hvalues);
+		
+		bool res;
+		TRTC_Is_Sorted(ctx, dvalues, res);
+		puts(res ? "true" : "false");
+
 		TRTC_Sort(ctx, dvalues);
 		dvalues.to_host(hvalues);
 		printf("%d %d %d %d %d %d\n", hvalues[0], hvalues[1], hvalues[2], hvalues[3], hvalues[4], hvalues[5]);
+
+		TRTC_Is_Sorted(ctx, dvalues, res);
+		puts(res ? "true" : "false");
 	}
 
 	{
 		int hvalues[6] = { 1, 4, 2, 8, 5, 7 };
 		DVVector dvalues(ctx, "int32_t", 6, hvalues);
+
+		bool res;
+		TRTC_Is_Sorted(ctx, dvalues, Functor("Greater"), res);
+		puts(res ? "true" : "false");
+
 		TRTC_Sort(ctx, dvalues, Functor("Greater"));
 		dvalues.to_host(hvalues);
 		printf("%d %d %d %d %d %d\n", hvalues[0], hvalues[1], hvalues[2], hvalues[3], hvalues[4], hvalues[5]);
+
+		TRTC_Is_Sorted(ctx, dvalues, Functor("Greater"), res);
+		puts(res ? "true" : "false");
 	}
 
 	{
@@ -46,6 +62,22 @@ int main()
 		dvalues.to_host(hvalues);
 		printf("%d %d %d %d %d %d\n", hkeys[0], hkeys[1], hkeys[2], hkeys[3], hkeys[4], hkeys[5]);
 		printf("%c %c %c %c %c %c\n", hvalues[0], hvalues[1], hvalues[2], hvalues[3], hvalues[4], hvalues[5]);
+	}
+
+	{
+		int hvalues[8] = { 0, 1, 2, 3, 0, 1, 2, 3 };
+		DVVector dvalues(ctx, "int32_t", 8, hvalues);
+		size_t res;
+		TRTC_Is_Sorted_Until(ctx, dvalues, res);
+		printf("%zu\n", res);
+	}
+
+	{
+		int hvalues[8] = { 3, 2, 1, 0, 3, 2, 1, 0 };
+		DVVector dvalues(ctx, "int32_t", 8, hvalues);
+		size_t res;
+		TRTC_Is_Sorted_Until(ctx, dvalues, Functor("Greater"), res);
+		printf("%zu\n", res);
 	}
 
 	// big case

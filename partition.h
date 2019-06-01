@@ -13,6 +13,6 @@ uint32_t THRUST_RTC_API TRTC_Partition_Copy(TRTCContext& ctx, const DVVectorLike
 uint32_t THRUST_RTC_API TRTC_Partition_Copy_Stencil(TRTCContext& ctx, const DVVectorLike& vec_in, const DVVectorLike& stencil, DVVectorLike& vec_true, DVVectorLike& vec_false, const Functor& pred, size_t begin_in = 0, size_t end_in = (size_t)(-1), size_t begin_stencil = 0, size_t begin_true = 0, size_t begin_false = 0);
 
 bool THRUST_RTC_API TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, size_t& result, size_t begin = 0, size_t end = (size_t)(-1));
-
+bool THRUST_RTC_API TRTC_Is_Partitioned(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& result, size_t begin = 0, size_t end = (size_t)(-1));
 
 #endif

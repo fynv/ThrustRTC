@@ -33,3 +33,9 @@ print (d_odds.to_host(0, 10-count))
 
 d_value = trtc.device_vector_from_list(ctx, [ 2, 4, 6, 8, 10, 1, 3, 5, 7, 9 ], 'int32_t')
 print(trtc.Partition_Point(ctx, d_value, is_even))
+
+d_value = trtc.device_vector_from_list(ctx, [ 2, 4, 6, 8, 10, 1, 3, 5, 7, 9 ], 'int32_t')
+print(trtc.Is_Partitioned(ctx, d_value, is_even))
+
+d_value = trtc.device_vector_from_list(ctx, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ], 'int32_t')
+print(trtc.Is_Partitioned(ctx, d_value, is_even))

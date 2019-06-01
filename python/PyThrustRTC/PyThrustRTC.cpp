@@ -161,6 +161,9 @@ static PyMethodDef s_Methods[] = {
 	{ "n_merge_by_key", n_merge_by_key, METH_VARARGS, "" },
 	{ "n_sort", n_sort, METH_VARARGS, "" },
 	{ "n_sort_by_key", n_sort_by_key, METH_VARARGS, "" },
+	{ "n_is_partitioned", n_is_partitioned, METH_VARARGS, "" },
+	{ "n_is_sorted", n_is_sorted, METH_VARARGS, "" },
+	{ "n_is_sorted_until", n_is_sorted_until, METH_VARARGS, "" },
 	0
 };
 
