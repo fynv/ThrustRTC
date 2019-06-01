@@ -347,6 +347,22 @@ __device__ inline size_t d_upper_bound(TVec& vec, const typename TVec::value_t& 
 	return end;
 }
 
+template<class TVec, class TComp>
+__device__ inline bool d_binary_search(TVec& vec, const typename TVec::value_t& value, TComp& comp, size_t begin = 0, size_t end = (size_t)(-1))
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin) return false;
+	if (comp(value, vec[begin]) || comp(vec[end - 1], value)) return false;
+	do
+	{
+		if (!comp(vec[begin], value) || !comp(value, vec[end - 1])) return true;
+		size_t mid = begin + ((end - begin) >> 1);
+		if (!comp(vec[mid - 1], value)) end = mid;
+		else if (!comp(value, vec[mid])) begin = mid;
+		else return false;		
+	} while (end > begin + 1);
+	return false;
+}
 
 template<class T, class TComp>
 __device__ inline unsigned d_lower_bound_s(const T* arr, unsigned n, const T& value, TComp& comp)

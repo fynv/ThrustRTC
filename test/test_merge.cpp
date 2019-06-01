@@ -88,4 +88,6 @@ int main()
 			printf("%d ", hValsOut[i]);
 		puts("");
 	}
+
+	return 0;
 }
