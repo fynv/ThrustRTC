@@ -4,7 +4,7 @@ For introduction in Chinese, see [here](https://zhuanlan.zhihu.com/p/62293854).
 
 ## Idea
 
-The aim of the project is to provide a library of general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/), that can be used in non-C++ programming launguages (currently focused on Python).
+The aim of the project is to provide a library of general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/), that can be used in non-C++ programming launguages that has an interface with C/C++ (Python, C#, JAVA etc).
 
 There are several options to integrate CUDA with a language like Python.
 
@@ -65,15 +65,13 @@ trtc.Replace_If(ctx, A, trtc.Functor( ctx, {}, ['x'], '        return x<0;\n'), 
 ```
 
 A significant difference between ThrustRTC and Thrust C++ is that ThrustRTC does not include the iterators. 
-All operations explicitly work on vectors types. 
-
-* We may not be able to port all the Thrust algorithms. (but hopefully most of them!)
+All operations explicitly work on vectors types. Working-ranges can be specified using begin/end parameters.
 
 ## Building the code
 
 ### Build-time Dependencies
 
-CUDA SDK is NOT required anymore. At build time, we only need:
+CUDA SDK is NOT required. At build time, we only need:
 
 * UnQLite source code, as submodule: thirdparty/unqlite
 * CMake 3.x
@@ -127,8 +125,13 @@ The following examples shows the basic usage of the core infrastructure:
 * python/test/test_trtc.py
 * python/test/test_for.py
 
-Thrust algorithms are being ported progressively.
-The following examples shows the use of the ported Thrust algorithms:
+Most Thrust algorithms has been implemented. Exceptions are:
+
+* set-operations: IMO, supporting of "duplicate elements" has made it unnecessarily complicated. 
+* bucket-sort: more efficient than merge-sort, but not general. Will wait until there is a performance need.
+
+The following examples shows the use of the implemented Thrust algorithms:
+
 * fill
   * test/test_fill.cpp
   * python/test/test_fill.py
@@ -245,8 +248,8 @@ The following examples shows the use of the ported Thrust algorithms:
   * test/test_sort.cpp
   * python/test/test_sort.py
 
-Thrust fancy-iterators are being ported progressively (as "fake-vectors").
-The following examples shows the use of the ported fake-vector classes:
+Fake-vector classes are provided to provide similar functionality as "fancy-iterators" of Thrust
+The following examples shows the use of the fake-vector classes:
 
 * DVConstant (constant_iterator)
   * test/test_constant.cpp
