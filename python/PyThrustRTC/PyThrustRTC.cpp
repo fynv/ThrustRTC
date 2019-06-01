@@ -47,6 +47,7 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "mismatch.hpp"
 #include "binary_search.hpp"
 #include "merge.hpp"
+#include "sort.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -158,6 +159,8 @@ static PyMethodDef s_Methods[] = {
 	{ "n_reduce_by_key", n_reduce_by_key, METH_VARARGS, "" },
 	{ "n_merge", n_merge, METH_VARARGS, "" },
 	{ "n_merge_by_key", n_merge_by_key, METH_VARARGS, "" },
+	{ "n_sort", n_sort, METH_VARARGS, "" },
+	{ "n_sort_by_key", n_sort_by_key, METH_VARARGS, "" },
 	0
 };
 

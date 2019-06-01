@@ -317,6 +317,7 @@ template<class TVec, class TComp>
 __device__ inline size_t d_lower_bound(TVec& vec, const typename TVec::value_t& value, TComp& comp, size_t begin = 0, size_t end = (size_t)(-1))
 {
 	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin) return begin;
 	if (comp(vec[end - 1], value)) return end;
 	while (end > begin + 1)
 	{
@@ -333,6 +334,7 @@ template<class TVec, class TComp>
 __device__ inline size_t d_upper_bound(TVec& vec, const typename TVec::value_t& value, TComp& comp, size_t begin = 0, size_t end = (size_t)(-1))
 {
 	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin) return begin;
 	if (comp(value, vec[begin])) return begin;
 	while (end > begin + 1)
 	{
@@ -344,6 +346,42 @@ __device__ inline size_t d_upper_bound(TVec& vec, const typename TVec::value_t& 
 	}
 	return end;
 }
+
+
+template<class T, class TComp>
+__device__ inline unsigned d_lower_bound_s(const T* arr, unsigned n, const T& value, TComp& comp)
+{
+	if (n <= 0) return 0;
+	if (comp(arr[n - 1], value)) return n;
+	unsigned begin = 0;
+	while (n > begin + 1)
+	{
+		size_t mid = begin + ((n - begin) >> 1);
+		if (comp(arr[mid - 1], value))
+			begin = mid;
+		else
+			n = mid;
+	}
+	return begin;
+}
+
+template<class T, class TComp>
+__device__ inline unsigned d_upper_bound_s(const T* arr, unsigned n, const T& value, TComp& comp)
+{
+	if (n <= 0) return 0;
+	if (comp(value, arr[0])) return 0;
+	unsigned begin = 0;
+	while (n > begin + 1)
+	{
+		size_t mid = begin + ((n - begin) >> 1);
+		if (comp(value, arr[mid]))
+			n = mid;
+		else
+			begin = mid;
+	}
+	return n;
+}
+
 
 
 #endif

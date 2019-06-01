@@ -58,6 +58,7 @@ find.cpp
 mismatch.cpp
 binary_search.cpp
 merge.cpp
+sort.cpp
 )
 
 set(LIB_HEADERS
@@ -95,6 +96,7 @@ find.h
 mismatch.h
 binary_search.h
 merge.h
+sort.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS
