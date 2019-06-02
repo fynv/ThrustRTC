@@ -20,7 +20,7 @@ Source code of ThrustRTC is available at:
 
 [https://github.com/fynv/ThrustRTC](https://github.com/fynv/ThrustRTC)
 
-The code does not actually contain any CUDA code that need to be prebuilt, therefore CUDA SDK is not a requirement at building time.
+The code does not actually contain any CUDA device code that need to be prebuilt, therefore CUDA SDK is not a requirement at building time.
 
 At build time, you only need:
 
@@ -45,7 +45,32 @@ You will get the library headers, binaries and examples in the "install" directo
 Experimental builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
 If your environment matches, you can try:
 
+```
 $ pip3 install ThrustRTC
+```
+
+You will not get the C++ library, headers as well as all the test programs using this installation method.
+
+### Runtime Dependencies
+
+* CUDA driver (up-to-date)
+* Shared library of NVRTC 
+  
+  * Windows: nvrtc64\*.dll, default location: %CUDA_PATH%/bin
+  * Linux: libnvrtc.so, default location: /usr/local/cuda/lib64
+  
+  If the library is not at the default location, you need to call:
+
+  * TRTCContext::set_libnvrtc_path() from C++ or 
+  * ThrustRTC.set_libnvrtc_path() from Python
+
+  at run-time to specify the path of the library.
+
+For Python
+* Python 3
+* numpy
+* numba (optional)
+
 
 ## Context Objects
 
