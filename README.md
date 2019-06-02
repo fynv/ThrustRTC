@@ -1,8 +1,6 @@
 # ThrustRTC
 
-For introduction in Chinese, see [here](https://zhuanlan.zhihu.com/p/62293854).
-
-## Idea
+## The Idea
 
 The aim of the project is to provide a library of general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/), that can be used in non-C++ programming launguages that has an interface with C/C++ (Python, C#, JAVA etc).
 
