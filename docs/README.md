@@ -315,6 +315,44 @@ print (dvec_out.to_host())
 
 ## Device Viewable Objects
 
+Device Viewable Objects are objects that can be used as kernel arguments. All Device Viewable objects are derived from the class DeviceViewable. Device Viewable Objects have their own type information maintained internally. Therefore, you see that the kernel and for-loop parameters do not have their types defined explicitly. You can consider that all parameters are "templated", which means their types are decided by the recieved arguments.
+
+### Basic Types
+
+The following types of Device Viewable Objects can be initalized using values of basic types.
+
+| Name of Class | C++ Type            | Creation (C++)     | Creattion (Python)      |
+| ------------- | ------------------- | ------------------ | ----------------------- |
+| DVInt8        | int8_t              | DVInt8 x(42);      | x = trtc.DVInt8(42)     |
+| DVUInt8       | uint8_t             | DVUInt8 x(42);     | x = trtc.DVUInt8(42)    |
+| DVInt16       | int16_t             | DVInt16 x(42);     | x = trtc.DVInt16(42)    |
+| DVUInt16      | uint16_t            | DVUInt16 x(42);    | x = trtc.DVUInt16(42)   | 
+| DVInt32       | int32_t             | DVInt32 x(42);     | x = trtc.DVInt32(42)    |
+| DVUInt32      | uint32_t            | DVUInt32 x(42);    | x = trtc.DVUInt32(42)   |
+| DVInt64       | int64_t             | DVInt64 x(42);     | x = trtc.DVInt64(42)    | 
+| DVUInt64      | uint64_t            | DVUInt64 x(42);    | x = trtc.DVUInt64(42)   | 
+| DVFloat       | float               | DVFloat x(42.0f);  | x = trtc.DVFloat(42.0)  |
+| DVDouble      | double              | DVDouble x(42.0);  | x = trtc.DVDouble(42.0) |
+| DVBool        | bool                | DVBool x(true);    | x = trtc.DVBool(True)   |
+| DVSizeT       | size_t              | DVSizeT x(42);     | N/A                     |
+| DVChar        | char                | DVChar x(42);      | N/A                     |
+| DVSChar       | signed char         | DVSChar x(42);     | N/A                     |
+| DVUChar       | unsigned char       | DVUChar x(42);     | N/A                     |
+| DVShort       | short               | DVShort x(42);     | N/A                     |
+| DVUShort      | unsigned short      | DVUShort x(42);    | N/A                     |
+| DVInt         | int                 | DVInt x(42);       | N/A                     |
+| DVUInt        | unsigned int        | DVUInt x(42);      | N/A                     |
+| DVLong        | long                | DVLong x(42);      | N/A                     |
+| DVULong       | unsigned long       | DVULong x(42);     | N/A                     |
+| DVLongLong    | long long           | DVLongLong x(42);  | N/A                     |
+| DVULongLong   | unsigned long long  | DVULongLong x(42); | N/A                     |
+
+### Advanced Types
+
+Besides the basic types listed above, Vectors and Functors are also Device Viewable Objects.
+These objects will be explained in separated sections.
+
+
 ## Vectors
 
 ## Functors
