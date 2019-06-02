@@ -52,6 +52,7 @@ set(PYTHON_TEST
 	test/test_binary_search.py
 	test/test_merge.py
 	test/test_sort.py
+	test/test_numba.py
 
 	test/test_constant.py
 	test/test_counter.py

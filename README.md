@@ -102,6 +102,7 @@ You will get the library headers, binaries and examples in the "install" directo
 For Python
 * Python 3
 * numpy
+* numba (optional)
 
 ## Install ThrustRTC for Python from Pypi
 

@@ -68,3 +68,13 @@ static PyObject* n_dvvector_from_dvs(PyObject* self, PyObject* args)
 	DVVector* ret = new DVVector(*ctx, elem_cls.data(), num_items, buf.data());
 	return PyLong_FromVoidPtr(ret);
 }
+
+static PyObject* n_dvvectoradaptor_create(PyObject* self, PyObject* args)
+{
+	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	const char* elem_cls = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
+	size_t size = (size_t)PyLong_AsUnsignedLongLong(PyTuple_GetItem(args, 2));
+	void* data = PyLong_AsVoidPtr(PyTuple_GetItem(args, 3));
+	DVVectorAdaptor* ret = new DVVectorAdaptor(*ctx, elem_cls, size, data);
+	return PyLong_FromVoidPtr(ret);
+}
