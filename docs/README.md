@@ -139,7 +139,6 @@ int main()
 
 ```python
 import ThrustRTC as trtc
-import numpy as np
 
 ctx = trtc.Context()
 
@@ -195,7 +194,6 @@ int main()
 
 ```python
 import ThrustRTC as trtc
-import numpy as np
 
 ctx = trtc.Context()
 
@@ -212,6 +210,108 @@ print (dvec_out.to_host())
 
 ```
 
+### Kernel and For-Loop Objects
+
+Kernel and For-Loop objects can be used to separate their definition from launching.
+
+Note that these objects are just catching the source code, no compilation will happen before they are sent to a context for launching.
+
+Example using Kernel objects:
+
+```cpp
+#include <stdio.h>
+#include "TRTCContext.h"
+#include "DVVector.h"
+
+int main()
+{
+	TRTCContext ctx;
+
+	TRTC_Kernel ker(
+	{ "arr_in", "arr_out", "k" },
+	"    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
+	"    if (idx >= arr_in.size()) return;\n"
+	"    arr_out[idx] = arr_in[idx]*k;\n");
+
+	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
+	DVVector dvec_in_f(ctx, "float", 5, test_f);
+	DVVector dvec_out_f(ctx, "float", 5);
+	DVFloat k1(10.0);
+	const DeviceViewable* args_f[] = { &dvec_in_f, &dvec_out_f, &k1 };
+	ker.launch(ctx, { 1, 1, 1 }, { 128, 1, 1 }, args_f);
+	dvec_out_f.to_host(test_f);
+	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);
+
+	return 0;
+}
+```
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+
+kernel = trtc.Kernel(['arr_in', 'arr_out', 'k'],
+	'''
+	size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx >= arr_in.size()) return;
+	arr_out[idx] = arr_in[idx]*k;
+	''')
+
+dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
+dvec_out = trtc.device_vector(ctx, 'float', 5)
+dv_k = trtc.DVFloat(10.0)
+
+kernel.launch(ctx, 1,128, [dvec_in, dvec_out, dv_k])
+print (dvec_out.to_host())
+```
+
+Example using For-Loop objects:
+
+```cpp
+#include <stdio.h>
+#include "TRTCContext.h"
+#include "DVVector.h"
+
+int main()
+{
+	TRTCContext ctx;
+
+	TRTC_For f({ "arr_in", "arr_out", "k" }, "idx",
+		"    arr_out[idx] = arr_in[idx]*k;\n");
+
+	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
+	DVVector dvec_in_f(ctx, "float", 5, test_f);
+	DVVector dvec_out_f(ctx, "float", 5);
+	DVDouble k1(10.0);
+	const DeviceViewable* args_f[] = { &dvec_in_f, &dvec_out_f, &k1 };
+	f.launch_n(ctx, 5, args_f);
+	dvec_out_f.to_host(test_f);
+	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);
+
+	return 0;
+}
+```
+
+```python
+import ThrustRTC as trtc
+import numpy as np
+
+ctx = trtc.Context()
+
+forLoop = trtc.For(['arr_in','arr_out','k'], "idx",
+	'''
+	arr_out[idx] = arr_in[idx]*k;
+	''')
+
+dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
+dvec_out = trtc.device_vector(ctx, 'float', 5)
+dv_k = trtc.DVFloat(10.0)
+
+forLoop.launch_n(ctx, 5, [dvec_in, dvec_out, dv_k])
+
+print (dvec_out.to_host())
+```
 
 ## Device Viewable Objects
 
