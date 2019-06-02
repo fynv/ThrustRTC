@@ -73,11 +73,11 @@ For Python
 
 ## Context Objects
 
-In ThrustRTC, a context object mains a list of headers that need to be included from device code, global constants, and most importantly, a cache of loaded kernels. When user submits a kernel that is already loaded in the current context, it will used directly and will not be compiled and loaded again.
+In ThrustRTC, a Context object mains a list of headers that need to be included from device code, global constants, and most importantly, a cache of loaded kernels. When user submits a kernel that is already loaded in the current context, it will used directly and will not be compiled and loaded again.
 
 ### Creation
 
-In C++, a context object can be created using its default constructor:
+In C++, a Context object can be created using its default constructor:
 
 ```cpp
 #include "TRTCContext.h"
@@ -97,9 +97,12 @@ import ThrustRTC as trtc
 ctx = trtc.Context()
 ```
 
+**Note:** The remaining of this section is about how to write and launch your own kernels using a context object.
+If you are only interested in using the built-in algorithms, you can skip them an go ahead from [Device Viewable Objects](#device-viewable-objects).
+
 ### Launching a Kernel
 
-User can use a context object to launch a kernel providing the following information:
+User can use a Context object to launch a kernel providing the following information:
 
 * Grid Dimensions
 * Block Dimensions
@@ -160,7 +163,7 @@ print (dvec_out.to_host())
 
 A paralleled for-loop is a special case of a kernel that has only 1 dimension.
 
-User can use a context object to launch a paralleled for-loop providing the following information:
+User can use a Context object to launch a paralleled for-loop providing the following information:
 
 * An iteration range specified by a begin/end pair, or just "n"
 * An argument map, the same as launching a kernel
@@ -216,6 +219,18 @@ Kernel and For-Loop objects can be used to separate their definition from launch
 
 Note that these objects are just catching the source code, no compilation will happen before they are sent to a context for launching.
 
+A Kernel object can be created given the following:
+
+* Names of parameters
+* Body of the kernel function represented as a string 
+
+Then it can be launched given the following:
+
+* The Context object
+* Grid Dimensions
+* Block Dimensions
+* Device Viewable Objects as arguments
+
 Example using Kernel objects:
 
 ```cpp
@@ -265,6 +280,18 @@ dv_k = trtc.DVFloat(10.0)
 kernel.launch(ctx, 1,128, [dvec_in, dvec_out, dv_k])
 print (dvec_out.to_host())
 ```
+
+A For-Loop object can be created given the following:
+
+* Names of parameters
+* Name of the iterator variable 
+* Body of the for loop represented as a string 
+
+Then it can be launched given the following:
+
+* The Context object
+* An iteration range specified by a begin/end pair, or just "n"
+* Device Viewable Objects as arguments
 
 Example using For-Loop objects:
 
@@ -321,7 +348,7 @@ Device Viewable Objects are objects that can be used as kernel arguments. All De
 
 The following types of Device Viewable Objects can be initalized using values of basic types.
 
-| Name of Class | C++ Type            | Creation (C++)     | Creattion (Python)      |
+| Name of Class | C++ Type            | Creation (C++)     | Creation (Python)      |
 | ------------- | ------------------- | ------------------ | ----------------------- |
 | DVInt8        | int8_t              | DVInt8 x(42);      | x = trtc.DVInt8(42)     |
 | DVUInt8       | uint8_t             | DVUInt8 x(42);     | x = trtc.DVUInt8(42)    |
@@ -370,8 +397,103 @@ trtc.DVTuple(ctx, {'a': d_int, 'b': d_float}
 Besides the basic types and Tuples, Vectors and Functors are also Device Viewable Objects.
 These objects will be explained in separated sections.
 
-
 ## Vectors
+
+Just like in Thrust, Vector is used as the most important data-container in ThrustRTC.
+
+A difference between ThrustRTC and Thrust is that there are no "iterators" in ThrustRTC.
+Vectors are Device Viewable Objects, and algorithms works directly on Vectors.
+
+In Thrust, there are "Fancy Iteractors" like "constant_iterator", "counting_iterator". 
+In ThrustRTC, the corresponding functionalities are provided through "Fake Vectors" --
+Device Viewable Objects that can be accessed by indices but does not necessarily have
+a storage.
+
+### DVVector
+
+#### Creation
+
+In C++ code, a DVVector object can be created given the following:
+
+* The Context object
+* Name of the type of elements: it can be anything that CUDA recognizes as a type.
+* Number of elements 
+* A pointer to a host array as source (optional)
+
+```cpp
+TRTCContext ctx;
+int hIn[8] = { 10, 20, 30, 40, 50, 60, 70, 80 };
+DVVector dIn(ctx, "int32_t", 8, hIn);
+DVVector dOut(ctx, "int32_t", 8);
+```
+
+In Python, there are several ways to create a DVVector object.
+
+* Create from Numpy
+
+```python
+ctx = trtc.Context()
+harr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype='float32')
+darr = trtc.device_vector_from_numpy(ctx, harr)
+```
+
+The supported Numpy dtypes are:
+  * np.int8
+  * np.uint8
+  * np.int16
+  * np.uint16
+  * np.int32
+  * np.uint32
+  * np.int64
+  * np.uint64
+  * np.float32
+  * np.float64
+  * np.bool
+
+* Create from Python List
+
+```python
+ctx = trtc.Context()
+dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
+```
+
+The C++ type specified here should be one of the basic types with a corresponding Device Viewable class in Python.
+
+Although this type of initialization if most widely used in test code, it should be noted that this is inefficient comparing to using the Numpy interface. The Numpy interface is the only recommended way of host to device transfer when there is a large amount of data.
+
+* Create with Specified Type and Size
+
+```python
+ctx = trtc.Context()
+dvec_out = trtc.device_vector(ctx, 'float', 5)
+```
+In this case, the C++ type specified can be any type that CUDA recognizes.
+
+Optionally, a raw C++ pointer to an host array can be passed as the src to copy.
+
+#### to_host()
+
+* The method *to_host()* can be used to copy the content of DVVector to host.
+
+The C++ version needs a host buffer of enough size.
+
+```cpp
+TRTCContext ctx;
+int hIn[8] = { 10, 20, 30, 40, 50, 60, 70, 80 };
+DVVector dIn(ctx, "int32_t", 8, hIn);
+dIn.to_host(hIn);
+```
+
+The Python version returns a Numpy NDArray. The type of elements must be a supported one.
+
+```python
+ctx = trtc.Context()
+dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
+print(dvec_in.to_host())
+```
+
+There are optional parameters *begin* and *end* which can be used to specify a range to copy.
+
 
 ## Functors
 
