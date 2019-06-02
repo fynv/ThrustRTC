@@ -501,7 +501,289 @@ There are optional parameters *begin* and *end* which can be used to specify a r
 
 ### DVVectorAdaptor
 
-DVVectorAdaptor objects are 
+DVVectorAdaptor objects are device Vectors with externally managed storage.
+
+In C++ code, user can create a DVVectorAdaptor object just like creating a DVVector, 
+passing in pointer of device memory instead of host memory to initialize the object.
+The device memory should not be freed while the DVVectorAdaptor object is still being
+used.
+
+In Python, DVVectorAdaptor is used by DVNumbaVector to adapt to Numba. A Numba DeviceNDArray
+can easily be used as a ThrustRTC recognized Vector like the following code shows:
+
+```python
+import ThrustRTC as trtc
+import numpy as np
+from numba import cuda
+
+ctx = trtc.Context()
+
+nparr = np.array([1, 0, 2, 2, 1, 3], dtype=np.int32)
+nbarr = cuda.to_device(nparr)
+darr = trtc.DVNumbaVector(ctx, nbarr)
+trtc.Inclusive_Scan(ctx, darr, darr)
+print(nbarr.copy_to_host())
+``` 
+
+### DVConstant
+
+DVConstant is corresponding to *thrust::constant_iterator*. 
+
+A DVConstant object can be created using a constant Device Viewable Object and accessed as a Vector of constant value.
+
+```cpp
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "fake_vectors/DVConstant.h"
+#include "copy.h"
+
+int main()
+{
+	TRTCContext ctx;
+	DVConstant src(ctx, DVInt32(123), 10)
+	DVVector dst(ctx, "int32_t", 10);
+	TRTC_Copy(ctx, src, dst);
+	...
+}
+
+```
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+src = trtc.DVConstant(ctx, trtc.DVInt32(123), 10)
+dst = trtc.device_vector(ctx, 'int32_t', 10)
+trtc.Copy(ctx, src, dst)
+
+```
+
+### DVCounter
+
+DVCounter is corresponding to *thrust::counting_iterator*. 
+
+A DVCounter object can be created using a constant Device Viewable Object as initial value,
+and accessed as a Vector of sequentially changing values.
+
+```cpp
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "fake_vectors/DVCounter.h"
+#include "copy.h"
+
+int main()
+{
+	TRTCContext ctx;
+	DVCounter src(ctx, DVInt32(1), 10)
+	DVVector dst(ctx, "int32_t", 10);
+	TRTC_Copy(ctx, src, dst);
+	...
+}
+
+```
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+src = trtc.DVCounter(ctx, trtc.DVInt32(1), 10)
+dst = trtc.device_vector(ctx, 'int32_t', 10)
+trtc.Copy(ctx, src, dst)
+
+```
+
+### DVDiscard
+
+DVDiscard is corresponding to *thrust::discard_iterator*. 
+
+A DVDiscard can be created given the element type. It will ignore all value written to it. 
+Can be used as a place-holder for an unused output.
+
+### DVPermutation
+
+DVPermutation is corresponding to *thrust::permutation_iterator*. 
+
+A DVPermutation object can be created using a Vector as source and another Vector as indices, 
+and then accessed the source Vector in permuted order.
+
+```cpp
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "fake_vectors/DVPermutation.h"
+#include "copy.h"
+
+int main()
+{
+	TRTCContext ctx;
+
+	float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
+	DVVector dvalues(ctx, "float", 8, hvalues);
+
+	int hindices[4] = { 2,6,1,3 };
+	DVVector dindices(ctx, "int32_t", 4, hindices);
+
+	DVPermutation src(ctx, dvalues, dindices);
+	DVVector dst(ctx, "float", 4);
+	
+	TRTC_Copy(ctx, src, dst);
+	...
+}
+
+```
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+
+dvalues = trtc.device_vector_from_list(ctx, [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0], 'float')
+dindices =  trtc.device_vector_from_list(ctx, [2,6,1,3], 'int32_t')
+src = trtc.DVPermutation(ctx, dvalues, dindices)
+dst = trtc.device_vector(ctx, 'float', 4)
+
+trtc.Copy(ctx, src, dst)
+
+```
+
+### DVReverse
+
+DVReverse is corresponding to *thrust::reverse_iterator*. 
+
+A DVReverse object can be created using a Vector as source and access it in reversed order.
+
+```cpp
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "fake_vectors/DVReverse.h"
+#include "copy.h"
+
+int main()
+{
+	TRTCContext ctx;
+
+	int hvalues[4] = { 3, 7, 2, 5 };
+	DVVector dvalues(ctx, "int32_t", 4, hvalues);
+
+	DVReverse src(ctx, dvalues);
+	DVVector dst(ctx, "int32_t", 4);
+	
+	TRTC_Copy(ctx, src, dst);
+	...
+}
+
+```
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+
+dvalues = trtc.device_vector_from_list(ctx, [3, 7, 2, 5], 'int32_t')
+src = trtc.DVReverse(ctx, dvalues)
+dst = trtc.device_vector(ctx, 'int32_t', 4)
+
+trtc.Copy(ctx, src, dst)
+
+```
+
+### DVTransform
+
+DVTransform is corresponding to *thrust::transform_iterator*. 
+
+A DVTransform object can be created using a Vector as source and a Functor as operator, 
+then access the transformed values of the source Vector.
+
+
+```cpp
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "fake_vectors/DVTransform.h"
+#include "copy.h"
+
+int main()
+{
+	TRTCContext ctx;
+
+	float hvalues[8] = { 1.0f, 4.0f, 9.0f, 16.0f };
+	DVVector dvalues(ctx, "float", 4, hvalues);
+
+	Functor square_root{ ctx, {}, { "x" }, "        return sqrtf(x);\n" };
+
+	DVTransform src(ctx, dvalues, "float", square_root);
+	DVVector dst(ctx, "float", 4);
+	
+	TRTC_Copy(ctx, src, dst);
+	...
+}
+
+```
+
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+
+dvalues = trtc.device_vector_from_list(ctx, [1.0, 4.0, 9.0, 16.0], 'float')
+src = trtc.DVTransform(ctx, dvalues, 'float', square_root)
+dst = trtc.device_vector(ctx, 'float', 4)
+
+trtc.Copy(ctx, src, dst)
+
+```
+
+### DVZipped
+
+DVZipped is corresponding to *thrust::zip_iterator*. 
+
+A DVZipped object can be created using multiple Vectors as inputs and accessed as a Vector consisting 
+elements combined from the elements from each of these Vectors.
+
+```cpp
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "fake_vectors/DVTransform.h"
+#include "copy.h"
+
+int main()
+{
+	TRTCContext ctx;
+
+	int h_int_in[5] = { 0, 1, 2, 3, 4};
+	DVVector d_int_in(ctx, "int32_t", 5, h_int_in);
+	float h_float_in[5] = { 0.0f, 10.0f, 20.0f, 30.0f, 40.0f };
+	DVVector d_float_in(ctx, "float", 5, h_float_in);
+
+	DVVector d_int_out(ctx, "int32_t", 5);
+	DVVector d_float_out(ctx, "float", 5);
+
+	DVZipped src(ctx, { &d_int_in, &d_float_in }, { "a", "b" });
+	DVZipped dst(ctx, { &d_int_out, &d_float_out }, { "a", "b" });
+
+	TRTC_Copy(ctx, src, dst);
+	...
+}
+
+```
+
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+
+d_int_in = trtc.device_vector_from_list(ctx, [0, 1, 2, 3, 4], 'int32_t')
+d_float_in = trtc.device_vector_from_list(ctx, [ 0.0, 10.0, 20.0, 30.0, 40.0], 'float')
+
+d_int_out = trtc.device_vector(ctx, 'int32_t', 5)
+d_float_out = trtc.device_vector(ctx, 'float', 5)
+
+src = trtc.DVZipped(ctx, [d_int_in, d_float_in], ['a','b'])
+dst = trtc.DVZipped(ctx, [d_int_out, d_float_out], ['a','b'])
+
+trtc.Copy(ctx, src, dst)
+
+```
 
 
 ## Functors
