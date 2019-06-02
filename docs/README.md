@@ -399,7 +399,7 @@ These objects will be explained in separated sections.
 
 Hierarchy of Device Viewable Objects
 
-![image](DeviceViewable.png){width="500px"}
+![image](DeviceViewable.png | width=500)
 
 ## Vectors
 
