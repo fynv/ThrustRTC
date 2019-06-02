@@ -347,9 +347,27 @@ The following types of Device Viewable Objects can be initalized using values of
 | DVLongLong    | long long           | DVLongLong x(42);  | N/A                     |
 | DVULongLong   | unsigned long long  | DVULongLong x(42); | N/A                     |
 
+### Tuples
+
+Tuples can be created by combining multiple Device Viewable Objects.
+Different from Thrust, in ThrustRTC, elements of a Tuple are accessed by their names, not by indices.
+The names of elements need to be specified at the creation of Tuples.
+
+```cpp
+DVInt32 d_int(123);
+DVFloat d_float(456.0f);
+DVTuple d_tuple(ctx, { {"a", &d_int}, {"b",&d_float} });
+```
+
+```python
+d_int = trtc.DVInt32(123);
+d_float = trtc.DVFloat(456.0);
+trtc.DVTuple(ctx, {'a': d_int, 'b': d_float}
+```
+
 ### Advanced Types
 
-Besides the basic types listed above, Vectors and Functors are also Device Viewable Objects.
+Besides the basic types and Tuples, Vectors and Functors are also Device Viewable Objects.
 These objects will be explained in separated sections.
 
 
