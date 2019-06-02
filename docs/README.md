@@ -397,6 +397,10 @@ trtc.DVTuple(ctx, {'a': d_int, 'b': d_float}
 Besides the basic types and Tuples, Vectors and Functors are also Device Viewable Objects.
 These objects will be explained in separated sections.
 
+Hierarchy of Device Viewable Objects
+
+![image](DeviceViewable.png)
+
 ## Vectors
 
 Just like in Thrust, Vector is used as the most important data-container in ThrustRTC.
@@ -438,6 +442,7 @@ darr = trtc.device_vector_from_numpy(ctx, harr)
 ```
 
 The supported Numpy dtypes are:
+
   * np.int8
   * np.uint8
   * np.int16
