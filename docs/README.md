@@ -1,5 +1,7 @@
 # ThrustRTC - Quick Start Guide
 
+![image](test.png)
+
 There will be a long time before ThrustRTC is properly documented. 
 
 ThrustRTC is "multilingual", there is a C++ library at its core, a wrapper layer for Python users, and there will be wrapper layers for C# and Java as well in the future. Therefore, documenting every detail will be a huge effort. However, thanks to [Thrust](https://thrust.github.io/doc/index.html), most of the core logics of the algorithms are already explained. ThrustRTC is following very similar logics as Thrust, so we can just focus on the differences here.
@@ -493,6 +495,10 @@ print(dvec_in.to_host())
 ```
 
 There are optional parameters *begin* and *end* which can be used to specify a range to copy.
+
+### DVVectorAdaptor
+
+DVVectorAdaptor objects are 
 
 
 ## Functors
