@@ -443,17 +443,18 @@ darr = trtc.device_vector_from_numpy(ctx, harr)
 
 The supported Numpy dtypes are:
 
-  * np.int8
-  * np.uint8
-  * np.int16
-  * np.uint16
-  * np.int32
-  * np.uint32
-  * np.int64
-  * np.uint64
-  * np.float32
-  * np.float64
-  * np.bool
+| Numpy dtype | C++ Type |
+| np.int8     | int8_t   |
+| np.uint8    | uint8_t  |
+| np.int16    | int16_t  |
+| np.uint16   | uint16_t |
+| np.int32    | int32_t  |
+| np.uint32   | uint32_t |
+| np.int64    | int64_t  |
+| np.uint64   | uint64_t |
+| np.float32  | float    |
+| np.float64  | double   |
+| np.bool     | bool     |
 
 * Create from Python List
 
@@ -462,7 +463,7 @@ ctx = trtc.Context()
 dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
 ```
 
-The C++ type specified here should be one of the basic types with a corresponding Device Viewable class in Python.
+The C++ type specified here should be one of the basic types corresponding to a supported Numpy dtype, as listed above.
 
 * Create with Specified Type and Size
 
