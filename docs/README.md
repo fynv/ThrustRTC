@@ -348,7 +348,7 @@ Device Viewable Objects are objects that can be used as kernel arguments. All De
 
 The following types of Device Viewable Objects can be initalized using values of basic types.
 
-| Name of Class | C++ Type            | Creation (C++)     | Creation (Python)      |
+| Name of Class | C++ Type            | Creation (C++)     | Creation (Python)       |
 | ------------- | ------------------- | ------------------ | ----------------------- |
 | DVInt8        | int8_t              | DVInt8 x(42);      | x = trtc.DVInt8(42)     |
 | DVUInt8       | uint8_t             | DVUInt8 x(42);     | x = trtc.DVUInt8(42)    |
@@ -785,8 +785,75 @@ trtc.Copy(ctx, src, dst)
 
 ```
 
-
 ## Functors
+
+Functors, in generally sense, are objects with a *operator()*. 
+In ThrustRTC, Functors are Device Viewable Objects with a device *operator()*
+There are 2 kinds of Functors that can be used: user defined Functors and
+built-in Functors.
+
+### User Defined Functors
+
+An user defined functor can be created given:
+
+* A map of Device Viewable Object to be captured, can be empty.
+* A list of names of Functor parameters, that are the parameters of *operator()*.
+* The code-body of *operator()* represented as a string.
+
+```cpp
+Functor is_even = { ctx, {},{ "x" }, "        return x % 2 == 0;\n" };
+```
+
+```python
+is_even = trtc.Functor( ctx, {}, ['x'], 
+'''
+         return x % 2 == 0;
+''')
+```
+
+A temporary structure will be created internally, which looks like:
+
+```cpp
+struct
+{
+	template<typename T>
+	__device__ inline auto operator()(const T& x)
+	{
+		return x % 2 == 0;
+	}
+};
+
+```
+
+The indentation is there just to make the code formated nicely so it will be easy to debug
+when there is a compilation error.
+
+### Built-In Functors
+
+In C++ code and Python code, the ways to create a build-in Functor are a little different.
+In C++, the class Functor has a constructor that takes in a single string parameter.
+In Python, Built-In Functors are defined as separate classes.
+
+The following built-in Functors are available:
+
+| Name of Functor | Creation (C++)             | Creation (Python)        |
+| --------------- | -------------------------- | ------------------------ |
+| Identity        | Functor f("Identity")      | f = trtc.Identity()      |
+| Maximum         | Functor f("Maximum")       | f = trtc.Maximum()       |
+| Minimum         | Functor f("Minimum")       | f = trtc.Minimum()       |
+| EqualTo         | Functor f("EqualTo")       | f = trtc.EqualTo()       |
+| NotEqualTo      | Functor f("NotEqualTo")    | f = trtc.NotEqualTo()    |
+| Greater         | Functor f("Greater")       | f = trtc.Greater()       |
+| Less            | Functor f("Less")          | f = trtc.Less()          |
+| GreaterEqual    | Functor f("GreaterEqual")  | f = trtc.GreaterEqual()  | 
+| LessEqual       | Functor f("LessEqual")     | f = trtc.LessEqual()     | 
+| Plus            | Functor f("Plus")          | f = trtc.Plus()          | 
+| Minus           | Functor f("Minus")         | f = trtc.Minus()         | 
+| Multiplies      | Functor f("Multiplies")    | f = trtc.Multiplies()    | 
+| Divides         | Functor f("Divides")       | f = trtc.Divides()       | 
+| Modulus         | Functor f("Modulus")       | f = trtc.Modulus()       | 
+| Negate          | Functor f("Negate")        | f = trtc.Negate()        | 
+
 
 ## Algorithms
 
