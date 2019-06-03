@@ -787,8 +787,8 @@ trtc.Copy(ctx, src, dst)
 
 ## Functors
 
-Functors, in generally sense, are objects with a *operator()*. 
-In ThrustRTC, Functors are Device Viewable Objects with a device *operator()*
+Functors, in generally sense, are objects with an *operator()*. 
+In ThrustRTC, Functors are Device Viewable Objects with a device *operator()*.
 There are 2 kinds of Functors that can be used: user defined Functors and
 built-in Functors.
 
@@ -856,4 +856,110 @@ The following built-in Functors are available:
 
 
 ## Algorithms
+
+Each algorithm of ThrustRTC is corresponding to one in Thrust. 
+A significant between ThrustRTC functions and Thrust functions is that Thrust 
+functions takes in iterators as parameters, while ThrustRTC takes in Vectors directly.
+In ThrustRTC, the working ranges can be specified separately using *begin*/*end* parameters.
+These parameters have default values *begin = 0* and *end = -1* that cover the full range
+of the Vectors.
+
+### Transformations
+
+Transformation algorithms are one-pass algorithms applied to each element of one or more Vectors.
+
+The simpliest transformation algorithm is Fill, which sets all elements of a Vector to a specified
+value.
+
+```cpp
+TRTCContext ctx;
+DVVector vec_to_fill(ctx, "int32_t", 5);
+TRTC_Fill(ctx, vec_to_fill, DVInt32(123));
+```
+
+```python
+ctx = trtc.Context()
+darr = trtc.device_vector(ctx, 'int32_t', 5)
+trtc.Fill(ctx, darr, trtc.DVInt32(123))
+```
+
+The above code sets all elements of the Vector to 123. Other transformations include Sequence,
+Replace, and of course Transform.
+
+The following source code demonstrates several of the transformation algorithms.
+
+```cpp
+#include <stdio.h>
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "transform.h"
+#include "sequence.h"
+#include "fill.h"
+#include "replace.h"
+
+int main()
+{
+	TRTCContext ctx;
+
+	DVVector X(ctx, "int32_t", 10);
+	DVVector Y(ctx, "int32_t", 10);
+	DVVector Z(ctx, "int32_t", 10);
+
+	// initialize X to 0,1,2,3, ....
+	TRTC_Sequence(ctx, X);
+
+	// compute Y = -X
+	TRTC_Transform(ctx, X, Y, Functor("Negate"));
+
+	// fill Z with twos
+	TRTC_Fill(ctx, Z, DVInt32(2));
+
+	// compute Y = X mod 2
+	TRTC_Transform_Binary(ctx, X, Z, Y, Functor("Modulus"));
+
+	// replace all the ones in Y with tens
+	TRTC_Replace(ctx, Y, DVInt32(1), DVInt32(10));
+
+	// print Y
+	int results[10];
+	Y.to_host(results);
+
+	for (int i = 0; i < 10; i++)
+		printf("%d ", results[i]);
+	puts("");
+
+	return 0;
+}
+```
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+
+X = trtc.device_vector(ctx, 'int32_t', 10)
+Y = trtc.device_vector(ctx, 'int32_t', 10)
+Z = trtc.device_vector(ctx, 'int32_t', 10)
+
+# initialize X to 0,1,2,3, ....
+trtc.Sequence(ctx, X)
+
+# compute Y = -X
+trtc.Transform(ctx, X, Y, trtc.Negate())
+
+# fill Z with twos
+trtc.Fill(ctx, Z, trtc.DVInt32(2))
+
+# compute Y = X mod 2
+trtc.Transform_Binary(ctx, X, Z, Y, trtc.Modulus())
+
+# replace all the ones in Y with tens
+trtc.Replace(ctx, Y, trtc.DVInt32(1), trtc.DVInt32(10))
+
+# print Y
+print(Y.to_host())
+```
+
+### Reductions
+
 
