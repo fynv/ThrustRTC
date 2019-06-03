@@ -45,6 +45,9 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "partition.hpp"
 #include "find.hpp"
 #include "mismatch.hpp"
+#include "binary_search.hpp"
+#include "merge.hpp"
+#include "sort.hpp"
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
@@ -81,6 +84,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvvector_create", n_dvvector_create, METH_VARARGS, "" },
 	{ "n_dvvector_to_host", n_dvvector_to_host, METH_VARARGS, "" },
 	{ "n_dvvector_from_dvs", n_dvvector_from_dvs, METH_VARARGS, "" },
+	{ "n_dvvectoradaptor_create", n_dvvectoradaptor_create, METH_VARARGS, "" },
 	{ "n_dvtuple_create", n_dvtuple_create, METH_VARARGS, "" },
 	{ "n_dvconstant_create", n_dvconstant_create, METH_VARARGS, "" },
 	{ "n_dvcounter_create", n_dvcounter_create, METH_VARARGS, "" },
@@ -149,6 +153,18 @@ static PyMethodDef s_Methods[] = {
 	{ "n_find_if", n_find_if, METH_VARARGS, "" },
 	{ "n_find_if_not", n_find_if_not, METH_VARARGS, "" },
 	{ "n_mismatch", n_mismatch, METH_VARARGS, "" },
+	{ "n_lower_bound", n_lower_bound, METH_VARARGS, "" },
+	{ "n_upper_bound", n_upper_bound, METH_VARARGS, "" },
+	{ "n_binary_search", n_binary_search, METH_VARARGS, "" },
+	{ "n_partition_point", n_partition_point, METH_VARARGS, "" },
+	{ "n_reduce_by_key", n_reduce_by_key, METH_VARARGS, "" },
+	{ "n_merge", n_merge, METH_VARARGS, "" },
+	{ "n_merge_by_key", n_merge_by_key, METH_VARARGS, "" },
+	{ "n_sort", n_sort, METH_VARARGS, "" },
+	{ "n_sort_by_key", n_sort_by_key, METH_VARARGS, "" },
+	{ "n_is_partitioned", n_is_partitioned, METH_VARARGS, "" },
+	{ "n_is_sorted", n_is_sorted, METH_VARARGS, "" },
+	{ "n_is_sorted_until", n_is_sorted_until, METH_VARARGS, "" },
 	0
 };
 

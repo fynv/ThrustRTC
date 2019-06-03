@@ -28,6 +28,9 @@ add_executable(test_unique test_unique.cpp)
 add_executable(test_partition test_partition.cpp)
 add_executable(test_find test_find.cpp)
 add_executable(test_mismatch test_mismatch.cpp)
+add_executable(test_binary_search test_binary_search.cpp)
+add_executable(test_merge test_merge.cpp)
+add_executable(test_sort test_sort.cpp)
 
 add_executable(test_constant test_constant.cpp)
 add_executable(test_counter test_counter.cpp)
@@ -67,6 +70,9 @@ target_compile_definitions(test_unique PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_partition PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_find PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_mismatch PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_binary_search PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_merge PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_sort PUBLIC THRUST_RTC_DLL_IMPORT)
 
 target_compile_definitions(test_constant PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_counter PUBLIC THRUST_RTC_DLL_IMPORT)
@@ -106,6 +112,9 @@ target_link_libraries(test_unique ThrustRTC)
 target_link_libraries(test_partition ThrustRTC)
 target_link_libraries(test_find ThrustRTC)
 target_link_libraries(test_mismatch ThrustRTC)
+target_link_libraries(test_binary_search ThrustRTC)
+target_link_libraries(test_merge ThrustRTC)
+target_link_libraries(test_sort ThrustRTC)
 
 target_link_libraries(test_constant ThrustRTC)
 target_link_libraries(test_counter ThrustRTC)
@@ -144,6 +153,9 @@ test_unique
 test_partition
 test_find
 test_mismatch
+test_binary_search
+test_merge
+test_sort
 
 test_constant
 test_counter

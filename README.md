@@ -1,10 +1,8 @@
 # ThrustRTC
 
-For introduction in Chinese, see [here](https://zhuanlan.zhihu.com/p/62293854).
+## The Idea
 
-## Idea
-
-The aim of the project is to provide a library of general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/), that can be used in non-C++ programming launguages (currently focused on Python).
+The aim of the project is to provide a library of general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/), that can be used in non-C++ programming launguages that has an interface with C/C++ (Python, C#, JAVA etc).
 
 There are several options to integrate CUDA with a language like Python.
 
@@ -65,189 +63,11 @@ trtc.Replace_If(ctx, A, trtc.Functor( ctx, {}, ['x'], '        return x<0;\n'), 
 ```
 
 A significant difference between ThrustRTC and Thrust C++ is that ThrustRTC does not include the iterators. 
-All operations explicitly work on vectors types. 
+All operations explicitly work on vectors types. Working-ranges can be specified using begin/end parameters.
 
-* We may not be able to port all the Thrust algorithms. (but hopefully most of them!)
+## Quick Start Guide
 
-## Building the code
-
-### Build-time Dependencies
-
-CUDA SDK is NOT required anymore. At build time, we only need:
-
-* UnQLite source code, as submodule: thirdparty/unqlite
-* CMake 3.x
-* C libraries of Python 3 is required to build the Python binding part of the code.
-
-### Building with CMake
-
-```
-$ mkdir build
-$ cd build
-$ cmake .. -DCMAKE_INSTALL_PREFIX=../install
-$ make
-$ make install
-```
-
-You will get the library headers, binaries and examples in the "install" directory.
-
-### Run-time dependencies
-
-* CUDA driver (up-to-date)
-* Shared library of NVRTC 
-  
-  * Windows: nvrtc64\*.dll, default location: %CUDA_PATH%/bin
-  * Linux: libnvrtc.so, default location: /usr/local/cuda/lib64
-  
-  If the library is not at the default location, TRTCContext::set_libnvrtc_path() need to be called at run-time to specify the path of the library.
-
-For Python
-* Python 3
-* numpy
-
-## Install ThrustRTC for Python from Pypi
-
-Experimental builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
-If your environment matches, you can try:
-
-$ pip3 install ThrustRTC
-
-## Progress
-
-The core infrastructure has been built, which includes:
-
-* A context class that manages the included headers, global contants and provides cache of PTX code in both internal and external storages.
-* General kernels and for-loops can be launched within a context, given their source-code as strings
-* A hierachy of device-viewable classes. The most important one is DVVectors, device-viewable GPU vectors. These objects can be created and managed by host and passed to device. 
-
-The following examples shows the basic usage of the core infrastructure:
-
-* test/test_trtc.cpp
-* test/test_for.cpp
-* python/test/test_trtc.py
-* python/test/test_for.py
-
-Thrust algorithms are being ported progressively.
-The following examples shows the use of the ported Thrust algorithms:
-* fill
-  * test/test_fill.cpp
-  * python/test/test_fill.py
-
-* replace
-  * test/test_replace.cpp
-  * python/test/test_replace.py
-
-* for_each
-  * test/test_for_each.cpp
-  * python/test/test_for_each.py
-
-* adjacent_difference
-  * test/adjacent_difference.cpp
-  * python/test/adjacent_difference.py
-
-* sequence
-  * test/sequence.cpp
-  * python/test/sequence.py
-
-* tabulate
-  * test/tabulate.cpp
-  * python/test/tabulate.py
-
-* transform
-  * test/test_transform.cpp
-  * python/test/test_transform.py
-
-* gather
-  * test/test_gather.cpp
-  * python/test/test_gather.py
-
-* scatter
-  * test/test_scatter.cpp
-  * python/test/test_scatter.py
-
-* copy
-  * test/test_copy.cpp
-  * python/test/test_copy.py
-
-* swap
-  * test/test_swap.cpp
-  * python/test/test_swap.py
-
-* count
-  * test/test_count.cpp
-  * python/test/test_count.py
-
-* reduce (missing reduce_by_key)
-  * test/test_reduce.cpp
-  * python/test/test_reduce.py
-
-* equal
-  * test/test_equal.cpp
-  * python/test/test_equal.py
-
-* extrema
-  * test/test_extrema.cpp
-  * python/test/test_extrema.py
-
-* inner_product
-  * test/test_inner_product.cpp
-  * python/test/test_inner_product.py
-
-* transform_reduce
-  * test/test_transform_reduce.cpp
-  * python/test/test_transform_reduce.py
-
-* logical
-  * test/test_logical.cpp
-  * python/test/test_logical.py
-
-* scan
-  * test/test_scan.cpp
-  * python/test/test_scan.py
-
-* transform_scan
-  * test/test_transform_scan.cpp
-  * python/test/test_transform_scan.py
-
-* scan_by_key
-  * test/test_scan_by_key.cpp
-  * python/test/test_scan_by_key.py
-
-* remove
-  * test/test_remove.cpp
-  * python/test/test_remove.py
-
-
-Thrust fancy-iterators are being ported progressively (as "fake-vectors").
-The following examples shows the use of the ported fake-vector classes:
-
-* DVConstant (constant_iterator)
-  * test/test_constant.cpp
-  * python/test/test_constant.py
-
-* DVCounter (counting_iterator)
-  * test/test_counter.cpp
-  * python/test/test_counter.py
-
-* DVDiscard (discard_iterator) 
-  * test/test_discard.cpp
-  * python/test/test_discard.py
-
-* DVPermutation (permutation_iterator)
-  * test/test_permutation.cpp
-  * python/test/test_permutation.py
-
-* DVReverse (reverse_iterator)
-  * test/test_reverse.cpp
-  * python/test/test_reverse.py
-
-* DVTransform (transform_iterator)
-  * test/test_transform_iter.cpp
-  * python/test/test_transform_iter.py
-
-* DVZipped (zip_iterator)
-  * test/test_zipped.cpp
-  * python/test/test_zipped.py
+[https://fynv.github.io/ThrustRTC/](https://fynv.github.io/ThrustRTC/)
 
 ## License 
 

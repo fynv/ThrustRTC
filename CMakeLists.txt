@@ -56,6 +56,9 @@ unique.cpp
 partition.cpp
 find.cpp
 mismatch.cpp
+binary_search.cpp
+merge.cpp
+sort.cpp
 )
 
 set(LIB_HEADERS
@@ -91,6 +94,9 @@ unique.h
 partition.h
 find.h
 mismatch.h
+binary_search.h
+merge.h
+sort.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS

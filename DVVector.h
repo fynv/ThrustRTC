@@ -42,5 +42,19 @@ private:
 	void* m_data;
 };
 
+class THRUST_RTC_API DVVectorAdaptor : public DVVectorLike
+{
+public:
+	DVVectorAdaptor(TRTCContext& ctx, const char* elem_cls, size_t size, void* ddata);
+	virtual bool is_writable() const { return true; }
+
+	virtual std::string name_view_cls() const;
+	virtual ViewBuf view() const;
+
+private:
+	void* m_data;
+
+};
+
 #endif
 

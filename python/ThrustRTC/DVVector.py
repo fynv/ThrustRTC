@@ -87,3 +87,36 @@ def device_vector_from_list(ctx, lst, elem_cls):
 	for dv in devive_viewables:
 		native.n_dv_destroy(dv)
 	return dvec
+
+class DVNumbaVector(DVVectorLike):
+	def __init__(self, ctx, nbarr):
+		self.nbarr = nbarr
+		if nbarr.dtype == np.int8:
+			elem_cls = 'int8_t'
+		elif nbarr.dtype == np.uint8:
+			elem_cls = 'uint8_t'
+		elif nbarr.dtype == np.int16:
+			elem_cls = 'int16_t'
+		elif nbarr.dtype == np.uint16:
+			elem_cls = 'uint16_t'
+		elif nbarr.dtype == np.int32:
+			elem_cls = 'int32_t'
+		elif nbarr.dtype == np.uint32:
+			elem_cls = 'uint32_t'		
+		elif nbarr.dtype == np.int64:
+			elem_cls = 'int64_t'
+		elif nbarr.dtype == np.uint64:
+			elem_cls = 'uint64_t'	
+		elif nbarr.dtype == np.int64:
+			elem_cls = 'int64_t'
+		elif nbarr.dtype == np.uint64:
+			elem_cls = 'uint64_t'	
+		elif nbarr.dtype == np.float32:
+			elem_cls = 'float'
+		elif nbarr.dtype == np.float64:
+			elem_cls = 'double'
+		elif nbarr.dtype == np.bool:
+			elem_cls = 'bool'
+		size = nbarr.size
+		ptr_device_data = nbarr.device_ctypes_pointer.value
+		self.m_cptr = native.n_dvvectoradaptor_create(ctx.m_cptr, elem_cls, size, ptr_device_data)

@@ -52,3 +52,48 @@ bool TRTC_Reduce(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable
 	return true;
 }
 
+#include "scan.h"
+#include "general_copy_if.h"
+
+uint32_t TRTC_Reduce_By_Key(TRTCContext& ctx, const DVVectorLike& key_in, const DVVectorLike& value_in, DVVectorLike& key_out, DVVectorLike& value_out, size_t begin_key_in, size_t end_key_in, size_t begin_value_in, size_t begin_key_out, size_t begin_value_out)
+{
+	if (end_key_in == (size_t)(-1)) end_key_in = key_in.size();
+	size_t n = end_key_in - begin_key_in;
+	DVVector scan_dst(ctx, value_out.name_elem_cls().c_str(), n);
+	TRTC_Inclusive_Scan_By_Key(ctx, key_in, value_in, scan_dst, begin_key_in, end_key_in, begin_value_in, 0);
+	
+	DVSizeT dvbegin_key_in(begin_key_in);
+	DVSizeT dv_n(n);
+	Functor src_scan(ctx, { {"key_in", &key_in}, {"begin_key_in", &dvbegin_key_in}, {"n", &dv_n } }, { "idx" },
+		"        return  idx==n-1 || key_in[idx+begin_key_in]!=key_in[idx+begin_key_in+1] ? (uint32_t)1:(uint32_t)0;\n");
+	return general_copy_if(ctx, n, src_scan, key_in, scan_dst, key_out, value_out, begin_key_in, 0, begin_key_out, begin_value_out);
+
+}
+
+uint32_t TRTC_Reduce_By_Key(TRTCContext& ctx, const DVVectorLike& key_in, const DVVectorLike& value_in, DVVectorLike& key_out, DVVectorLike& value_out, const Functor& binary_pred, size_t begin_key_in , size_t end_key_in, size_t begin_value_in, size_t begin_key_out, size_t begin_value_out)
+{
+	if (end_key_in == (size_t)(-1)) end_key_in = key_in.size();
+	size_t n = end_key_in - begin_key_in;
+	DVVector scan_dst(ctx, value_out.name_elem_cls().c_str(), n);
+	TRTC_Inclusive_Scan_By_Key(ctx, key_in, value_in, scan_dst, binary_pred, begin_key_in, end_key_in, begin_value_in, 0);
+
+	DVSizeT dvbegin_key_in(begin_key_in);
+	DVSizeT dv_n(n);
+	Functor src_scan(ctx, { {"key_in", &key_in}, {"begin_key_in", &dvbegin_key_in}, {"n", &dv_n },  {"binary_pred", &binary_pred} }, { "idx" },
+		"        return  idx==n-1 || !binary_pred(key_in[idx+begin_key_in],key_in[idx+begin_key_in+1]) ? (uint32_t)1:(uint32_t)0;\n");
+	return general_copy_if(ctx, n, src_scan, key_in, scan_dst, key_out, value_out, begin_key_in, 0, begin_key_out, begin_value_out);
+}
+
+uint32_t TRTC_Reduce_By_Key(TRTCContext& ctx, const DVVectorLike& key_in, const DVVectorLike& value_in, DVVectorLike& key_out, DVVectorLike& value_out, const Functor& binary_pred, const Functor& binary_op, size_t begin_key_in, size_t end_key_in, size_t begin_value_in, size_t begin_key_out, size_t begin_value_out)
+{
+	if (end_key_in == (size_t)(-1)) end_key_in = key_in.size();
+	size_t n = end_key_in - begin_key_in;
+	DVVector scan_dst(ctx, value_out.name_elem_cls().c_str(), n);
+	TRTC_Inclusive_Scan_By_Key(ctx, key_in, value_in, scan_dst, binary_pred, binary_op, begin_key_in, end_key_in, begin_value_in, 0);
+
+	DVSizeT dvbegin_key_in(begin_key_in);
+	DVSizeT dv_n(n);
+	Functor src_scan(ctx, { {"key_in", &key_in}, {"begin_key_in", &dvbegin_key_in}, {"n", &dv_n },  {"binary_pred", &binary_pred} }, { "idx" },
+		"        return  idx==n-1 || !binary_pred(key_in[idx+begin_key_in], key_in[idx+begin_key_in+1]) ? (uint32_t)1:(uint32_t)0;\n");
+	return general_copy_if(ctx, n, src_scan, key_in, scan_dst, key_out, value_out, begin_key_in, 0, begin_key_out, begin_value_out);
+}

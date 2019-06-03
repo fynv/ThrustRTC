@@ -151,7 +151,6 @@ struct Negate
 #endif
 
 ////////// Vectors ///////////
-
 template<class _T>
 struct VectorView
 {
@@ -173,7 +172,6 @@ struct VectorView
 	}
 #endif
 };
-
 
 template<class _T>
 struct ConstantView
@@ -197,7 +195,6 @@ struct ConstantView
 #endif
 };
 
-
 template<class _T>
 struct CounterView
 {
@@ -218,7 +215,6 @@ struct CounterView
 	}
 #endif
 };
-
 
 template<class _T>
 struct _Sink
@@ -252,7 +248,6 @@ struct DiscardView
 #endif
 };
 
-
 template<class _TVVALUE, class _TVINDEX>
 struct PermutationView
 {
@@ -274,7 +269,6 @@ struct PermutationView
 #endif
 };
 
-
 template<class _TVVALUE>
 struct ReverseView
 {
@@ -294,7 +288,6 @@ struct ReverseView
 	}
 #endif
 };
-
 
 template<class _T, class _T_VIN, class _T_OP>
 struct TransformView
@@ -316,6 +309,98 @@ struct TransformView
 	}
 #endif
 };
+
+////////// Binary-Search routines ///////////
+#ifdef DEVICE_ONLY
+
+template<class TVec, class TComp>
+__device__ inline size_t d_lower_bound(TVec& vec, const typename TVec::value_t& value, TComp& comp, size_t begin = 0, size_t end = (size_t)(-1))
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin) return begin;
+	if (comp(vec[end - 1], value)) return end;
+	while (end > begin + 1)
+	{
+		size_t mid = begin + ((end - begin) >> 1);
+		if (comp(vec[mid - 1], value))
+			begin = mid;
+		else
+			end = mid;
+	}
+	return begin;
+}
+
+template<class TVec, class TComp>
+__device__ inline size_t d_upper_bound(TVec& vec, const typename TVec::value_t& value, TComp& comp, size_t begin = 0, size_t end = (size_t)(-1))
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin) return begin;
+	if (comp(value, vec[begin])) return begin;
+	while (end > begin + 1)
+	{
+		size_t mid = begin + ((end - begin) >> 1);
+		if (comp(value, vec[mid]))
+			end = mid;
+		else
+			begin = mid;
+	}
+	return end;
+}
+
+template<class TVec, class TComp>
+__device__ inline bool d_binary_search(TVec& vec, const typename TVec::value_t& value, TComp& comp, size_t begin = 0, size_t end = (size_t)(-1))
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end <= begin) return false;
+	if (comp(value, vec[begin]) || comp(vec[end - 1], value)) return false;
+	do
+	{
+		if (!comp(vec[begin], value) || !comp(value, vec[end - 1])) return true;
+		size_t mid = begin + ((end - begin) >> 1);
+		if (!comp(vec[mid - 1], value)) end = mid;
+		else if (!comp(value, vec[mid])) begin = mid;
+		else return false;		
+	} while (end > begin + 1);
+	return false;
+}
+
+template<class T, class TComp>
+__device__ inline unsigned d_lower_bound_s(const T* arr, unsigned n, const T& value, TComp& comp)
+{
+	if (n <= 0) return 0;
+	if (comp(arr[n - 1], value)) return n;
+	unsigned begin = 0;
+	while (n > begin + 1)
+	{
+		size_t mid = begin + ((n - begin) >> 1);
+		if (comp(arr[mid - 1], value))
+			begin = mid;
+		else
+			n = mid;
+	}
+	return begin;
+}
+
+template<class T, class TComp>
+__device__ inline unsigned d_upper_bound_s(const T* arr, unsigned n, const T& value, TComp& comp)
+{
+	if (n <= 0) return 0;
+	if (comp(value, arr[0])) return 0;
+	unsigned begin = 0;
+	while (n > begin + 1)
+	{
+		size_t mid = begin + ((n - begin) >> 1);
+		if (comp(value, arr[mid]))
+			n = mid;
+		else
+			begin = mid;
+	}
+	return n;
+}
+
+
+
+#endif
 
 #endif
 

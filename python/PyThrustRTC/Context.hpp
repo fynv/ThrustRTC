@@ -102,7 +102,7 @@ static PyObject* n_context_calc_number_blocks(PyObject* self, PyObject* args)
 		arg_map[i].arg = (DeviceViewable*)PyLong_AsVoidPtr(PyTuple_GetItem(pyAssignedParam, 1));
 	}
 	const char* code_body = PyUnicode_AsUTF8(PyTuple_GetItem(args, 2));
-	int sizeBlock = PyLong_AsLongLong(PyTuple_GetItem(args, 3));
+	int sizeBlock = (int)PyLong_AsLongLong(PyTuple_GetItem(args, 3));
 	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 4));
 	int numBlocks;
 	if (ctx->calc_number_blocks(arg_map, code_body, sizeBlock, numBlocks, sharedMemBytes))
@@ -284,7 +284,7 @@ static PyObject* n_kernel_calc_number_blocks(PyObject* self, PyObject* args)
 	for (ssize_t i = 0; i < size; i++)
 		params[i] = (DeviceViewable*)PyLong_AsVoidPtr(PyList_GetItem(arg2, i));
 
-	int sizeBlock = PyLong_AsLongLong(PyTuple_GetItem(args, 3));
+	int sizeBlock = (int)PyLong_AsLongLong(PyTuple_GetItem(args, 3));
 	unsigned sharedMemBytes = (unsigned)PyLong_AsUnsignedLong(PyTuple_GetItem(args, 4));
 	int numBlocks;
 	if (cptr->calc_number_blocks(*ctx, params.data(), sizeBlock, numBlocks, sharedMemBytes))

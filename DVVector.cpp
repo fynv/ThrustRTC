@@ -47,3 +47,21 @@ ViewBuf DVVector::view() const
 	pview->_size = m_size;
 	return buf;
 }
+
+DVVectorAdaptor::DVVectorAdaptor(TRTCContext& ctx, const char* elem_cls, size_t size, void* ddata)
+	: DVVectorLike(ctx, elem_cls, (std::string(elem_cls) + "&").c_str(), size), m_data(ddata){}
+
+
+std::string DVVectorAdaptor::name_view_cls() const
+{
+	return std::string("VectorView<") + m_elem_cls + ">";
+}
+
+ViewBuf DVVectorAdaptor::view() const
+{
+	ViewBuf buf(sizeof(VectorView<char>));
+	VectorView<char> *pview = (VectorView<char>*)buf.data();
+	pview->_data = (char*)m_data;
+	pview->_size = m_size;
+	return buf;
+}

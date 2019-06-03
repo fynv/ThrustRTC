@@ -42,6 +42,9 @@ unique.hpp
 partition.hpp
 find.hpp
 mismatch.hpp
+binary_search.hpp
+merge.hpp
+sort.hpp
 )
 
 set (INCLUDE_DIR 
