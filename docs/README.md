@@ -474,7 +474,7 @@ dvec_out = trtc.device_vector(ctx, 'float', 5)
 ```
 In this case, the C++ type specified can be any type that CUDA recognizes.
 
-Optionally, a raw C++ pointer to an host array can be passed as the src to copy.
+Optionally, a raw C++ pointer to an host array can be passed as the source to copy from.
 
 #### to_host()
 
