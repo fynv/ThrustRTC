@@ -444,6 +444,7 @@ darr = trtc.device_vector_from_numpy(ctx, harr)
 The supported Numpy dtypes are:
 
 | Numpy dtype | C++ Type |
+| ----------- | -------- |
 | np.int8     | int8_t   |
 | np.uint8    | uint8_t  |
 | np.int16    | int16_t  |
