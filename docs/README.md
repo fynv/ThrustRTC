@@ -1,8 +1,8 @@
 # ThrustRTC - Quick Start Guide
 
-There will be a long time before ThrustRTC is properly documented. 
+There could be a long time before ThrustRTC can be "properly" documented, with every API covered. That is not the aim of this document.
 
-ThrustRTC is "multilingual", there is a C++ library at its core, a wrapper layer for Python users, and there will be wrapper layers for C# and Java as well in the future. Therefore, documenting every detail will be a huge effort. However, thanks to [Thrust](https://thrust.github.io/doc/index.html), most of the core logics of the algorithms are already explained. ThrustRTC is following very similar logics as Thrust, so we can just focus on the differences here.
+ThrustRTC is "multilingual". There is a C++ library at its core, a wrapper layer for Python users, and there will be wrapper layers for C# and Java as well in the future. Therefore, documenting every detail will be a huge effort. However, thanks to [Thrust](https://thrust.github.io/doc/index.html), most of the core logics of the algorithms are already explained. Algorithm interfaces of ThrustRTC is following very similar logics as Thrust's, so we can focus more on the differences here, which is mostly about the infrastructures.
 
 ## Introduction
 
@@ -22,7 +22,7 @@ Source code of ThrustRTC is available at:
 
 The code does not actually contain any CUDA device code that need to be prebuilt, therefore CUDA SDK is not a requirement at building time.
 
-At build time, you only need:
+At build time, you will only need:
 
 * UnQLite source code, as submodule: thirdparty/unqlite
 * CMake 3.x
