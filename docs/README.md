@@ -464,8 +464,6 @@ dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float'
 
 The C++ type specified here should be one of the basic types with a corresponding Device Viewable class in Python.
 
-Although this type of initialization if most widely used in test code, it should be noted that this is inefficient comparing to using the Numpy interface. The Numpy interface is the only recommended way of host to device transfer when there is a large amount of data.
-
 * Create with Specified Type and Size
 
 ```python
