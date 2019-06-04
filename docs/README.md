@@ -962,4 +962,45 @@ print(Y.to_host())
 
 ### Reductions
 
+A reduction algorithm uses a binary operation to reduce an input Vector to a single value. 
+For example, the sum of a Vector of numbers is obtained by reducing the array with a Plus
+operation. Similarly, the maximum of a Vector is obtained by reducing with a Maximum 
+operation. The sum of a Vector D can be done by the following code:
+
+```cpp
+ViewBuf ret;
+TRTC_Reduce(ctx, D, DVInt32(0), Functor("Plus"), ret);
+int sum = *((int*)ret.data());
+```
+
+```python
+sum = trtc.Reduce(ctx, D, trtc.DVInt32(0), trtc.Plus())
+```
+
+The first argument is the context for execution. The second argument is the input Vector. 
+The third and fourth arguments provide the initial value and reduction operator respectively.
+Actually, this kind of reduction is so common that it is the default choice when no initial 
+value or operator is provided. The following three lines are therefore equivalent:
+
+```python
+sum = trtc.Reduce(ctx, D, trtc.DVInt32(0), trtc.Plus())
+sum = trtc.Reduce(ctx, D, trtc.DVInt32(0))
+sum = trtc.Reduce(ctx, D)
+```
+
+Although Reduce() is sufficient to implement a wide variety of reductions, ThrustRTC provides
+a few additional functions for convenience. For example, Count() returns the number of 
+instances of a specific value in a given Vector.
+
+```python
+vec = trtc.device_vector_from_list(ctx, [ 0, 1, 0, 1, 1], 'int32_t')
+result = trtc.Count(vec, trtc.DVInt32(1))
+```
+
+Other reduction operations include Count_If(), Min_Element(), Max_Element(), Is_Sorted(),
+Inner_Product(), and several others.
+
+
+
+
 
