@@ -725,6 +725,12 @@ import ThrustRTC as trtc
 ctx = trtc.Context()
 
 dvalues = trtc.device_vector_from_list(ctx, [1.0, 4.0, 9.0, 16.0], 'float')
+
+square_root = trtc.Functor( ctx, {}, ['x'], 
+'''
+         return sqrtf(x);
+''')
+
 src = trtc.DVTransform(ctx, dvalues, 'float', square_root)
 dst = trtc.device_vector(ctx, 'float', 4)
 
@@ -858,7 +864,7 @@ The following built-in Functors are available:
 ## Algorithms
 
 Each algorithm of ThrustRTC is corresponding to one in Thrust. 
-A significant between ThrustRTC functions and Thrust functions is that Thrust 
+A significant difference between ThrustRTC functions and Thrust functions is that Thrust 
 functions takes in iterators as parameters, while ThrustRTC takes in Vectors directly.
 In ThrustRTC, the working ranges can be specified separately using *begin*/*end* parameters.
 These parameters have default values *begin = 0* and *end = -1* that cover the full range
