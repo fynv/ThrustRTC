@@ -2,7 +2,7 @@
 
 There could be a long time before ThrustRTC can be "properly" documented, with every API covered. That is not the aim of this document.
 
-ThrustRTC is "multilingual". There is a C++ library at its core, a wrapper layer for Python users, and there will be wrapper layers for C# and Java as well in the future. Therefore, documenting every detail will be a huge effort. However, thanks to [Thrust](https://thrust.github.io/doc/index.html), most of the core logics of the algorithms are already explained. Algorithm interfaces of ThrustRTC is following very similar logics as Thrust's, so we can focus more on the differences here, which is mostly about the infrastructures.
+ThrustRTC is "multilingual". There is a C++ library at its core, a wrapper layer for Python users, and there will be wrapper layers for C# and Java as well in the future. Therefore, documenting every detail will be a huge effort. However, thanks to [Thrust](https://thrust.github.io/doc/index.html), most of the core logics of the algorithms are already explained. Algorithm interfaces of ThrustRTC are following very similar logics as Thrust's, so we can focus more on the differences here, which is mostly about the infrastructures.
 
 ## Introduction
 
@@ -836,7 +836,7 @@ when there is a compilation error.
 
 ### Built-In Functors
 
-In C++ code and Python code, the ways to create a build-in Functor are a little different.
+In C++ code and Python code, the ways to create a built-in Functor are a little different.
 In C++, the class Functor has a constructor that takes in a single string parameter.
 In Python, Built-In Functors are defined as separate classes.
 
