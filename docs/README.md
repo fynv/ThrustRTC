@@ -1006,7 +1006,107 @@ result = trtc.Count(vec, trtc.DVInt32(1))
 Other reduction operations include Count_If(), Min_Element(), Max_Element(), Is_Sorted(),
 Inner_Product(), and several others.
 
+### Prefix-Sums
 
+Parallel prefix-sums, or *scan* operations, are important building blocks in many parallel 
+algorithms such as stream compaction and radix sort. Consider the following source code
+which illustrates an *inclusive scan* operation using the default **plus** operator:
 
+```cpp
+int data[6] = { 1, 0, 2, 2, 1, 3 };
+DVVector d_data(ctx, "int32_t", 6, data);
+TRTC_Inclusive_Scan(ctx, d_data, d_data); // in-place scan
+d_data.to_host(data);
+// data is now {1, 1, 3, 5, 6, 9}
+```
 
+```python
+data = trtc.device_vector_from_list(ctx, [1, 0, 2, 2, 1, 3], 'int32_t')
+trtc.Inclusive_Scan(ctx, data, data) # in-place scan
+#  data is now {1, 1, 3, 5, 6, 9}
+```
+In an inclusive scan each element of the output is the corresponding partial sum of the
+input Vector. For example, data[2] = data[0] + data[1] + data[2]. An exclusive
+scan is similar, but shifted by one place to the right:
 
+```python
+data = trtc.device_vector_from_list(ctx, [1, 0, 2, 2, 1, 3], 'int32_t')
+trtc.Exclusive_Scan(ctx, data, data) # in-place scan
+# data is now {0, 1, 1, 3, 5, 6}
+```
+
+So now data[2] = data[0] + data[1]. As these examples show, Inclusive_Scan()
+and Exclusive_Scan() are permitted to be performed in-place. ThrustRTC also provides
+the functions Transform_Inclusive_Scan() and Transform_Exclusive_Scan() which
+apply a unary function to the input Vector before performing the scan.
+
+### Reordering
+
+ThrustRTC provides support for partitioning and stream compaction through the following
+algorithms:
+
+Copy_If(): copy elements that pass a predicate test
+Partition(): reorder elements according to a predicate (True values precede False values)
+Remove() and Remove_If(): remove elements that pass a predicate test
+Unique(): remove consecutive duplicates within a sequence
+
+### Sorting
+
+ThrustRTC offers several functions to sort data or rearrange data according to a given
+criterion. Currently, the library only provides merge-based sorting, which is general
+and stable, but not the most efficient for special cases such as integer sorting. 
+We may extend this part later if there is a performance requirement.
+
+```cpp
+int hvalues[6]= { 1, 4, 2, 8, 5, 7 };
+DVVector dvalues(ctx, "int32_t", 6, hvalues);
+
+TRTC_Sort(ctx, dvalues);
+dvalues.to_host(hvalues);
+// hvalues is now {1, 2, 4, 5, 7, 8}
+```
+
+```python
+dvalues = trtc.device_vector_from_list(ctx, [ 1, 4, 2, 8, 5, 7 ], 'int32_t')
+trtc.Sort(ctx, dvalues)
+# dvalues is now {1, 2, 4, 5, 7, 8}
+```
+
+In addition, ThrustRTC provides Sort_By_Key(), which sort key-value pairs stored in separate places.
+
+```cpp
+int hkeys[6] = { 1, 4, 2, 8, 5, 7 };
+DVVector dkeys(ctx, "int32_t", 6, hkeys);
+char hvalues[6] = { 'a', 'b', 'c', 'd', 'e', 'f' };
+DVVector dvalues(ctx, "int8_t", 6, hvalues);
+TRTC_Sort_By_Key(ctx, dkeys, dvalues);
+dkeys.to_host(hkeys);
+dvalues.to_host(hvalues);
+// hkeys is now { 1, 2, 4, 5, 7, 8}
+// hvalues is now {'a', 'c', 'b', 'e', 'f', 'd'}
+```
+
+```python
+dkeys = trtc.device_vector_from_list(ctx, [ 1, 4, 2, 8, 5, 7 ], 'int32_t')
+dvalues = trtc.device_vector_from_list(ctx, [ 1, 2, 3, 4, 5, 6], 'int32_t')
+trtc.Sort_By_Key(ctx, dkeys, dvalues)
+// dkeys is now { 1, 2, 4, 5, 7, 8}
+// dvalues is now {'1', '3', '2', '5', '6', '4'}
+```
+
+Just like in Thrust, sorting functions in ThrustRTC also accept functors as alternative 
+comparison operators:
+
+```cpp
+int hvalues[6] = { 1, 4, 2, 8, 5, 7 };
+DVVector dvalues(ctx, "int32_t", 6, hvalues);
+TRTC_Sort(ctx, dvalues, Functor("Greater"));
+dvalues.to_host(hvalues);
+// hvalues is now {8, 7, 5, 4, 2, 1}
+```
+
+```python
+dvalues = trtc.device_vector_from_list(ctx, [ 1, 4, 2, 8, 5, 7 ], 'int32_t')
+trtc.Sort(ctx, dvalues, trtc.Greater())
+# dvalues is now {8, 7, 5, 4, 2, 1}
+```
