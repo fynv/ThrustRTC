@@ -39,6 +39,7 @@ add_executable(test_permutation test_permutation.cpp)
 add_executable(test_reverse test_reverse.cpp)
 add_executable(test_transform_iter test_transform_iter.cpp)
 add_executable(test_zipped test_zipped.cpp)
+add_executable(test_custom_vector test_custom_vector.cpp)
 
 
 if (WIN32) 
@@ -81,6 +82,7 @@ target_compile_definitions(test_permutation PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_reverse PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_transform_iter PUBLIC THRUST_RTC_DLL_IMPORT)
 target_compile_definitions(test_zipped PUBLIC THRUST_RTC_DLL_IMPORT)
+target_compile_definitions(test_custom_vector PUBLIC THRUST_RTC_DLL_IMPORT)
 
 endif()
 
@@ -123,6 +125,7 @@ target_link_libraries(test_permutation ThrustRTC)
 target_link_libraries(test_reverse ThrustRTC)
 target_link_libraries(test_transform_iter ThrustRTC)
 target_link_libraries(test_zipped ThrustRTC)
+target_link_libraries(test_custom_vector ThrustRTC)
 
 install(TARGETS 
 test_trtc 
@@ -164,5 +167,6 @@ test_permutation
 test_reverse
 test_transform_iter
 test_zipped
+test_custom_vector
 
 RUNTIME DESTINATION test_cpp)

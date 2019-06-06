@@ -19,6 +19,7 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "DVReverse.hpp"
 #include "DVTransform.hpp"
 #include "DVZipped.hpp"
+#include "DVCustomVector.hpp"
 #include "functor.hpp"
 #include "fill.hpp"
 #include "replace.hpp"
@@ -93,6 +94,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvreverse_create", n_dvreverse_create, METH_VARARGS, "" },
 	{ "n_dvtransform_create", n_dvtransform_create, METH_VARARGS, "" },
 	{ "n_dvzipped_create", n_dvzipped_create, METH_VARARGS, "" },
+	{ "n_dvcustomvector_create", n_dvcustomvector_create, METH_VARARGS, "" },
 	{ "n_functor_create", n_functor_create, METH_VARARGS, "" },
 	{ "n_built_in_functor_create", n_built_in_functor_create, METH_VARARGS, "" },
 	{ "n_fill", n_fill, METH_VARARGS, "" },

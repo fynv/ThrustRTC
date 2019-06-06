@@ -36,3 +36,12 @@ class DVZipped(DVVectorLike):
 	def __init__(self, ctx, vecs, elem_names):
 		self.m_vecs = vecs
 		self.m_cptr = native.n_dvzipped_create(ctx.m_cptr, [item.m_cptr for item in vecs], elem_names)
+
+class DVCustomVector(DVVectorLike):
+	def __init__(self, ctx, arg_map, name_idx, code_body, elem_cls, size = -1, read_only = True):
+		self.m_arg_map = arg_map
+		self.m_cptr = native.n_dvcustomvector_create(
+			ctx.m_cptr, 
+			[ (param_name, arg.m_cptr) for param_name, arg in arg_map.items()],
+			name_idx, code_body, elem_cls, size, read_only)
+

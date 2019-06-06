@@ -61,6 +61,7 @@ set(PYTHON_TEST
 	test/test_reverse.py
 	test/test_transform_iter.py
 	test/test_zipped.py
+	test/test_custom_vector.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )

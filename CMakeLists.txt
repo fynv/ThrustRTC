@@ -29,6 +29,7 @@ fake_vectors/DVPermutation.cpp
 fake_vectors/DVReverse.cpp
 fake_vectors/DVTransform.cpp
 fake_vectors/DVZipped.cpp
+fake_vectors/DVCustomVector.cpp
 functor.cpp
 fill.cpp
 replace.cpp
@@ -107,6 +108,7 @@ fake_vectors/DVPermutation.h
 fake_vectors/DVReverse.h
 fake_vectors/DVTransform.h
 fake_vectors/DVZipped.h
+fake_vectors/DVCustomVector.h
 )
 
 set(INTERNAL_HEADERS

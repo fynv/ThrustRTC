@@ -16,6 +16,7 @@ DVPermutation.hpp
 DVReverse.hpp
 DVTransform.hpp
 DVZipped.hpp
+DVCustomVector.hpp
 fill.hpp
 functor.hpp
 replace.hpp
