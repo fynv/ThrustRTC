@@ -791,6 +791,60 @@ trtc.Copy(ctx, src, dst)
 
 ```
 
+### DVCustomVector
+
+DVCustomVector allows user to customize the behavior of a Fake Vector.
+It is corresponding to *iterator_adaptor*.
+
+A DVCustomVector object can be created given:
+
+* The Context object.
+* A map of Device Viewable Object to be captured, usually used as source of data
+* Name of the index variable, which is a *size_t* variable used by *operator[]*
+* The code-body of *operator[]* represented as a string.
+* ELement type of the vector as a string
+* Size of the vector
+* Optional switch telling if the elements are read-only
+
+```cpp
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "fake_vectors/DVCustomVector.h"
+#include "copy.h"
+
+int main()
+{
+	TRTCContext ctx;
+
+	int h_in[5] = { 0, 1, 2, 3, 4};
+	DVVector d_in(ctx, "int32_t", 5, h_in);
+
+	DVCustomVector src(ctx, { {"src", &d_in} }, "idx",
+	"        return src[idx % src.size()];\n", "int32_t", d_in.size() * 5);
+
+	DVVector dst(ctx, "int32_t", 25);
+	
+	TRTC_Copy(ctx, src, dst);
+}
+```
+
+```python
+import ThrustRTC as trtc
+
+ctx = trtc.Context()
+
+d_in = trtc.device_vector_from_list(ctx, [0, 1, 2, 3, 4], 'int32_t')
+
+src = trtc.DVCustomVector(ctx, {'src':d_in }, 'idx',
+'''
+       return src[idx % src.size()]; 
+''',  "int32_t", d_in.size() * 5) 
+
+dst = trtc.device_vector(ctx, 'int32_t', 25)
+
+trtc.Copy(ctx, src, dst)
+```
+
 ## Functors
 
 Functors, in generally sense, are objects with an *operator()*. 
@@ -802,6 +856,7 @@ built-in Functors.
 
 An user defined functor can be created given:
 
+* The Context object.
 * A map of Device Viewable Object to be captured, can be empty.
 * A list of names of Functor parameters, that are the parameters of *operator()*.
 * The code-body of *operator()* represented as a string.
