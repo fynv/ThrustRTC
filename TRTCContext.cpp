@@ -113,6 +113,7 @@ TRTCContext::TRTCContext()
 
 	this->add_code_block("#define DEVICE_ONLY\n");
 	this->add_inlcude_filename("cstdint");
+	this->add_inlcude_filename("cfloat");
 	this->add_inlcude_filename("built_in.h");
 }
 

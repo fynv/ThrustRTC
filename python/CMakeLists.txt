@@ -62,6 +62,9 @@ set(PYTHON_TEST
 	test/test_transform_iter.py
 	test/test_zipped.py
 	test/test_custom_vector.py
+
+	demo/histogram.py
+	demo/k-means.py
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )

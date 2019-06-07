@@ -1,3 +1,9 @@
+/*
+These header implementations are copied from the project "jitify".
+https://github.com/NVIDIA/jitify
+Thanks for the work.
+*/
+
 static const char s_safe_header_climits[] =
 "#pragma once\n"
 "\n"
@@ -96,15 +102,50 @@ static const char s_safe_header_cstdint[] =
 "#define PTRDIFF_MAX INTPTR_MAX\n"
 "#define SIZE_MAX    UINT64_MAX\n";
 
+static const char s_safe_header_cfloat[] =
+"#pragma once\n"
+"\n"
+"inline __host__ __device__ float  jitify_int_as_float(int i)             "
+"{ union FloatInt { float f; int i; } fi; fi.i = i; return fi.f; }\n"
+"inline __host__ __device__ double jitify_longlong_as_double(long long i) "
+"{ union DoubleLongLong { double f; long long i; } fi; fi.i = i; return "
+"fi.f; }\n"
+"#define FLT_RADIX       2\n"
+"#define FLT_MANT_DIG    24\n"
+"#define DBL_MANT_DIG    53\n"
+"#define FLT_DIG         6\n"
+"#define DBL_DIG         15\n"
+"#define FLT_MIN_EXP     -125\n"
+"#define DBL_MIN_EXP     -1021\n"
+"#define FLT_MIN_10_EXP  -37\n"
+"#define DBL_MIN_10_EXP  -307\n"
+"#define FLT_MAX_EXP     128\n"
+"#define DBL_MAX_EXP     1024\n"
+"#define FLT_MAX_10_EXP  38\n"
+"#define DBL_MAX_10_EXP  308\n"
+"#define FLT_MAX         jitify_int_as_float(2139095039)\n"
+"#define DBL_MAX         jitify_longlong_as_double(9218868437227405311)\n"
+"#define FLT_EPSILON     jitify_int_as_float(872415232)\n"
+"#define DBL_EPSILON     jitify_longlong_as_double(4372995238176751616)\n"
+"#define FLT_MIN         jitify_int_as_float(8388608)\n"
+"#define DBL_MIN         jitify_longlong_as_double(4503599627370496)\n"
+"#define FLT_ROUNDS      1\n"
+"#if defined __cplusplus && __cplusplus >= 201103L\n"
+"#define FLT_EVAL_METHOD 0\n"
+"#define DECIMAL_DIG     21\n"
+"#endif\n";
 
-static int s_num_headers_global = 2;
+
+static int s_num_headers_global = 3;
 static const char* s_name_headers_global[] = {
 	"climits",
-	"cstdint"
+	"cstdint",
+	"cfloat"
 };
 
 static const char* s_content_headers_global[] = {
 	s_safe_header_climits,
-	s_safe_header_cstdint
+	s_safe_header_cstdint,
+	s_safe_header_cfloat
 };
 
