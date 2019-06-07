@@ -18,6 +18,8 @@ internal/general_scan.cpp
 internal/general_scan_by_key.cpp
 internal/general_copy_if.cpp
 internal/general_find.cpp
+internal/merge_sort.cpp
+internal/radix_sort.cpp
 
 TRTCContext.cpp
 DVVector.cpp
@@ -122,6 +124,8 @@ internal/general_scan.h
 internal/general_scan_by_key.h
 internal/general_copy_if.h
 internal/general_find.h
+internal/merge_sort.h
+internal/radix_sort.h
 )
 
 set (INCLUDE_DIR 

@@ -311,6 +311,7 @@ struct TransformView
 };
 
 ////////// Binary-Search routines ///////////
+
 #ifdef DEVICE_ONLY
 
 template<class TVec, class TComp>
@@ -398,9 +399,43 @@ __device__ inline unsigned d_upper_bound_s(const T* arr, unsigned n, const T& va
 	return n;
 }
 
+#endif
 
+////////// Any->UINT converters, for radix sort ///////////
+#ifdef DEVICE_ONLY
+
+template<typename T>
+__device__ inline uint32_t d_u32(T v)
+{
+	return (uint32_t)v;
+}
+
+template <>
+__device__ inline uint32_t d_u32<float>(float v)
+{
+	uint32_t u = *(uint32_t*)(&v);
+	if (u & 0x80000000)
+		u = -(u & 0x7FFFFFFF);
+	return u;
+}
+
+template<typename T>
+__device__ inline uint64_t d_u64(T v)
+{
+	return (uint64_t)v;
+}
+
+template <>
+__device__ inline uint64_t d_u64<double>(double v)
+{
+	uint64_t u = *(uint64_t*)(&v);
+	if (u & 0x8000000000000000)
+		u = -(u & 0x7FFFFFFFFFFFFFFF);
+	return u;
+}
 
 #endif
+
 
 #endif
 

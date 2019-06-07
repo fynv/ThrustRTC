@@ -1108,9 +1108,7 @@ Unique(): remove consecutive duplicates within a sequence
 ### Sorting
 
 ThrustRTC offers several functions to sort data or rearrange data according to a given
-criterion. Currently, the library only provides merge-based sorting, which is general
-and stable, but not the most efficient for special cases such as integer sorting. 
-We may extend this part later if there is a performance requirement.
+criterion. All sorting algorithms of ThrustRTC are stable.
 
 ```cpp
 int hvalues[6]= { 1, 4, 2, 8, 5, 7 };
