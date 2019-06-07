@@ -41,3 +41,22 @@ def Is_Sorted_Until(ctx, vec, comp = None, begin = 0, end = -1):
 	if comp!=None:
 		cptr_comp = comp.m_cptr
 	return native.n_is_sorted_until(ctx.m_cptr, vec.m_cptr, cptr_comp, begin, end)
+
+def Lower_Bound_V(ctx, vec, values, result, comp = None, begin = 0, end = -1, begin_values = 0, end_values = -1, begin_result =0):
+	cptr_comp = None
+	if comp!=None:
+		cptr_comp = comp.m_cptr
+	return native.n_lower_bound_v(ctx.m_cptr, vec.m_cptr, values.m_cptr, result.m_cptr, cptr_comp, begin, end, begin_values, end_values, begin_result)
+
+def Upper_Bound_V(ctx, vec, values, result, comp = None, begin = 0, end = -1, begin_values = 0, end_values = -1, begin_result =0):
+	cptr_comp = None
+	if comp!=None:
+		cptr_comp = comp.m_cptr
+	return native.n_upper_bound_v(ctx.m_cptr, vec.m_cptr, values.m_cptr, result.m_cptr, cptr_comp, begin, end, begin_values, end_values, begin_result)
+
+def Binary_Search_V(ctx, vec, values, result, comp = None, begin = 0, end = -1, begin_values = 0, end_values = -1, begin_result =0):
+	cptr_comp = None
+	if comp!=None:
+		cptr_comp = comp.m_cptr
+	return native.n_binary_search_v(ctx.m_cptr, vec.m_cptr, values.m_cptr, result.m_cptr, cptr_comp, begin, end, begin_values, end_values, begin_result)
+

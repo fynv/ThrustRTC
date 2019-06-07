@@ -259,8 +259,80 @@ bool TRTC_Binary_Search(TRTCContext& ctx, const DVVectorLike& vec, const DeviceV
 
 }
 
-
 bool TRTC_Binary_Search(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable& value, bool& result, size_t begin, size_t end)
 {
 	return TRTC_Binary_Search(ctx, vec, value, Functor("Less"), result, begin, end);
+}
+
+bool TRTC_Lower_Bound_V(TRTCContext& ctx, const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end_values == (size_t)(-1)) end_values = values.size();
+
+	static TRTC_For s_for({ "vec", "values", "result", "begin", "end", "begin_values", "begin_result", "comp" }, "idx",
+		"    auto value = values[idx + begin_values];\n"
+		"    result[idx + begin_result] =  (decltype(result)::value_t) d_lower_bound(vec, value, comp, begin, end);\n"
+	);
+
+	DVSizeT dvbegin(begin);
+	DVSizeT dvend(end);
+	DVSizeT dvbegin_values(begin_values);
+	DVSizeT dvbegin_result(begin_result);
+
+	const DeviceViewable* args[] = { &vec, &values, &result, &dvbegin, &dvend, &dvbegin_values, &dvbegin_result, &comp };
+	return s_for.launch_n(ctx, end_values-begin_values, args);
+}
+
+bool TRTC_Lower_Bound_V(TRTCContext& ctx, const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+{
+	return TRTC_Lower_Bound_V(ctx, vec, values, result, Functor("Less"), begin, end, begin_values, end_values, begin_result);
+}
+
+bool TRTC_Upper_Bound_V(TRTCContext& ctx, const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end_values == (size_t)(-1)) end_values = values.size();
+
+	static TRTC_For s_for({ "vec", "values", "result", "begin", "end", "begin_values", "begin_result", "comp" }, "idx",
+		"    auto value = values[idx + begin_values];\n"
+		"    result[idx + begin_result] =  (decltype(result)::value_t) d_upper_bound(vec, value, comp, begin, end);\n"
+	);
+
+	DVSizeT dvbegin(begin);
+	DVSizeT dvend(end);
+	DVSizeT dvbegin_values(begin_values);
+	DVSizeT dvbegin_result(begin_result);
+
+	const DeviceViewable* args[] = { &vec, &values, &result, &dvbegin, &dvend, &dvbegin_values, &dvbegin_result, &comp };
+	return s_for.launch_n(ctx, end_values - begin_values, args);
+}
+
+bool TRTC_Upper_Bound_V(TRTCContext& ctx, const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+{
+	return TRTC_Upper_Bound_V(ctx, vec, values, result, Functor("Less"), begin, end, begin_values, end_values, begin_result);
+}
+
+
+bool TRTC_Binary_Search_V(TRTCContext& ctx, const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+{
+	if (end == (size_t)(-1)) end = vec.size();
+	if (end_values == (size_t)(-1)) end_values = values.size();
+
+	static TRTC_For s_for({ "vec", "values", "result", "begin", "end", "begin_values", "begin_result", "comp" }, "idx",
+		"    auto value = values[idx + begin_values];\n"
+		"    result[idx + begin_result] =  (decltype(result)::value_t) d_binary_search(vec, value, comp, begin, end);\n"
+	);
+
+	DVSizeT dvbegin(begin);
+	DVSizeT dvend(end);
+	DVSizeT dvbegin_values(begin_values);
+	DVSizeT dvbegin_result(begin_result);
+
+	const DeviceViewable* args[] = { &vec, &values, &result, &dvbegin, &dvend, &dvbegin_values, &dvbegin_result, &comp };
+	return s_for.launch_n(ctx, end_values - begin_values, args);
+}
+
+bool TRTC_Binary_Search_V(TRTCContext& ctx, const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+{
+	return TRTC_Binary_Search_V(ctx, vec, values, result, Functor("Less"), begin, end, begin_values, end_values, begin_result);
 }

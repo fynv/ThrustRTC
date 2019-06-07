@@ -167,6 +167,9 @@ static PyMethodDef s_Methods[] = {
 	{ "n_is_partitioned", n_is_partitioned, METH_VARARGS, "" },
 	{ "n_is_sorted", n_is_sorted, METH_VARARGS, "" },
 	{ "n_is_sorted_until", n_is_sorted_until, METH_VARARGS, "" },
+	{ "n_lower_bound_v", n_lower_bound_v, METH_VARARGS, "" },
+	{ "n_upper_bound_v", n_upper_bound_v, METH_VARARGS, "" },
+	{ "n_binary_search_v", n_binary_search_v, METH_VARARGS, "" },
 	0
 };
 
