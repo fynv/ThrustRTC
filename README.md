@@ -67,7 +67,13 @@ All operations explicitly work on vectors types. Working-ranges can be specified
 
 ## Quick Start Guide
 
-[https://fynv.github.io/ThrustRTC/](https://fynv.github.io/ThrustRTC/)
+[https://fynv.github.io/ThrustRTC/QuickStartGuide.html](https://fynv.github.io/ThrustRTC/QuickStartGuide.html)
+
+## Demos
+
+Using ThrustRTC for histogram calculation and k-means clustering.
+
+[https://fynv.github.io/ThrustRTC/Demo.html](https://fynv.github.io/ThrustRTC/Demo.html)
 
 ## License 
 
