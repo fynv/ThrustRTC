@@ -53,7 +53,7 @@ You will not get the C++ library, headers as well as all the test programs using
 
 #### GitHub Release
 
-Zip packages (for Windows 64 only) are available at:
+Zip packages are available at:
 
 [https://github.com/fynv/ThrustRTC/releases](https://github.com/fynv/ThrustRTC/releases)
 
