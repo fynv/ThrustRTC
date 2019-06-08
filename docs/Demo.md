@@ -17,7 +17,7 @@ happening in Python. You don't even need a full CUDA SDK to do these.
 
 ## Histogram
 
-First, we pretend we have some data to analysis. We use *p.random.randn()* to generate some random numbers:
+First, we pretend we have some data to analysis. We use *np.random.randn()* to generate some random numbers:
 
 ```python
 h_data = np.random.randn(2000).astype(np.float32) * 30.0 +100.0
