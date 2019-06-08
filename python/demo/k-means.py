@@ -5,132 +5,132 @@ from matplotlib import collections  as mc
 
 def demo_k_means(ctx, d_x, d_y, k):
 
-	n = d_x.size()
+    n = d_x.size()
 
-	# create a zipped vector for convenience
-	d_points = trtc.DVZipped(ctx, [d_x, d_y], ['x','y'])
+    # create a zipped vector for convenience
+    d_points = trtc.DVZipped(ctx, [d_x, d_y], ['x','y'])
 
-	# operations
-	point_plus = trtc.Functor(ctx, { }, ['pos1', "pos2"],
+    # operations
+    point_plus = trtc.Functor(ctx, { }, ['pos1', "pos2"],
 '''
         return decltype(pos1)({pos1.x + pos2.x, pos1.y + pos2.y});
 ''')
 
-	point_div = trtc.Functor(ctx, { }, ['pos', "count"],
+    point_div = trtc.Functor(ctx, { }, ['pos', "count"],
 '''
-		return decltype(pos)({pos.x/(float)count, pos.y/(float)count});
+        return decltype(pos)({pos.x/(float)count, pos.y/(float)count});
 ''')
-	
-	# initialize centers
-	center_ids = [0] * k
-	d_min_dis = trtc.device_vector(ctx, "float", n)
+    
+    # initialize centers
+    center_ids = [0] * k
+    d_min_dis = trtc.device_vector(ctx, "float", n)
 
-	for i in range(1, k):
-		d_count = trtc.DVInt32(i)
-		d_center_ids =  trtc.device_vector_from_list(ctx, center_ids[0:i], 'int32_t')
-		calc_min_dis = trtc.Functor(ctx, {"points": d_points, "center_ids": d_center_ids, "count": d_count }, ['pos'], 
+    for i in range(1, k):
+        d_count = trtc.DVInt32(i)
+        d_center_ids =  trtc.device_vector_from_list(ctx, center_ids[0:i], 'int32_t')
+        calc_min_dis = trtc.Functor(ctx, {"points": d_points, "center_ids": d_center_ids, "count": d_count }, ['pos'], 
 '''
-		float minDis = FLT_MAX;
+        float minDis = FLT_MAX;
         for (int i=0; i<count; i++)
         {
-        	int j = center_ids[i];
-        	float dis = (pos.x - points[j].x)*(pos.x - points[j].x);
-        	dis+= (pos.y - points[j].y)*(pos.y - points[j].y);
-        	if (dis<minDis) minDis = dis;
+            int j = center_ids[i];
+            float dis = (pos.x - points[j].x)*(pos.x - points[j].x);
+            dis+= (pos.y - points[j].y)*(pos.y - points[j].y);
+            if (dis<minDis) minDis = dis;
         }
         return minDis;
 ''')
-		trtc.Transform(ctx, d_points, d_min_dis, calc_min_dis)
-		center_ids[i] = trtc.Max_Element(ctx, d_min_dis)
+        trtc.Transform(ctx, d_points, d_min_dis, calc_min_dis)
+        center_ids[i] = trtc.Max_Element(ctx, d_min_dis)
 
-	d_count = trtc.DVInt32(k)
-	d_center_ids =  trtc.device_vector_from_list(ctx, center_ids, 'int32_t')
+    d_count = trtc.DVInt32(k)
+    d_center_ids =  trtc.device_vector_from_list(ctx, center_ids, 'int32_t')
 
-	# initialize group-average values
-	d_group_aves_x =  trtc.device_vector(ctx, "float", k)
-	d_group_aves_y =  trtc.device_vector(ctx, "float", k)
-	d_group_aves = trtc.DVZipped(ctx, [d_group_aves_x, d_group_aves_y], ['x','y'])
+    # initialize group-average values
+    d_group_aves_x =  trtc.device_vector(ctx, "float", k)
+    d_group_aves_y =  trtc.device_vector(ctx, "float", k)
+    d_group_aves = trtc.DVZipped(ctx, [d_group_aves_x, d_group_aves_y], ['x','y'])
 
-	trtc.Gather(ctx, d_center_ids, d_points, d_group_aves)
+    trtc.Gather(ctx, d_center_ids, d_points, d_group_aves)
 
-	# initialize labels
-	d_labels =  trtc.device_vector(ctx, "int32_t", n)
-	trtc.Fill(ctx, d_labels, trtc.DVInt32(-1))
+    # initialize labels
+    d_labels =  trtc.device_vector(ctx, "int32_t", n)
+    trtc.Fill(ctx, d_labels, trtc.DVInt32(-1))
 
-	# buffer for new-calculated lables
-	d_labels_new =  trtc.device_vector(ctx, "int32_t", n)
+    # buffer for new-calculated lables
+    d_labels_new =  trtc.device_vector(ctx, "int32_t", n)
 
-	d_labels_sink = trtc.DVDiscard(ctx, "int32_t", k)
-	d_group_sums = trtc.device_vector(ctx, d_points.name_elem_cls(), k)
-	d_group_cumulate_counts = trtc.device_vector(ctx, "int32_t", k)
-	d_group_counts = trtc.device_vector(ctx, "int32_t", k)
+    d_labels_sink = trtc.DVDiscard(ctx, "int32_t", k)
+    d_group_sums = trtc.device_vector(ctx, d_points.name_elem_cls(), k)
+    d_group_cumulate_counts = trtc.device_vector(ctx, "int32_t", k)
+    d_group_counts = trtc.device_vector(ctx, "int32_t", k)
 
-	d_counter = trtc.DVCounter(ctx, trtc.DVInt32(0), k)
+    d_counter = trtc.DVCounter(ctx, trtc.DVInt32(0), k)
 
-	# iterations
-	while True:
-		# calculate new labels
-		calc_new_labels = trtc.Functor(ctx, {"aves": d_group_aves, "count": d_count }, ['pos'], 
+    # iterations
+    while True:
+        # calculate new labels
+        calc_new_labels = trtc.Functor(ctx, {"aves": d_group_aves, "count": d_count }, ['pos'], 
 '''
-		float minDis = FLT_MAX;
-		int label = -1;
-		for (int i=0; i<count; i++)
+        float minDis = FLT_MAX;
+        int label = -1;
+        for (int i=0; i<count; i++)
         {
-        	float dis = (pos.x - aves[i].x)*(pos.x - aves[i].x);
-        	dis+= (pos.y - aves[i].y)*(pos.y - aves[i].y);
-        	if (dis<minDis) 
-        	{
-        		minDis = dis;
-        		label = i;
-        	}
+            float dis = (pos.x - aves[i].x)*(pos.x - aves[i].x);
+            dis+= (pos.y - aves[i].y)*(pos.y - aves[i].y);
+            if (dis<minDis) 
+            {
+                minDis = dis;
+                label = i;
+            }
         }
         return label;
 ''')
-		trtc.Transform(ctx, d_points, d_labels_new, calc_new_labels)
-		if trtc.Equal(ctx, d_labels, d_labels_new):
-			break
-		trtc.Copy(ctx, d_labels_new, d_labels)
+        trtc.Transform(ctx, d_points, d_labels_new, calc_new_labels)
+        if trtc.Equal(ctx, d_labels, d_labels_new):
+            break
+        trtc.Copy(ctx, d_labels_new, d_labels)
 
-		# recalculate group-average values
-		trtc.Sort_By_Key(ctx, d_labels, d_points)
-		trtc.Reduce_By_Key(ctx, d_labels, d_points, d_labels_sink, d_group_sums, trtc.EqualTo(), point_plus)
-		trtc.Upper_Bound_V(ctx, d_labels, d_counter, d_group_cumulate_counts)
-		trtc.Adjacent_Difference(ctx, d_group_cumulate_counts, d_group_counts)
-		trtc.Transform_Binary(ctx, d_group_sums, d_group_counts, d_group_aves, point_div)
+        # recalculate group-average values
+        trtc.Sort_By_Key(ctx, d_labels, d_points)
+        trtc.Reduce_By_Key(ctx, d_labels, d_points, d_labels_sink, d_group_sums, trtc.EqualTo(), point_plus)
+        trtc.Upper_Bound_V(ctx, d_labels, d_counter, d_group_cumulate_counts)
+        trtc.Adjacent_Difference(ctx, d_group_cumulate_counts, d_group_counts)
+        trtc.Transform_Binary(ctx, d_group_sums, d_group_counts, d_group_aves, point_div)
 
-	h_x = d_x.to_host()
-	h_y = d_y.to_host()
-	h_labels = d_labels.to_host()
-	h_group_aves_x = d_group_aves_x.to_host()
-	h_group_aves_y = d_group_aves_y.to_host()
-	h_group_counts = d_group_counts.to_host()
+    h_x = d_x.to_host()
+    h_y = d_y.to_host()
+    h_labels = d_labels.to_host()
+    h_group_aves_x = d_group_aves_x.to_host()
+    h_group_aves_y = d_group_aves_y.to_host()
+    h_group_counts = d_group_counts.to_host()
 
-	lines = []
+    lines = []
 
-	for i in range(n):
-		label = h_labels[i]
-		lines.append([(h_x[i], h_y[i]), (h_group_aves_x[label], h_group_aves_y[label]) ] )
+    for i in range(n):
+        label = h_labels[i]
+        lines.append([(h_x[i], h_y[i]), (h_group_aves_x[label], h_group_aves_y[label]) ] )
 
-	lc = mc.LineCollection(lines)
+    lc = mc.LineCollection(lines)
 
-	fig, ax = plt.subplots()
-	ax.set_xlim((0, 1000))
-	ax.set_ylim((0, 1000))
+    fig, ax = plt.subplots()
+    ax.set_xlim((0, 1000))
+    ax.set_ylim((0, 1000))
 
-	ax.add_collection(lc)
+    ax.add_collection(lc)
 
-	plt.show()
+    plt.show()
 
 
 
 if __name__ == '__main__':
 
-	ctx = trtc.Context()
+    ctx = trtc.Context()
 
-	h_x = np.random.rand(1000).astype(np.float32)*1000.0
-	h_y = np.random.rand(1000).astype(np.float32)*1000.0
+    h_x = np.random.rand(1000).astype(np.float32)*1000.0
+    h_y = np.random.rand(1000).astype(np.float32)*1000.0
 
-	d_x = trtc.device_vector_from_numpy(ctx, h_x)
-	d_y = trtc.device_vector_from_numpy(ctx, h_y)
+    d_x = trtc.device_vector_from_numpy(ctx, h_x)
+    d_y = trtc.device_vector_from_numpy(ctx, h_y)
 
-	demo_k_means(ctx, d_x, d_y, 50)
+    demo_k_means(ctx, d_x, d_y, 50)
