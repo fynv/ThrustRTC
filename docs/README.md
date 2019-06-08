@@ -51,6 +51,13 @@ $ pip3 install ThrustRTC
 
 You will not get the C++ library, headers as well as all the test programs using this installation method.
 
+#### GitHub Release
+
+Zip packages (for Windows 64 only) are available at:
+
+[https://github.com/fynv/ThrustRTC/releases](https://github.com/fynv/ThrustRTC/releases)
+
+
 ### Runtime Dependencies
 
 * CUDA driver (up-to-date)
