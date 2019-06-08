@@ -23,7 +23,7 @@ First, we pretend we have some data to analysis. We use *np.random.randn()* to g
 h_data = np.random.randn(2000).astype(np.float32) * 30.0 +100.0
 ```
 
-Second, we copy these data to GPU memory by creating a *DVector()* object:
+Second, we copy these data to GPU memory by creating a *DVVector* object:
 
 ```python
 ctx = trtc.Context()
