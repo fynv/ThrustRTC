@@ -1,14 +1,13 @@
 #ifndef _TRTCContext_h
 #define _TRTCContext_h
 
-#pragma warning( disable: 4251 )
+#include "TRTC_api.h"
 
 #include <vector>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 
-#include "TRTC_api.h"
 #include "DeviceViewable.h"
 
 struct dim_type

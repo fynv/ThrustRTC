@@ -1,12 +1,12 @@
-#include "cuda_wrapper.h"
+#include "TRTCContext.h"
 #include <string>
 #include <string.h>
 #include <stdio.h>
 #include <unqlite.h>
+#include "cuda_wrapper.h"
 #include "nvtrc_wrapper.h"
 #include "launch_calc.h"
 #include "crc64.h"
-#include "TRTCContext.h"
 #include "functor.h"
 #include "cuda_inline_headers.hpp"
 #include "cuda_inline_headers_global.hpp"
