@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.0)
 
+project(ThrustRTC)
+
 add_executable(PackHeaders internal/pack_headers.cpp)
 add_custom_target(Run_PackHeaders
 COMMAND PackHeaders
