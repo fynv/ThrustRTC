@@ -151,6 +151,8 @@ print (dvec_out.to_host())
 
 ### For-Loop Objects
 
+For-Loop is a simplified version of Kernel, specialized for 1D-cases.
+
 A For-Loop object can be created given the following:
 
 * Names of parameters
