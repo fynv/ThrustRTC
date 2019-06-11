@@ -12,7 +12,7 @@ namespace test_trtc
 
         static void Main(string[] args)
         {
-            var ctx = new trtc.Context();
+
             
         }
     }

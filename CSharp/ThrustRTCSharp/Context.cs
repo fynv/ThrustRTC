@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace ThrustRTCSharp
 {
-    public class Context
+    public class TRTC
     {
         static void set_libnvrtc_path(String path)
         {
@@ -16,49 +16,35 @@ namespace ThrustRTCSharp
             Native.set_libnvrtc_path(p_path);
         }
 
-        IntPtr c_ptr() { return m_cptr; }
-
-        public Context()
+        static public void Set_Verbose(bool verbose)
         {
-            m_cptr = Native.context_create();
+            Native.set_verbose(verbose);
         }
 
-        ~Context()
-        {
-            Native.context_destroy(m_cptr);
-        }
-
-
-        public void set_verbose(bool verbose)
-        {
-            Native.context_set_verbose(m_cptr, verbose);
-        }
-
-        public void add_include_dir(String dir)
+        static public void Add_Include_Dir(String dir)
         {
             IntPtr p_dir = Marshal.StringToBSTR(dir);
-            Native.context_add_include_dir(m_cptr, p_dir);
+            Native.add_include_dir(p_dir);
         }
 
-        public void add_built_in_header(String filename, String filecontent)
+        static public void Add_Built_In_Header(String filename, String filecontent)
         {
             IntPtr p_filename = Marshal.StringToBSTR(filename);
             IntPtr p_filecontent = Marshal.StringToBSTR(filecontent);
-            Native.context_add_built_in_header(m_cptr, p_filename, p_filecontent);
+            Native.add_built_in_header(p_filename, p_filecontent);
         }
 
-        public void add_inlcude_filename(String filename)
+        public void Add_Inlcude_Filename(String filename)
         {
             IntPtr p_filename = Marshal.StringToBSTR(filename);
-            Native.context_add_include_filename(m_cptr, p_filename);
+            Native.add_include_filename(p_filename);
         }
 
-        public void add_code_block(String code)
+        static public void Add_Code_Block(String code)
         {
             IntPtr p_code = Marshal.StringToBSTR(code);
-            Native.context_add_code_block(m_cptr, p_code);
+            Native.add_code_block(p_code);
         }
 
-        private IntPtr m_cptr;
     }
 }
