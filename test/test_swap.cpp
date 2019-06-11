@@ -5,15 +5,15 @@
 
 int main()
 {
-	TRTCContext ctx;
+	
 
 	int harr1[8] = { 10, 20, 30, 40, 50, 60, 70, 80 };
-	DVVector darr1(ctx, "int32_t", 8, harr1);
+	DVVector darr1("int32_t", 8, harr1);
 
 	int harr2[8] = { 1000, 900, 800, 700, 600, 500, 400, 300 };
-	DVVector darr2(ctx, "int32_t", 8, harr2);
+	DVVector darr2("int32_t", 8, harr2);
 
-	TRTC_Swap(ctx, darr1, darr2);
+	TRTC_Swap(darr1, darr2);
 	darr1.to_host(harr1);
 	darr2.to_host(harr2);
 

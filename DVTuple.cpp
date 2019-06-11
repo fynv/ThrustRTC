@@ -1,7 +1,7 @@
 #include "memory.h"
 #include "DVTuple.h"
 
-DVTuple::DVTuple(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>& elem_map)
+DVTuple::DVTuple(const std::vector<AssignedParam>& elem_map)
 {
 	std::string struct_body;
 	m_view_elems.resize(elem_map.size());
@@ -13,9 +13,9 @@ DVTuple::DVTuple(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>
 		name_elems[i] = elem_map[i].param_name;
 	}
 
-	m_name_view_cls = ctx.add_struct(struct_body.c_str());
+	m_name_view_cls = TRTC_Add_Struct(struct_body.c_str());
 	m_offsets.resize(elem_map.size() + 1);
-	ctx.query_struct(m_name_view_cls.c_str(), name_elems, m_offsets.data());
+	TRTC_Query_Struct(m_name_view_cls.c_str(), name_elems, m_offsets.data());
 }
 
 std::string DVTuple::name_view_cls() const

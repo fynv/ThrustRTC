@@ -1,11 +1,11 @@
 #include "cuda_wrapper.h"
 #include "general_scan.h"
 
-uint32_t general_copy_if(TRTCContext& ctx, size_t n, const Functor& src_scan, const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_in, size_t begin_out)
+uint32_t general_copy_if(size_t n, const Functor& src_scan, const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_in, size_t begin_out)
 {
-	DVVector inds(ctx, "uint32_t", n);
+	DVVector inds("uint32_t", n);
 	Functor plus("Plus");
-	if (!general_scan(ctx, n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
+	if (!general_scan(n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
 
 	uint32_t ret;
 	cuMemcpyDtoH(&ret, (CUdeviceptr)((uint32_t*)inds.data() + n - 1), sizeof(uint32_t));
@@ -17,16 +17,16 @@ uint32_t general_copy_if(TRTCContext& ctx, size_t n, const Functor& src_scan, co
 	DVSizeT dvbegin_in(begin_in);
 	DVSizeT dvbegin_out(begin_out);
 	const DeviceViewable* args[] = { &vec_in, &inds, &vec_out, &dvbegin_in, &dvbegin_out };
-	if (!s_for_scatter.launch_n(ctx, n, args)) return (uint32_t)(-1);
+	if (!s_for_scatter.launch_n(n, args)) return (uint32_t)(-1);
 	return ret;
 }
 
-uint32_t general_copy_if(TRTCContext& ctx, size_t n, const Functor& src_scan, const DVVectorLike& vec_in1, const DVVectorLike& vec_in2,
+uint32_t general_copy_if(size_t n, const Functor& src_scan, const DVVectorLike& vec_in1, const DVVectorLike& vec_in2,
 	DVVectorLike& vec_out1, DVVectorLike& vec_out2, size_t begin_in1, size_t begin_in2, size_t begin_out1, size_t begin_out2)
 {
-	DVVector inds(ctx, "uint32_t", n);
+	DVVector inds("uint32_t", n);
 	Functor plus("Plus");
-	if (!general_scan(ctx, n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
+	if (!general_scan(n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
 
 	uint32_t ret;
 	cuMemcpyDtoH(&ret, (CUdeviceptr)((uint32_t*)inds.data() + n - 1), sizeof(uint32_t));
@@ -44,6 +44,6 @@ uint32_t general_copy_if(TRTCContext& ctx, size_t n, const Functor& src_scan, co
 	DVSizeT dvbegin_out1(begin_out1);
 	DVSizeT dvbegin_out2(begin_out2);
 	const DeviceViewable* args[] = { &vec_in1, &vec_in2, &inds, &vec_out1, &vec_out2, &dvbegin_in1, &dvbegin_in2, &dvbegin_out1, &dvbegin_out2 };
-	if (!s_for_scatter.launch_n(ctx, n, args)) return (uint32_t)(-1);
+	if (!s_for_scatter.launch_n(n, args)) return (uint32_t)(-1);
 	return ret;
 }

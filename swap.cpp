@@ -1,6 +1,6 @@
 #include "swap.h"
 
-bool TRTC_Swap(TRTCContext& ctx, DVVectorLike& vec1, DVVectorLike& vec2, size_t begin1, size_t end1, size_t begin2)
+bool TRTC_Swap(DVVectorLike& vec1, DVVectorLike& vec2, size_t begin1, size_t end1, size_t begin2)
 {
 	static TRTC_For s_for(
 		{ "view_vec1", "view_vec2", "begin1", "begin2" }, "idx",
@@ -13,5 +13,5 @@ bool TRTC_Swap(TRTCContext& ctx, DVVectorLike& vec1, DVVectorLike& vec2, size_t 
 	DVSizeT dvbegin1(begin1);
 	DVSizeT dvbegin2(begin2);
 	const DeviceViewable* args[] = { &vec1, &vec2, &dvbegin1, &dvbegin2 };
-	return s_for.launch_n(ctx, end1-begin1, args);
+	return s_for.launch_n(end1-begin1, args);
 }

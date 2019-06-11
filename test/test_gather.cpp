@@ -5,19 +5,19 @@
 
 int main()
 {
-	TRTCContext ctx;
+	
 
 	{
 		int values[10] = { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
-		DVVector d_values(ctx, "int32_t", 10, values);
+		DVVector d_values("int32_t", 10, values);
 
 		int map[10] = { 0, 2, 4, 6, 8, 1, 3, 5, 7, 9 };
-		DVVector d_map(ctx, "int32_t", 10, map);
+		DVVector d_map("int32_t", 10, map);
 
 		int output[10];
-		DVVector d_output(ctx, "int32_t", 10);
+		DVVector d_output("int32_t", 10);
 
-		TRTC_Gather(ctx, d_map, d_values, d_output);
+		TRTC_Gather(d_map, d_values, d_output);
 		d_output.to_host(output);
 
 		printf("%d %d %d %d %d ", output[0], output[1], output[2], output[3], output[4]);
@@ -26,18 +26,18 @@ int main()
 
 	{
 		int values[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		DVVector d_values(ctx, "int32_t", 10, values);
+		DVVector d_values("int32_t", 10, values);
 
 		int stencil[10] = { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
-		DVVector d_stencil(ctx, "int32_t", 10, stencil);
+		DVVector d_stencil("int32_t", 10, stencil);
 
 		int map[10] = { 0, 2, 4, 6, 8, 1, 3, 5, 7, 9 };
-		DVVector d_map(ctx, "int32_t", 10, map);
+		DVVector d_map("int32_t", 10, map);
 
 		int output[10] = { 7,7,7,7,7,7,7,7,7,7 };
-		DVVector d_output(ctx, "int32_t", 10, output);
+		DVVector d_output("int32_t", 10, output);
 
-		TRTC_Gather_If(ctx, d_map, d_stencil, d_values, d_output);
+		TRTC_Gather_If(d_map, d_stencil, d_values, d_output);
 		d_output.to_host(output);
 
 		printf("%d %d %d %d %d ", output[0], output[1], output[2], output[3], output[4]);
@@ -45,22 +45,22 @@ int main()
 
 	}
 
-	Functor is_even = { ctx, {},{ "x" }, "        return ((x % 2) == 0);\n" };
+	Functor is_even = { {},{ "x" }, "        return ((x % 2) == 0);\n" };
 
 	{
 		int values[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		DVVector d_values(ctx, "int32_t", 10, values);
+		DVVector d_values("int32_t", 10, values);
 
 		int stencil[10] = { 0, 3, 4, 1, 4, 1, 2, 7, 8, 9 };
-		DVVector d_stencil(ctx, "int32_t", 10, stencil);
+		DVVector d_stencil("int32_t", 10, stencil);
 
 		int map[10] = { 0, 2, 4, 6, 8, 1, 3, 5, 7, 9 };
-		DVVector d_map(ctx, "int32_t", 10, map);
+		DVVector d_map("int32_t", 10, map);
 
 		int output[10] = { 7,7,7,7,7,7,7,7,7,7 };
-		DVVector d_output(ctx, "int32_t", 10, output);
+		DVVector d_output("int32_t", 10, output);
 
-		TRTC_Gather_If(ctx, d_map, d_stencil, d_values, d_output, is_even);
+		TRTC_Gather_If(d_map, d_stencil, d_values, d_output, is_even);
 		d_output.to_host(output);
 
 		printf("%d %d %d %d %d ", output[0], output[1], output[2], output[3], output[4]);

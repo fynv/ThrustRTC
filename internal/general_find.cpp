@@ -1,6 +1,6 @@
 #include "general_find.h"
 
-bool general_find(TRTCContext& ctx, size_t begin, size_t end, const Functor src, size_t& result)
+bool general_find(size_t begin, size_t end, const Functor src, size_t& result)
 {
 	static TRTC_Kernel s_kernel(
 		{ "src", "result", "begin", "end" },
@@ -16,13 +16,13 @@ bool general_find(TRTCContext& ctx, size_t begin, size_t end, const Functor src,
 	);
 
 	result = (size_t)(-1);
-	DVVector dvresult(ctx, "unsigned long long", 1, &result);
+	DVVector dvresult("unsigned long long", 1, &result);
 	int numBlocks;
 	{
 		DVSizeT _dvbegin(begin);
 		DVSizeT _dvend(end);
 		const DeviceViewable* _args[] = { &src, &dvresult, &_dvbegin, &_dvend };
-		s_kernel.calc_number_blocks(ctx, _args, 128, numBlocks);
+		s_kernel.calc_number_blocks(_args, 128, numBlocks);
 	}
 	unsigned trunk_size = (unsigned)numBlocks * 128;
 	unsigned trunk_begin = (unsigned)begin;
@@ -34,7 +34,7 @@ bool general_find(TRTCContext& ctx, size_t begin, size_t end, const Functor src,
 		DVSizeT dvend(trunk_end);
 		const DeviceViewable* args[] = { &src, &dvresult, &dvbegin, &dvend };
 		numBlocks = (int)((trunk_end - trunk_begin + 127) / 128);
-		if (!s_kernel.launch(ctx, { (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;
+		if (!s_kernel.launch({ (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;
 		dvresult.to_host(&result);
 		if (result != (size_t)(-1)) break;
 		trunk_begin = trunk_end;

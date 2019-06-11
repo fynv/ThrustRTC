@@ -248,6 +248,8 @@ extern CUresult (*cuDeviceGetCount)(int *count);
 extern CUresult (*cuDeviceGet)(CUdevice *device, int ordinal);
 extern CUresult (*cuDeviceGetAttribute)(int *pi, CUdevice_attribute attrib, CUdevice dev);
 extern CUresult (*cuCtxCreate)(CUcontext *pctx, unsigned int flags, CUdevice dev);
+extern CUresult (*cuCtxGetCurrent)(CUcontext *pctx);
+extern CUresult (*cuCtxGetDevice)(CUdevice *device);
 extern CUresult (*cuCtxGetCacheConfig)(CUfunc_cache *pconfig);
 extern CUresult (*cuModuleLoadDataEx)(CUmodule *module, const void *image, unsigned int numOptions, CUjit_option *options, void **optionValues);
 extern CUresult (*cuModuleUnload)(CUmodule hmod);

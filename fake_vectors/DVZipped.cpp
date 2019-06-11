@@ -1,17 +1,17 @@
 #include <memory.h>
 #include "DVZipped.h"
 
-static std::string s_add_elem_struct(TRTCContext& ctx, const std::vector<DVVectorLike*>& vecs, const std::vector<const char*>& elem_names)
+static std::string s_add_elem_struct(const std::vector<DVVectorLike*>& vecs, const std::vector<const char*>& elem_names)
 {
 	std::string struct_body;
 	for (size_t i = 0; i < vecs.size(); i++)
 		struct_body += std::string("    ") + vecs[i]->name_elem_cls() + " " + elem_names[i] + ";\n";
-	return ctx.add_struct(struct_body.c_str());
+	return TRTC_Add_Struct(struct_body.c_str());
 }
 
-static std::string s_add_ref_struct(TRTCContext& ctx, const std::vector<DVVectorLike*>& vecs, const std::vector<const char*>& elem_names, bool& readable, bool& writable)
+static std::string s_add_ref_struct(const std::vector<DVVectorLike*>& vecs, const std::vector<const char*>& elem_names, bool& readable, bool& writable)
 {
-	std::string elem_cls = s_add_elem_struct(ctx, vecs, elem_names);
+	std::string elem_cls = s_add_elem_struct(vecs, elem_names);
 	readable = true;
 	writable = true;
 	for (size_t i = 0; i < vecs.size(); i++)
@@ -45,13 +45,12 @@ static std::string s_add_ref_struct(TRTCContext& ctx, const std::vector<DVVector
 		struct_body += "        return *this;\n    }\n";
 	}
 
-	return ctx.add_struct(struct_body.c_str());
+	return TRTC_Add_Struct(struct_body.c_str());
 }
 
-DVZipped::DVZipped(TRTCContext& ctx, const std::vector<DVVectorLike*>& vecs, const std::vector<const char*>& elem_names)
-	:DVVectorLike(ctx,
-		s_add_elem_struct(ctx, vecs, elem_names).c_str(),
-		s_add_ref_struct(ctx, vecs, elem_names, m_readable, m_writable).c_str(), vecs[0]->size())
+DVZipped::DVZipped(const std::vector<DVVectorLike*>& vecs, const std::vector<const char*>& elem_names)
+	:DVVectorLike(s_add_elem_struct(vecs, elem_names).c_str(),
+		s_add_ref_struct(vecs, elem_names, m_readable, m_writable).c_str(), vecs[0]->size())
 {
 	m_view_elems.resize(vecs.size());
 	for (size_t i = 0; i < vecs.size(); i++)
@@ -74,11 +73,11 @@ DVZipped::DVZipped(TRTCContext& ctx, const std::vector<DVVectorLike*>& vecs, con
 	}
 	struct_body += "};\n    }\n";
 
-	m_name_view_cls = ctx.add_struct(struct_body.c_str());
+	m_name_view_cls = TRTC_Add_Struct(struct_body.c_str());
 
 	m_offsets.resize(vecs.size() + 1);
 	std::string name_struct = name_view_cls();
-	ctx.query_struct(name_struct.c_str(), elem_names, m_offsets.data());
+	TRTC_Query_Struct(name_struct.c_str(), elem_names, m_offsets.data());
 }
 
 

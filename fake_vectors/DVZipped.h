@@ -6,7 +6,7 @@
 class THRUST_RTC_API DVZipped : public DVVectorLike
 {
 public:
-	DVZipped(TRTCContext& ctx, const std::vector<DVVectorLike*>& vecs, const std::vector<const char*>& elem_names);
+	DVZipped(const std::vector<DVVectorLike*>& vecs, const std::vector<const char*>& elem_names);
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 	virtual bool is_readable() const { return m_readable; }

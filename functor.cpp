@@ -1,7 +1,7 @@
 #include "memory.h"
 #include "functor.h"
 
-Functor::Functor(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>& arg_map, const std::vector<const char*>& functor_params, const char* code_body)
+Functor::Functor(const std::vector<AssignedParam>& arg_map, const std::vector<const char*>& functor_params, const char* code_body)
 {
 	std::string struct_body;
 	m_view_args.resize(arg_map.size());
@@ -38,10 +38,10 @@ Functor::Functor(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>
 	struct_body += ")\n    {\n";
 	struct_body += code_body;
 	struct_body += "    }\n";
-	m_name_view_cls = ctx.add_struct(struct_body.c_str());
+	m_name_view_cls = TRTC_Add_Struct(struct_body.c_str());
 
 	m_offsets.resize(arg_map.size()+1);
-	ctx.query_struct(m_name_view_cls.c_str(), members, m_offsets.data());
+	TRTC_Query_Struct(m_name_view_cls.c_str(), members, m_offsets.data());
 }
 
 Functor::Functor(const char* name_built_in_view_cls)

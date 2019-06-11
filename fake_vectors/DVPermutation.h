@@ -11,7 +11,7 @@ public:
 	std::string cls_index() const { return m_cls_index; }
 	ViewBuf view_index() const { return m_view_index;  }
 
-	DVPermutation(TRTCContext& ctx, const DVVectorLike& vec_value, const DVVectorLike& vec_index );
+	DVPermutation(const DVVectorLike& vec_value, const DVVectorLike& vec_index );
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 	virtual bool is_readable() const { return m_readable; }

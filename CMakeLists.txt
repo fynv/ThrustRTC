@@ -117,6 +117,7 @@ fake_vectors/DVCustomVector.h
 
 set(INTERNAL_HEADERS
 thirdparty/crc64/crc64.h
+internal/impl_context.inl
 internal/Timing.h
 internal/launch_calc.h
 internal/cuda_wrapper.h

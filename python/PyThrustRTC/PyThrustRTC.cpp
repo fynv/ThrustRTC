@@ -4,7 +4,7 @@
 static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 {
 	const char* path = PyUnicode_AsUTF8(PyTuple_GetItem(args, 0));
-	TRTCContext::set_libnvrtc_path(path);
+	set_libnvrtc_path(path);
 	return PyLong_FromLong(0);
 }
 
@@ -52,19 +52,12 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 
 static PyMethodDef s_Methods[] = {
 	{ "n_set_libnvrtc_path", n_set_libnvrtc_path, METH_VARARGS, "" },
-	{ "n_context_create", n_context_create, METH_VARARGS, "" },
-	{ "n_context_destroy", n_context_destroy, METH_VARARGS, "" },
-	{ "n_context_set_verbose", n_context_set_verbose, METH_VARARGS, "" },
-	{ "n_context_add_include_dir", n_context_add_include_dir, METH_VARARGS, "" },
-	{ "n_context_add_built_in_header", n_context_add_built_in_header, METH_VARARGS, "" },
-	{ "n_context_add_inlcude_filename", n_context_add_inlcude_filename, METH_VARARGS, "" },
-	{ "n_context_add_code_block", n_context_add_code_block, METH_VARARGS, "" },
-	{ "n_context_add_constant_object", n_context_add_constant_object, METH_VARARGS, "" },
-	{ "n_context_calc_optimal_block_size", n_context_calc_optimal_block_size, METH_VARARGS, "" },
-	{ "n_context_calc_number_blocks", n_context_calc_number_blocks, METH_VARARGS, "" },
-	{ "n_context_launch_kernel", n_context_launch_kernel, METH_VARARGS, "" },
-	{ "n_context_launch_for", n_context_launch_for, METH_VARARGS, "" },
-	{ "n_context_launch_for_n", n_context_launch_for_n, METH_VARARGS, "" },
+	{ "n_set_verbose", n_set_verbose, METH_VARARGS, "" },
+	{ "n_add_include_dir", n_add_include_dir, METH_VARARGS, "" },
+	{ "n_add_built_in_header", n_add_built_in_header, METH_VARARGS, "" },
+	{ "n_add_inlcude_filename", n_add_inlcude_filename, METH_VARARGS, "" },
+	{ "n_add_code_block", n_add_code_block, METH_VARARGS, "" },
+	{ "n_add_constant_object", n_add_constant_object, METH_VARARGS, "" },
 	{ "n_kernel_create", n_kernel_create, METH_VARARGS, "" },
 	{ "n_kernel_destroy", n_kernel_destroy, METH_VARARGS, "" },
 	{ "n_kernel_num_params", n_kernel_num_params, METH_VARARGS, "" },

@@ -7,7 +7,7 @@ class THRUST_RTC_API DVCounter : public DVVectorLike
 {
 public:
 	ViewBuf value_init() const { return m_value_init; }
-	DVCounter(TRTCContext& ctx, const DeviceViewable& dvobj_init, size_t size = (size_t)(-1));
+	DVCounter(const DeviceViewable& dvobj_init, size_t size = (size_t)(-1));
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 

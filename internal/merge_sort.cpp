@@ -3,7 +3,7 @@
 
 #define BLOCK_SIZE 256
 
-bool merge_sort(TRTCContext& ctx, DVVectorLike& vec, const Functor& comp, size_t begin, size_t end)
+bool merge_sort(DVVectorLike& vec, const Functor& comp, size_t begin, size_t end)
 {
 	if (end == (size_t)(-1)) end = vec.size();
 
@@ -63,7 +63,7 @@ bool merge_sort(TRTCContext& ctx, DVVectorLike& vec, const Functor& comp, size_t
 		DVSizeT dvbegin(begin);
 		DVSizeT dvend(end);
 		const DeviceViewable* args[] = { &vec, &comp, &dvbegin, &dvend };
-		if (!s_ker_block.launch(ctx, { blocks, 1, 1 }, { BLOCK_SIZE, 1, 1 }, args, size_shared)) return false;
+		if (!s_ker_block.launch({ blocks, 1, 1 }, { BLOCK_SIZE, 1, 1 }, args, size_shared)) return false;
 	}
 
 	// global level
@@ -72,9 +72,9 @@ bool merge_sort(TRTCContext& ctx, DVVectorLike& vec, const Functor& comp, size_t
 	if (end - begin > half_size_group)
 	{
 		size_t size = end - begin;
-		DVVector tmp1(ctx, vec.name_elem_cls().c_str(), size);
-		DVVector tmp2(ctx, vec.name_elem_cls().c_str(), size);
-		if (!TRTC_Copy(ctx, vec, tmp1, begin, end, 0)) return false;
+		DVVector tmp1(vec.name_elem_cls().c_str(), size);
+		DVVector tmp2(vec.name_elem_cls().c_str(), size);
+		if (!TRTC_Copy(vec, tmp1, begin, end, 0)) return false;
 		DVVector* p1 = &tmp1;
 		DVVector* p2 = &tmp2;
 		DVSizeT dvsize(size);
@@ -104,7 +104,7 @@ bool merge_sort(TRTCContext& ctx, DVVectorLike& vec, const Functor& comp, size_t
 			unsigned blocks = (size + half_size_group - 1) / half_size_group / 2 * (half_size_group / BLOCK_SIZE);
 			DVSizeT dv_half_size_group(half_size_group);
 			const DeviceViewable* args[] = { p1, p2, &dvsize, &comp, &dv_half_size_group };
-			if (!s_ker_global.launch(ctx, { blocks, 1, 1 }, { BLOCK_SIZE, 1, 1 }, args)) return false;
+			if (!s_ker_global.launch({ blocks, 1, 1 }, { BLOCK_SIZE, 1, 1 }, args)) return false;
 
 			half_size_group = half_size_group << 1;
 			size_group = size_group << 1;
@@ -114,12 +114,12 @@ bool merge_sort(TRTCContext& ctx, DVVectorLike& vec, const Functor& comp, size_t
 				p2 = tmp;
 			}
 		}
-		if (!TRTC_Copy(ctx, *p1, vec, 0, size, begin)) return false;
+		if (!TRTC_Copy(*p1, vec, 0, size, begin)) return false;
 	}
 	return true;
 }
 
-bool merge_sort_by_key(TRTCContext& ctx, DVVectorLike& keys, DVVectorLike& values, const Functor& comp, size_t begin_keys, size_t end_keys, size_t begin_values)
+bool merge_sort_by_key(DVVectorLike& keys, DVVectorLike& values, const Functor& comp, size_t begin_keys, size_t end_keys, size_t begin_values)
 {
 	if (end_keys == (size_t)(-1)) end_keys = keys.size();
 
@@ -210,7 +210,7 @@ bool merge_sort_by_key(TRTCContext& ctx, DVVectorLike& keys, DVVectorLike& value
 		DVSizeT dvend_keys(end_keys);
 		DVSizeT dvbegin_values(begin_values);
 		const DeviceViewable* args[] = { &keys, &values, &comp, &dvbegin_keys, &dvend_keys, &dvbegin_values };
-		if (!s_ker_block.launch(ctx, { blocks, 1, 1 }, { BLOCK_SIZE, 1, 1 }, args, size_shared)) return false;
+		if (!s_ker_block.launch({ blocks, 1, 1 }, { BLOCK_SIZE, 1, 1 }, args, size_shared)) return false;
 	}
 
 	// global level
@@ -219,12 +219,12 @@ bool merge_sort_by_key(TRTCContext& ctx, DVVectorLike& keys, DVVectorLike& value
 	if (end_keys - begin_keys > half_size_group)
 	{
 		size_t size = end_keys - begin_keys;
-		DVVector tmp_keys1(ctx, keys.name_elem_cls().c_str(), size);
-		DVVector tmp_keys2(ctx, keys.name_elem_cls().c_str(), size);
-		DVVector tmp_values1(ctx, values.name_elem_cls().c_str(), size);
-		DVVector tmp_values2(ctx, values.name_elem_cls().c_str(), size);
-		if (!TRTC_Copy(ctx, keys, tmp_keys1, begin_keys, end_keys, 0)) return false;
-		if (!TRTC_Copy(ctx, values, tmp_values1, begin_values, begin_values + size, 0)) return false;
+		DVVector tmp_keys1(keys.name_elem_cls().c_str(), size);
+		DVVector tmp_keys2(keys.name_elem_cls().c_str(), size);
+		DVVector tmp_values1(values.name_elem_cls().c_str(), size);
+		DVVector tmp_values2(values.name_elem_cls().c_str(), size);
+		if (!TRTC_Copy(keys, tmp_keys1, begin_keys, end_keys, 0)) return false;
+		if (!TRTC_Copy(values, tmp_values1, begin_values, begin_values + size, 0)) return false;
 		DVVector* pkeys1 = &tmp_keys1;
 		DVVector* pkeys2 = &tmp_keys2;
 		DVVector* pvalues1 = &tmp_values1;
@@ -258,7 +258,7 @@ bool merge_sort_by_key(TRTCContext& ctx, DVVectorLike& keys, DVVectorLike& value
 			unsigned blocks = (size + half_size_group - 1) / half_size_group / 2 * (half_size_group / BLOCK_SIZE);
 			DVSizeT dv_half_size_group(half_size_group);
 			const DeviceViewable* args[] = { pkeys1, pkeys2, pvalues1, pvalues2, &dvsize, &comp, &dv_half_size_group };
-			if (!s_ker_global.launch(ctx, { blocks, 1, 1 }, { BLOCK_SIZE, 1, 1 }, args)) return false;
+			if (!s_ker_global.launch({ blocks, 1, 1 }, { BLOCK_SIZE, 1, 1 }, args)) return false;
 			half_size_group = half_size_group << 1;
 			size_group = size_group << 1;
 			{
@@ -270,8 +270,8 @@ bool merge_sort_by_key(TRTCContext& ctx, DVVectorLike& keys, DVVectorLike& value
 				pvalues2 = tmp;
 			}
 		}
-		if (!TRTC_Copy(ctx, *pkeys1, keys, 0, size, begin_keys)) return false;
-		if (!TRTC_Copy(ctx, *pvalues1, values, 0, size, begin_values)) return false;
+		if (!TRTC_Copy(*pkeys1, keys, 0, size, begin_keys)) return false;
+		if (!TRTC_Copy(*pvalues1, values, 0, size, begin_values)) return false;
 	}
 
 	return true;

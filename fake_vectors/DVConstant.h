@@ -7,7 +7,7 @@ class THRUST_RTC_API DVConstant : public DVVectorLike
 {
 public:
 	ViewBuf value() const { return m_value; }
-	DVConstant(TRTCContext& ctx, const DeviceViewable& dvobj, size_t size = (size_t)(-1));
+	DVConstant(const DeviceViewable& dvobj, size_t size = (size_t)(-1));
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 

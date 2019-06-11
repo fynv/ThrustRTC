@@ -7,9 +7,9 @@
 #include "DVVector.h"
 #include "functor.h"
 
-bool THRUST_RTC_API TRTC_Copy(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_in = 0, size_t end_in = (size_t)(-1), size_t begin_out = 0);
+bool THRUST_RTC_API TRTC_Copy(const DVVectorLike& vec_in, DVVectorLike& vec_out, size_t begin_in = 0, size_t end_in = (size_t)(-1), size_t begin_out = 0);
 
-uint32_t THRUST_RTC_API TRTC_Copy_If(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& pred, size_t begin_in = 0, size_t end_in = (size_t)(-1), size_t begin_out = 0);
-uint32_t THRUST_RTC_API TRTC_Copy_If_Stencil(TRTCContext& ctx, const DVVectorLike& vec_in, const DVVectorLike& vec_stencil, DVVectorLike& vec_out, const Functor& pred, size_t begin_in = 0, size_t end_in = (size_t)(-1), size_t begin_stencil=0, size_t begin_out = 0);
+uint32_t THRUST_RTC_API TRTC_Copy_If(const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& pred, size_t begin_in = 0, size_t end_in = (size_t)(-1), size_t begin_out = 0);
+uint32_t THRUST_RTC_API TRTC_Copy_If_Stencil(const DVVectorLike& vec_in, const DVVectorLike& vec_stencil, DVVectorLike& vec_out, const Functor& pred, size_t begin_in = 0, size_t end_in = (size_t)(-1), size_t begin_stencil=0, size_t begin_out = 0);
 
 #endif

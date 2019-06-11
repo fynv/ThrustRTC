@@ -5,7 +5,7 @@
 
 #define BLOCK_SIZE 256
 
-bool s_reduce(TRTCContext& ctx, const DVVector& src, DVVector& res, const Functor& binary_op)
+bool s_reduce(const DVVector& src, DVVector& res, const Functor& binary_op)
 {
 	static TRTC_Kernel s_kernel({ "view_src", "view_res", "n", "binary_op" },
 		"    extern __shared__ decltype(view_src)::value_t s_buf[];\n"
@@ -27,15 +27,15 @@ bool s_reduce(TRTCContext& ctx, const DVVector& src, DVVector& res, const Functo
 	unsigned size_shared = (unsigned)(src.elem_size()*BLOCK_SIZE);
 	DVUInt32 dv_n(n);
 	const DeviceViewable* args[] = { &src, &res, &dv_n, &binary_op};
-	return s_kernel.launch(ctx, { blocks,1,1 }, { BLOCK_SIZE ,1,1 }, args, size_shared);
+	return s_kernel.launch({ blocks,1,1 }, { BLOCK_SIZE ,1,1 }, args, size_shared);
 }
 
-bool general_reduce(TRTCContext& ctx, size_t n, const char* name_cls, const Functor& src, const Functor& binary_op, ViewBuf& ret_buf)
+bool general_reduce(size_t n, const char* name_cls, const Functor& src, const Functor& binary_op, ViewBuf& ret_buf)
 {
 	if (n < 1) return false;
 
 	unsigned blocks = (unsigned)(n + BLOCK_SIZE - 1) / BLOCK_SIZE;
-	std::shared_ptr<DVVector> res(new DVVector(ctx, name_cls, blocks));
+	std::shared_ptr<DVVector> res(new DVVector(name_cls, blocks));
 
 	// first round
 	{
@@ -55,7 +55,7 @@ bool general_reduce(TRTCContext& ctx, size_t n, const char* name_cls, const Func
 		DVUInt32 dv_n((unsigned)n);
 		unsigned size_shared = (unsigned)(res->elem_size()*BLOCK_SIZE);
 		const DeviceViewable* args[] = { &*res, &dv_n, &src, &binary_op };
-		if (!s_kernel.launch(ctx, { blocks,1,1 }, { BLOCK_SIZE ,1,1 }, args, size_shared)) return false;
+		if (!s_kernel.launch({ blocks,1,1 }, { BLOCK_SIZE ,1,1 }, args, size_shared)) return false;
 	}
 
 	while (res->size() > 1)
@@ -63,8 +63,8 @@ bool general_reduce(TRTCContext& ctx, size_t n, const char* name_cls, const Func
 		std::shared_ptr<DVVector> src = res;
 		n = (unsigned)src->size();
 		blocks = (unsigned)(n + BLOCK_SIZE - 1) / BLOCK_SIZE;		
-		res = std::shared_ptr<DVVector>(new DVVector(ctx, name_cls, blocks));
-		if (!s_reduce(ctx, *src, *res, binary_op)) return false;
+		res = std::shared_ptr<DVVector>(new DVVector(name_cls, blocks));
+		if (!s_reduce(*src, *res, binary_op)) return false;
 	}
 
 	ret_buf.resize(res->elem_size());

@@ -7,7 +7,7 @@
 #include "DVVector.h"
 #include "functor.h"
 
-bool THRUST_RTC_API TRTC_Count(TRTCContext& ctx, const DVVectorLike& vec, const DeviceViewable& value, size_t& ret, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_Count_If(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, size_t& ret, size_t begin = 0, size_t end = (size_t)(-1));
+bool THRUST_RTC_API TRTC_Count(const DVVectorLike& vec, const DeviceViewable& value, size_t& ret, size_t begin = 0, size_t end = (size_t)(-1));
+bool THRUST_RTC_API TRTC_Count_If(const DVVectorLike& vec, const Functor& pred, size_t& ret, size_t begin = 0, size_t end = (size_t)(-1));
 
 #endif

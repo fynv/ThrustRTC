@@ -1,6 +1,6 @@
 #include "logical.h"
 
-bool TRTC_All_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
+bool TRTC_All_Of(const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
 {
 	static TRTC_For s_for({ "view_vec", "view_res", "pred" }, "idx",
 		"    if (!pred(view_vec[idx])) view_res[0]=false;\n"
@@ -9,14 +9,14 @@ bool TRTC_All_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred,
 	ret = false;
 	if (end - begin < 1) return true;
 	ret = true;
-	DVVector dvres(ctx, "bool", 1, &ret);
+	DVVector dvres("bool", 1, &ret);
 	const DeviceViewable* args[] = { &vec, &dvres, &pred };
-	if (!s_for.launch(ctx, begin, end, args)) return false;
+	if (!s_for.launch(begin, end, args)) return false;
 	dvres.to_host(&ret);
 	return true;
 }
 
-bool TRTC_Any_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
+bool TRTC_Any_Of(const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
 {
 	static TRTC_For s_for({ "view_vec", "view_res", "pred" }, "idx",
 		"    if (pred(view_vec[idx])) view_res[0]=true;\n"
@@ -26,15 +26,15 @@ bool TRTC_Any_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred,
 	ret = false;
 	if (end - begin < 1) return true;
 
-	DVVector dvres(ctx, "bool", 1, &ret);
+	DVVector dvres("bool", 1, &ret);
 	const DeviceViewable* args[] = { &vec, &dvres, &pred };
-	if (!s_for.launch(ctx, begin, end, args)) return false;
+	if (!s_for.launch(begin, end, args)) return false;
 	dvres.to_host(&ret);
 	return true;
 }
 
 
-bool TRTC_None_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
+bool TRTC_None_Of(const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin, size_t end)
 {
 	static TRTC_For s_for({ "view_vec", "view_res", "pred" }, "idx",
 		"    if (pred(view_vec[idx])) view_res[0]=false;\n"
@@ -44,9 +44,9 @@ bool TRTC_None_Of(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred
 	ret = true;
 	if (end - begin < 1) return true;
 
-	DVVector dvres(ctx, "bool", 1, &ret);
+	DVVector dvres("bool", 1, &ret);
 	const DeviceViewable* args[] = { &vec, &dvres, &pred };
-	if (!s_for.launch(ctx, begin, end, args)) return false;
+	if (!s_for.launch(begin, end, args)) return false;
 	dvres.to_host(&ret);
 	return true;
 }

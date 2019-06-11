@@ -44,10 +44,10 @@ class DVVector(DVVectorLike):
 		native.n_dvvector_to_host(self.m_cptr, ret.__array_interface__['data'][0], begin, end)
 		return ret
 
-def device_vector(ctx, elem_cls, size, ptr_host_data=None):
-	return DVVector(native.n_dvvector_create(ctx.m_cptr, elem_cls, size, ptr_host_data))
+def device_vector(elem_cls, size, ptr_host_data=None):
+	return DVVector(native.n_dvvector_create(elem_cls, size, ptr_host_data))
 
-def device_vector_from_numpy(ctx, nparr):
+def device_vector_from_numpy(nparr):
 	if nparr.dtype == np.int8:
 		elem_cls = 'int8_t'
 	elif nparr.dtype == np.uint8:
@@ -76,9 +76,9 @@ def device_vector_from_numpy(ctx, nparr):
 		elem_cls = 'bool'
 	size = len(nparr)
 	ptr_host_data = nparr.__array_interface__['data'][0]
-	return device_vector(ctx, elem_cls, size, ptr_host_data)
+	return device_vector(elem_cls, size, ptr_host_data)
 
-def device_vector_from_list(ctx, lst, elem_cls):
+def device_vector_from_list(lst, elem_cls):
 	if elem_cls=='int8_t':
 		nptype = np.int8
 	elif elem_cls=='uint8_t':
@@ -104,13 +104,13 @@ def device_vector_from_list(ctx, lst, elem_cls):
 	nparr = np.array(lst, dtype=nptype)
 	size = len(lst)
 	ptr_host_data = nparr.__array_interface__['data'][0]
-	return device_vector(ctx, elem_cls, size, ptr_host_data)
+	return device_vector(elem_cls, size, ptr_host_data)
 
-def device_vector_from_dvs(ctx, lst_dv):
-	return DVVector(native.n_dvvector_from_dvs(ctx.m_cptr, [item.m_cptr for item in lst_dv]))
+def device_vector_from_dvs(lst_dv):
+	return DVVector(native.n_dvvector_from_dvs([item.m_cptr for item in lst_dv]))
 
 class DVNumbaVector(DVVectorLike):
-	def __init__(self, ctx, nbarr):
+	def __init__(self, nbarr):
 		self.nbarr = nbarr
 		if nbarr.dtype == np.int8:
 			elem_cls = 'int8_t'
@@ -140,4 +140,4 @@ class DVNumbaVector(DVVectorLike):
 			elem_cls = 'bool'
 		size = nbarr.size
 		ptr_device_data = nbarr.device_ctypes_pointer.value
-		self.m_cptr = native.n_dvvectoradaptor_create(ctx.m_cptr, elem_cls, size, ptr_device_data)
+		self.m_cptr = native.n_dvvectoradaptor_create(elem_cls, size, ptr_device_data)

@@ -2,16 +2,16 @@
 #include "DVVector.h"
 #include "built_in.h"
 
-DVVectorLike::DVVectorLike(TRTCContext& ctx, const char* elem_cls, const char* ref_type, size_t size)
+DVVectorLike::DVVectorLike(const char* elem_cls, const char* ref_type, size_t size)
 {
 	m_elem_cls = elem_cls;
 	m_ref_type = ref_type;
-	m_elem_size = ctx.size_of(elem_cls);
+	m_elem_size = TRTC_Size_Of(elem_cls);
 	m_size = size;
 }
 
-DVVector::DVVector(TRTCContext& ctx, const char* elem_cls, size_t size, void* hdata)
-	: DVVectorLike(ctx, elem_cls, (std::string(elem_cls)+"&").c_str(), size)
+DVVector::DVVector(const char* elem_cls, size_t size, void* hdata)
+	: DVVectorLike(elem_cls, (std::string(elem_cls)+"&").c_str(), size)
 {
 	CUdeviceptr dptr;
 	cuMemAlloc(&dptr, m_elem_size*m_size);
@@ -48,8 +48,8 @@ ViewBuf DVVector::view() const
 	return buf;
 }
 
-DVVectorAdaptor::DVVectorAdaptor(TRTCContext& ctx, const char* elem_cls, size_t size, void* ddata)
-	: DVVectorLike(ctx, elem_cls, (std::string(elem_cls) + "&").c_str(), size), m_data(ddata){}
+DVVectorAdaptor::DVVectorAdaptor(const char* elem_cls, size_t size, void* ddata)
+	: DVVectorLike(elem_cls, (std::string(elem_cls) + "&").c_str(), size), m_data(ddata){}
 
 
 std::string DVVectorAdaptor::name_view_cls() const

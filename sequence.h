@@ -6,8 +6,8 @@
 #include "DeviceViewable.h"
 #include "DVVector.h"
 
-bool THRUST_RTC_API TRTC_Sequence(TRTCContext& ctx, DVVectorLike& vec, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_Sequence(TRTCContext& ctx, DVVectorLike& vec, const DeviceViewable& value_init, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_Sequence(TRTCContext& ctx, DVVectorLike& vec, const DeviceViewable& value_init, const DeviceViewable& value_step, size_t begin = 0, size_t end = (size_t)(-1));
+bool THRUST_RTC_API TRTC_Sequence(DVVectorLike& vec, size_t begin = 0, size_t end = (size_t)(-1));
+bool THRUST_RTC_API TRTC_Sequence(DVVectorLike& vec, const DeviceViewable& value_init, size_t begin = 0, size_t end = (size_t)(-1));
+bool THRUST_RTC_API TRTC_Sequence(DVVectorLike& vec, const DeviceViewable& value_init, const DeviceViewable& value_step, size_t begin = 0, size_t end = (size_t)(-1));
 
 #endif

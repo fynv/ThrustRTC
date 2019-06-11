@@ -7,7 +7,7 @@
 class THRUST_RTC_API DVTransform : public DVVectorLike
 {
 public:
-	DVTransform(TRTCContext& ctx, const DVVectorLike& vec_in, const char* elem_cls, const Functor& op);
+	DVTransform(const DVVectorLike& vec_in, const char* elem_cls, const Functor& op);
 
 	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;

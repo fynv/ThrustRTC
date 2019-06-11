@@ -1,7 +1,7 @@
 #include "DVDiscard.h"
 
-DVDiscard::DVDiscard(TRTCContext& ctx, const char* elem_cls, size_t size)
-	:DVVectorLike(ctx, elem_cls, (std::string("_Sink<")+ elem_cls +">&").c_str(), size){}
+DVDiscard::DVDiscard(const char* elem_cls, size_t size)
+	:DVVectorLike(elem_cls, (std::string("_Sink<")+ elem_cls +">&").c_str(), size){}
 
 std::string DVDiscard::name_view_cls() const
 {

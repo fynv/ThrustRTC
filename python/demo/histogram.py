@@ -3,22 +3,22 @@ import ThrustRTC as trtc
 import matplotlib.pyplot as plt
 
 
-def demo_histogram(ctx, d_data):
+def demo_histogram(d_data):
 
     # sort data to bring equal elements together
-    trtc.Sort(ctx, d_data)
+    trtc.Sort(d_data)
 
     # caculate 20 bins from 0~200
     # 1 extra to exclude possible negative values
-    d_cumulative_histogram =  trtc.device_vector(ctx, "int32_t", 21)
+    d_cumulative_histogram =  trtc.device_vector("int32_t", 21)
 
-    d_counter = trtc.DVCounter(ctx, trtc.DVFloat(0.0), 21)
-    d_range_ends = trtc.DVTransform(ctx, d_counter, "float", trtc.Functor(ctx, {}, ['x'], '        return x*10.0;\n' ))
+    d_counter = trtc.DVCounter(trtc.DVFloat(0.0), 21)
+    d_range_ends = trtc.DVTransform(d_counter, "float", trtc.Functor({}, ['x'], '        return x*10.0;\n' ))
 
-    trtc.Upper_Bound_V(ctx, d_data, d_range_ends, d_cumulative_histogram)
+    trtc.Upper_Bound_V(d_data, d_range_ends, d_cumulative_histogram)
 
-    d_histogram = trtc.device_vector(ctx, "int32_t", 21)
-    trtc.Adjacent_Difference(ctx, d_cumulative_histogram, d_histogram)
+    d_histogram = trtc.device_vector("int32_t", 21)
+    trtc.Adjacent_Difference(d_cumulative_histogram, d_histogram)
 
     h_histogram = d_histogram.to_host(1, 21)
 
@@ -35,12 +35,9 @@ def demo_histogram(ctx, d_data):
 
 
 if __name__ == '__main__':
-
-    ctx = trtc.Context()
-
     h_data = np.random.randn(2000).astype(np.float32) * 30.0 +100.0
-    d_data = trtc.device_vector_from_numpy(ctx, h_data)
+    d_data = trtc.device_vector_from_numpy(h_data)
 
-    demo_histogram(ctx, d_data)
+    demo_histogram(d_data)
 
 

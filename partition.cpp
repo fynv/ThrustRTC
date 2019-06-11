@@ -4,19 +4,19 @@
 #include "cuda_wrapper.h"
 #include "built_in.h"
 
-uint32_t TRTC_Partition(TRTCContext& ctx, DVVectorLike& vec, const Functor& pred, size_t begin, size_t end)
+uint32_t TRTC_Partition(DVVectorLike& vec, const Functor& pred, size_t begin, size_t end)
 {
 	if (end == (size_t)(-1)) end = vec.size();
 	size_t n = end - begin;
-	DVVector cpy(ctx, vec.name_elem_cls().c_str(), n);
-	TRTC_Copy(ctx, vec, cpy, begin, end);
+	DVVector cpy(vec.name_elem_cls().c_str(), n);
+	TRTC_Copy(vec, cpy, begin, end);
 
-	Functor src_scan(ctx, { {"src", &cpy}, { "pred", &pred } }, { "idx" },
+	Functor src_scan({ {"src", &cpy}, { "pred", &pred } }, { "idx" },
 		"        return pred(src[idx]) ? Pair<uint32_t, uint32_t>({(uint32_t)1, (uint32_t)0}):Pair<uint32_t, uint32_t>({(uint32_t)0, (uint32_t)1});\n");
-	DVVector inds(ctx, "Pair<uint32_t, uint32_t>", n);
-	Functor plus(ctx, {}, { "x", "y" },
+	DVVector inds("Pair<uint32_t, uint32_t>", n);
+	Functor plus({}, { "x", "y" },
 		"        return Pair<uint32_t, uint32_t>({x.first + y.first , x.second + y.second });\n");
-	if (!general_scan(ctx, n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
+	if (!general_scan(n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
 	Pair<uint32_t, uint32_t> ret;
 	cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + n - 1), sizeof(Pair<uint32_t, uint32_t>));
 
@@ -29,24 +29,24 @@ uint32_t TRTC_Partition(TRTCContext& ctx, DVVectorLike& vec, const Functor& pred
 	DVUInt32 dvcount(ret.first);
 	DVSizeT dvbegin(begin);
 	const DeviceViewable* args[] = { &cpy, &inds, &vec, &dvbegin, &dvcount };
-	if (!s_for_scatter.launch_n(ctx, n, args)) return (uint32_t)(-1);
+	if (!s_for_scatter.launch_n(n, args)) return (uint32_t)(-1);
 	return ret.first;
 }
 
-uint32_t TRTC_Partition_Stencil(TRTCContext& ctx, DVVectorLike& vec, const DVVectorLike& stencil, const Functor& pred, size_t begin, size_t end, size_t begin_stencil)
+uint32_t TRTC_Partition_Stencil(DVVectorLike& vec, const DVVectorLike& stencil, const Functor& pred, size_t begin, size_t end, size_t begin_stencil)
 {
 	if (end == (size_t)(-1)) end = vec.size();
 	size_t n = end - begin;
-	DVVector cpy(ctx, vec.name_elem_cls().c_str(), n);
-	TRTC_Copy(ctx, vec, cpy, begin, end);
+	DVVector cpy(vec.name_elem_cls().c_str(), n);
+	TRTC_Copy(vec, cpy, begin, end);
 
 	DVSizeT dvbegin_stencil(begin_stencil);
-	Functor src_scan(ctx, { {"stencil", &stencil}, {"begin_stencil", &dvbegin_stencil}, { "pred", &pred } }, { "idx" },
+	Functor src_scan({ {"stencil", &stencil}, {"begin_stencil", &dvbegin_stencil}, { "pred", &pred } }, { "idx" },
 		"        return pred(stencil[idx + begin_stencil]) ? Pair<uint32_t, uint32_t>({(uint32_t)1, (uint32_t)0}):Pair<uint32_t, uint32_t>({(uint32_t)0, (uint32_t)1});\n");
-	DVVector inds(ctx, "Pair<uint32_t, uint32_t>", n);
-	Functor plus(ctx, {}, { "x", "y" },
+	DVVector inds("Pair<uint32_t, uint32_t>", n);
+	Functor plus({}, { "x", "y" },
 		"        return Pair<uint32_t, uint32_t>({x.first + y.first , x.second + y.second });\n");
-	if (!general_scan(ctx, n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
+	if (!general_scan(n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
 	Pair<uint32_t, uint32_t> ret;
 	cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + n - 1), sizeof(Pair<uint32_t, uint32_t>));
 
@@ -59,21 +59,21 @@ uint32_t TRTC_Partition_Stencil(TRTCContext& ctx, DVVectorLike& vec, const DVVec
 	DVUInt32 dvcount(ret.first);
 	DVSizeT dvbegin(begin);
 	const DeviceViewable* args[] = { &cpy, &inds, &vec, &dvbegin, &dvcount };
-	if (!s_for_scatter.launch_n(ctx, n, args)) return (uint32_t)(-1);
+	if (!s_for_scatter.launch_n(n, args)) return (uint32_t)(-1);
 	return ret.first;
 }
 
-uint32_t TRTC_Partition_Copy(TRTCContext& ctx, const DVVectorLike& vec_in, DVVectorLike& vec_true, DVVectorLike& vec_false, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_true, size_t begin_false)
+uint32_t TRTC_Partition_Copy(const DVVectorLike& vec_in, DVVectorLike& vec_true, DVVectorLike& vec_false, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_true, size_t begin_false)
 {
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
 	size_t n = end_in - begin_in;
 	DVSizeT dvbegin_in(begin_in);
-	Functor src_scan(ctx, { {"src", &vec_in},{"begin_in", &dvbegin_in},  { "pred", &pred } }, { "idx" },
+	Functor src_scan({ {"src", &vec_in},{"begin_in", &dvbegin_in},  { "pred", &pred } }, { "idx" },
 		"        return pred(src[idx]) ? Pair<uint32_t, uint32_t>({(uint32_t)1, (uint32_t)0}):Pair<uint32_t, uint32_t>({(uint32_t)0, (uint32_t)1});\n");
-	DVVector inds(ctx, "Pair<uint32_t, uint32_t>", n);
-	Functor plus(ctx, {}, { "x", "y" },
+	DVVector inds("Pair<uint32_t, uint32_t>", n);
+	Functor plus({}, { "x", "y" },
 		"        return Pair<uint32_t, uint32_t>({x.first + y.first , x.second + y.second });\n");
-	if (!general_scan(ctx, n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
+	if (!general_scan(n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
 	Pair<uint32_t, uint32_t> ret;
 	cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + n - 1), sizeof(Pair<uint32_t, uint32_t>));
 
@@ -87,22 +87,22 @@ uint32_t TRTC_Partition_Copy(TRTCContext& ctx, const DVVectorLike& vec_in, DVVec
 	DVSizeT dvbegin_true(begin_true);
 	DVSizeT dvbegin_false(begin_false);
 	const DeviceViewable* args[] = { &vec_in, &inds, &vec_true, &vec_false, &dvbegin_in, &dvbegin_true, &dvbegin_false };
-	if (!s_for_scatter.launch_n(ctx, n, args)) return (uint32_t)(-1);
+	if (!s_for_scatter.launch_n(n, args)) return (uint32_t)(-1);
 	return ret.first;
 }
 
-uint32_t TRTC_Partition_Copy_Stencil(TRTCContext& ctx, const DVVectorLike& vec_in, const DVVectorLike& stencil, DVVectorLike& vec_true, DVVectorLike& vec_false, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_true, size_t begin_false)
+uint32_t TRTC_Partition_Copy_Stencil(const DVVectorLike& vec_in, const DVVectorLike& stencil, DVVectorLike& vec_true, DVVectorLike& vec_false, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_true, size_t begin_false)
 {
 	if (end_in == (size_t)(-1)) end_in = vec_in.size();
 	size_t n = end_in - begin_in;
 
 	DVSizeT dvbegin_stencil(begin_stencil);
-	Functor src_scan(ctx, { {"stencil", &stencil}, {"begin_stencil", &dvbegin_stencil}, { "pred", &pred } }, { "idx" },
+	Functor src_scan({ {"stencil", &stencil}, {"begin_stencil", &dvbegin_stencil}, { "pred", &pred } }, { "idx" },
 		"        return pred(stencil[idx + begin_stencil]) ? Pair<uint32_t, uint32_t>({(uint32_t)1, (uint32_t)0}):Pair<uint32_t, uint32_t>({(uint32_t)0, (uint32_t)1});\n");
-	DVVector inds(ctx, "Pair<uint32_t, uint32_t>", n);
-	Functor plus(ctx, {}, { "x", "y" },
+	DVVector inds("Pair<uint32_t, uint32_t>", n);
+	Functor plus({}, { "x", "y" },
 		"        return Pair<uint32_t, uint32_t>({x.first + y.first , x.second + y.second });\n");
-	if (!general_scan(ctx, n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
+	if (!general_scan(n, src_scan, inds, plus, 0)) return (uint32_t)(-1);
 	Pair<uint32_t, uint32_t> ret;
 	cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + n - 1), sizeof(Pair<uint32_t, uint32_t>));
 	
@@ -116,11 +116,11 @@ uint32_t TRTC_Partition_Copy_Stencil(TRTCContext& ctx, const DVVectorLike& vec_i
 	DVSizeT dvbegin_true(begin_true);
 	DVSizeT dvbegin_false(begin_false);
 	const DeviceViewable* args[] = { &vec_in, &inds, &vec_true, &vec_false, &dvbegin_in, &dvbegin_true, &dvbegin_false };
-	if (!s_for_scatter.launch_n(ctx, n, args)) return (uint32_t)(-1);
+	if (!s_for_scatter.launch_n(n, args)) return (uint32_t)(-1);
 	return ret.first;
 }
 
-bool TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, size_t& result, size_t begin, size_t end)
+bool TRTC_Partition_Point(const DVVectorLike& vec, const Functor& pred, size_t& result, size_t begin, size_t end)
 {
 	if (end == (size_t)(-1)) end = vec.size();
 	if (end <= begin) return false;
@@ -144,7 +144,7 @@ bool TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Funct
 	);
 
 	size_t h_range_out[2];
-	DVVector dv_range_out(ctx, "size_t", 2);
+	DVVector dv_range_out("size_t", 2);
 	int numBlocks;
 	{
 		DVSizeT _dv_num_grps(end - begin);
@@ -152,7 +152,7 @@ bool TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Funct
 		DVSizeT _dv_size_grp(1);
 		DVSizeT _dv_div_id((size_t)(-1));
 		const DeviceViewable* _args[] = { &_dv_num_grps, &vec, &_dv_begin, &pred, &dv_range_out, &_dv_size_grp, &_dv_div_id };
-		s_kernel.calc_number_blocks(ctx, _args, 128, numBlocks);
+		s_kernel.calc_number_blocks(_args, 128, numBlocks);
 	}
 	size_t s_begin = begin;
 	size_t s_end = end;
@@ -184,7 +184,7 @@ bool TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Funct
 		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2);
 
 		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &pred, &dv_range_out, &dv_size_grp, &dv_div_id };
-		if (!s_kernel.launch(ctx, { (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;
+		if (!s_kernel.launch({ (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;
 		dv_range_out.to_host(h_range_out);
 		s_begin = h_range_out[0];
 		s_end = h_range_out[1];
@@ -194,7 +194,7 @@ bool TRTC_Partition_Point(TRTCContext& ctx, const DVVectorLike& vec, const Funct
 	return true;
 }
 
-bool TRTC_Is_Partitioned(TRTCContext& ctx, const DVVectorLike& vec, const Functor& pred, bool& result, size_t begin, size_t end)
+bool TRTC_Is_Partitioned(const DVVectorLike& vec, const Functor& pred, bool& result, size_t begin, size_t end)
 {
 	if (end == (size_t)(-1)) end = vec.size();
 	if (end <= begin + 1)
@@ -206,9 +206,9 @@ bool TRTC_Is_Partitioned(TRTCContext& ctx, const DVVectorLike& vec, const Functo
 		"    if (!pred(vec[idx]) && pred(vec[idx+1])) res[0] = false;\n");
 
 	result = true;
-	DVVector dvres(ctx, "bool", 1, &result);
+	DVVector dvres("bool", 1, &result);
 	const DeviceViewable* args[] = { &vec, &pred, &dvres };
-	if (!s_for.launch(ctx, begin, end-1, args)) return false;
+	if (!s_for.launch(begin, end-1, args)) return false;
 	dvres.to_host(&result);
 	return true;
 }

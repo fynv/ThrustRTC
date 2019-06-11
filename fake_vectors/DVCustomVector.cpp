@@ -2,9 +2,9 @@
 #include <memory.h>
 #include "DVCustomVector.h"
 
-DVCustomVector::DVCustomVector(TRTCContext& ctx, const std::vector<TRTCContext::AssignedParam>& arg_map, 
+DVCustomVector::DVCustomVector(const std::vector<AssignedParam>& arg_map, 
 	const char* name_idx, const char* code_body, const char* elem_cls, size_t size, bool read_only)
-	: DVVectorLike(ctx, elem_cls, read_only ? elem_cls : (std::string(elem_cls) + "&").c_str(), size), m_size(size), m_read_only(read_only)
+	: DVVectorLike(elem_cls, read_only ? elem_cls : (std::string(elem_cls) + "&").c_str(), size), m_size(size), m_read_only(read_only)
 {
 	std::string functor_body;
 	m_view_args.resize(arg_map.size());
@@ -20,9 +20,9 @@ DVCustomVector::DVCustomVector(TRTCContext& ctx, const std::vector<TRTCContext::
 	functor_body += code_body;
 	functor_body += "    }\n";
 
-	std::string name_functor_cls = ctx.add_struct(functor_body.c_str());
+	std::string name_functor_cls = TRTC_Add_Struct(functor_body.c_str());
 	m_arg_offsets.resize(arg_map.size() + 1);
-	ctx.query_struct(name_functor_cls.c_str(), args, m_arg_offsets.data());
+	TRTC_Query_Struct(name_functor_cls.c_str(), args, m_arg_offsets.data());
 
 	std::string struct_body;
 	struct_body += "    typedef " + m_elem_cls + " value_t;\n";
@@ -33,9 +33,9 @@ DVCustomVector::DVCustomVector(TRTCContext& ctx, const std::vector<TRTCContext::
 		"        return _size;\n    }\n";
 	struct_body += "    __device__ ref_t operator [](size_t idx)\n    {\n";
 	struct_body += "        return _op(idx);\n    }\n";
-	m_name_view_cls = ctx.add_struct(struct_body.c_str());
+	m_name_view_cls = TRTC_Add_Struct(struct_body.c_str());
 	
-	ctx.query_struct(m_name_view_cls.c_str(), { "_size", "_op" }, m_offsets);
+	TRTC_Query_Struct(m_name_view_cls.c_str(), { "_size", "_op" }, m_offsets);
 }
 
 

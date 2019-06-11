@@ -6,46 +6,46 @@
 
 int main()
 {
-	TRTCContext ctx;
+	
 	
 	{
 		int hvalues[6]= { 1, 4, 2, 8, 5, 7 };
-		DVVector dvalues(ctx, "int32_t", 6, hvalues);
+		DVVector dvalues("int32_t", 6, hvalues);
 		
 		bool res;
-		TRTC_Is_Sorted(ctx, dvalues, res);
+		TRTC_Is_Sorted(dvalues, res);
 		puts(res ? "true" : "false");
 
-		TRTC_Sort(ctx, dvalues);
+		TRTC_Sort(dvalues);
 		dvalues.to_host(hvalues);
 		printf("%d %d %d %d %d %d\n", hvalues[0], hvalues[1], hvalues[2], hvalues[3], hvalues[4], hvalues[5]);
 
-		TRTC_Is_Sorted(ctx, dvalues, res);
+		TRTC_Is_Sorted(dvalues, res);
 		puts(res ? "true" : "false");
 	}
 
 	{
 		int hvalues[6] = { 1, 4, 2, 8, 5, 7 };
-		DVVector dvalues(ctx, "int32_t", 6, hvalues);
+		DVVector dvalues("int32_t", 6, hvalues);
 
 		bool res;
-		TRTC_Is_Sorted(ctx, dvalues, Functor("Greater"), res);
+		TRTC_Is_Sorted(dvalues, Functor("Greater"), res);
 		puts(res ? "true" : "false");
 
-		TRTC_Sort(ctx, dvalues, Functor("Greater"));
+		TRTC_Sort(dvalues, Functor("Greater"));
 		dvalues.to_host(hvalues);
 		printf("%d %d %d %d %d %d\n", hvalues[0], hvalues[1], hvalues[2], hvalues[3], hvalues[4], hvalues[5]);
 
-		TRTC_Is_Sorted(ctx, dvalues, Functor("Greater"), res);
+		TRTC_Is_Sorted(dvalues, Functor("Greater"), res);
 		puts(res ? "true" : "false");
 	}
 
 	{
 		int hkeys[6] = { 1, 4, 2, 8, 5, 7 };
-		DVVector dkeys(ctx, "int32_t", 6, hkeys);
+		DVVector dkeys("int32_t", 6, hkeys);
 		char hvalues[6] = { 'a', 'b', 'c', 'd', 'e', 'f' };
-		DVVector dvalues(ctx, "int8_t", 6, hvalues);
-		TRTC_Sort_By_Key(ctx, dkeys, dvalues);
+		DVVector dvalues("int8_t", 6, hvalues);
+		TRTC_Sort_By_Key(dkeys, dvalues);
 		dkeys.to_host(hkeys);
 		dvalues.to_host(hvalues);
 		printf("%d %d %d %d %d %d\n", hkeys[0], hkeys[1], hkeys[2], hkeys[3], hkeys[4], hkeys[5]);
@@ -54,10 +54,10 @@ int main()
 
 	{
 		int hkeys[6] = { 1, 4, 2, 8, 5, 7 };
-		DVVector dkeys(ctx, "int32_t", 6, hkeys);
+		DVVector dkeys("int32_t", 6, hkeys);
 		char hvalues[6] = { 'a', 'b', 'c', 'd', 'e', 'f' };
-		DVVector dvalues(ctx, "int8_t", 6, hvalues);
-		TRTC_Sort_By_Key(ctx, dkeys, dvalues, Functor("Greater"));
+		DVVector dvalues("int8_t", 6, hvalues);
+		TRTC_Sort_By_Key(dkeys, dvalues, Functor("Greater"));
 		dkeys.to_host(hkeys);
 		dvalues.to_host(hvalues);
 		printf("%d %d %d %d %d %d\n", hkeys[0], hkeys[1], hkeys[2], hkeys[3], hkeys[4], hkeys[5]);
@@ -66,17 +66,17 @@ int main()
 
 	{
 		int hvalues[8] = { 0, 1, 2, 3, 0, 1, 2, 3 };
-		DVVector dvalues(ctx, "int32_t", 8, hvalues);
+		DVVector dvalues("int32_t", 8, hvalues);
 		size_t res;
-		TRTC_Is_Sorted_Until(ctx, dvalues, res);
+		TRTC_Is_Sorted_Until(dvalues, res);
 		printf("%zu\n", res);
 	}
 
 	{
 		int hvalues[8] = { 3, 2, 1, 0, 3, 2, 1, 0 };
-		DVVector dvalues(ctx, "int32_t", 8, hvalues);
+		DVVector dvalues("int32_t", 8, hvalues);
 		size_t res;
-		TRTC_Is_Sorted_Until(ctx, dvalues, Functor("Greater"), res);
+		TRTC_Is_Sorted_Until(dvalues, Functor("Greater"), res);
 		printf("%zu\n", res);
 	}
 
@@ -103,8 +103,8 @@ int main()
 			fclose(fp);
 		}
 
-		DVVector dvalues(ctx, "int32_t", 10000, hvalues);
-		TRTC_Sort(ctx, dvalues);
+		DVVector dvalues("int32_t", 10000, hvalues);
+		TRTC_Sort(dvalues);
 		dvalues.to_host(hvalues);
 		{
 			FILE *fp = fopen("after_sort1.txt", "w");
@@ -150,9 +150,9 @@ int main()
 			fclose(fp);
 		}
 
-		DVVector dkeys(ctx, "int32_t", 10000, hkeys);
-		DVVector dvalues(ctx, "int32_t", 10000, hvalues);
-		TRTC_Sort_By_Key(ctx, dkeys, dvalues);
+		DVVector dkeys("int32_t", 10000, hkeys);
+		DVVector dvalues("int32_t", 10000, hvalues);
+		TRTC_Sort_By_Key(dkeys, dvalues);
 		dkeys.to_host(hkeys);
 		dvalues.to_host(hvalues);
 		{

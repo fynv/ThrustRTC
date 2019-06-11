@@ -13,7 +13,7 @@ public:
 	size_t elem_size() const { return m_elem_size; }
 	size_t size() const { return m_size; }
 
-	DVVectorLike(TRTCContext& ctx, const char* elem_cls, const char* ref_type, size_t size);
+	DVVectorLike(const char* elem_cls, const char* ref_type, size_t size);
 	virtual ~DVVectorLike() {}
 	virtual bool is_readable() const { return true; }
 	virtual bool is_writable() const { return false; }
@@ -30,7 +30,7 @@ class THRUST_RTC_API DVVector : public DVVectorLike
 public:
 	void* data() const { return m_data; }
 
-	DVVector(TRTCContext& ctx, const char* elem_cls, size_t size, void* hdata=nullptr);
+	DVVector(const char* elem_cls, size_t size, void* hdata=nullptr);
 	~DVVector();
 	virtual bool is_writable() const { return true; }
 
@@ -45,7 +45,7 @@ private:
 class THRUST_RTC_API DVVectorAdaptor : public DVVectorLike
 {
 public:
-	DVVectorAdaptor(TRTCContext& ctx, const char* elem_cls, size_t size, void* ddata);
+	DVVectorAdaptor(const char* elem_cls, size_t size, void* ddata);
 	virtual bool is_writable() const { return true; }
 
 	virtual std::string name_view_cls() const;

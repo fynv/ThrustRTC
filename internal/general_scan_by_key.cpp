@@ -5,7 +5,7 @@
 
 #define BLOCK_SIZE 256
 
-static bool s_scan_block(TRTCContext& ctx, size_t n, const Functor& value_in,
+static bool s_scan_block(size_t n, const Functor& value_in,
 	const DVVectorLike& key_in, DVVectorLike& active, DVVectorLike& value_out, 
 	DVVectorLike& key_out_b, DVVectorLike& value_out_b, DVVectorLike& active_out_b,
 	const Functor& binary_pred, const Functor& binary_op, size_t begin_key, size_t begin_out)
@@ -81,10 +81,10 @@ static bool s_scan_block(TRTCContext& ctx, size_t n, const Functor& value_in,
 	DVSizeT dvbegin_out(begin_out);
 	const DeviceViewable* args[] = { &value_in, &dv_n, &key_in,  &active, &value_out, 
 		&key_out_b, &value_out_b, &active_out_b, &binary_pred, &binary_op, &dvbegin_key, &dvbegin_out };
-	return s_kernel.launch(ctx, { blocks,1,1 }, { BLOCK_SIZE ,1,1 }, args, size_shared);
+	return s_kernel.launch({ blocks,1,1 }, { BLOCK_SIZE ,1,1 }, args, size_shared);
 }
 
-static bool s_additional(TRTCContext& ctx, const DVVectorLike& key, DVVectorLike& value, DVVectorLike& active,
+static bool s_additional(const DVVectorLike& key, DVVectorLike& value, DVVectorLike& active,
 	const DVVectorLike& key_b, const DVVector& value_b, const DVVector& active_b, 
 	const Functor& binary_pred, const Functor& binary_op, size_t begin_key, size_t begin_value, size_t n)
 {
@@ -105,18 +105,18 @@ static bool s_additional(TRTCContext& ctx, const DVVectorLike& key, DVVectorLike
 	DVSizeT dvbegin_value(begin_value);
 	DVSizeT dvbegin_n(n);
 	const DeviceViewable* args[] = { &key, &value, &active, &key_b, &value_b, &active_b, &binary_pred, &binary_op, &dvbegin_key, &dvbegin_value, &dvbegin_n };
-	return s_kernel.launch(ctx, { blocks,1,1 }, { BLOCK_SIZE ,1,1 }, args);
+	return s_kernel.launch({ blocks,1,1 }, { BLOCK_SIZE ,1,1 }, args);
 }
 
 
-bool general_scan_by_key(TRTCContext& ctx, size_t n, const Functor& value_in, const DVVectorLike& key, DVVectorLike& value_out, const Functor& binary_pred, const Functor& binary_op, size_t begin_key, size_t begin_out)
+bool general_scan_by_key(size_t n, const Functor& value_in, const DVVectorLike& key, DVVectorLike& value_out, const Functor& binary_pred, const Functor& binary_op, size_t begin_key, size_t begin_out)
 {
-	DVVector dvactive(ctx, "bool", n);
-	TRTC_Fill(ctx, dvactive, DVBool(true));
-	std::shared_ptr<DVVector> p_key_out_b(new DVVector(ctx, key.name_elem_cls().c_str(), (n + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
-	std::shared_ptr<DVVector> p_value_out_b(new DVVector(ctx, value_out.name_elem_cls().c_str(), (n + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
-	std::shared_ptr<DVVector> p_active_out_b(new DVVector(ctx, "bool", (n + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
-	if (!s_scan_block(ctx, n, value_in, key, dvactive, value_out, *p_key_out_b, *p_value_out_b, *p_active_out_b,
+	DVVector dvactive("bool", n);
+	TRTC_Fill(dvactive, DVBool(true));
+	std::shared_ptr<DVVector> p_key_out_b(new DVVector(key.name_elem_cls().c_str(), (n + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
+	std::shared_ptr<DVVector> p_value_out_b(new DVVector(value_out.name_elem_cls().c_str(), (n + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
+	std::shared_ptr<DVVector> p_active_out_b(new DVVector("bool", (n + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
+	if (!s_scan_block(n, value_in, key, dvactive, value_out, *p_key_out_b, *p_value_out_b, *p_active_out_b,
 		binary_pred, binary_op, begin_key, begin_out)) return false;
 	std::vector<std::shared_ptr<DVVector>> bufs_key;
 	std::vector<std::shared_ptr<DVVector>> bufs_value;
@@ -130,20 +130,20 @@ bool general_scan_by_key(TRTCContext& ctx, size_t n, const Functor& value_in, co
 		DVVector* p_in_value = &*p_value_out_b;
 		DVVector* p_in_active = &*p_active_out_b;
 		size_t n2 = p_in_key->size();
-		p_key_out_b = std::shared_ptr<DVVector>(new DVVector(ctx, key.name_elem_cls().c_str(), (n2 + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
-		p_value_out_b = std::shared_ptr<DVVector>(new DVVector(ctx, value_out.name_elem_cls().c_str(), (n2 + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
-		p_active_out_b = std::shared_ptr<DVVector>(new DVVector(ctx, "bool", (n2 + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
-		Functor src2(ctx, { {"vec", p_in_value} }, { "idx" }, "        return vec[idx];\n");
-		if (!s_scan_block(ctx, n2, src2, *p_in_key, *p_in_active, *p_in_value, *p_key_out_b, *p_value_out_b, *p_active_out_b,
+		p_key_out_b = std::shared_ptr<DVVector>(new DVVector(key.name_elem_cls().c_str(), (n2 + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
+		p_value_out_b = std::shared_ptr<DVVector>(new DVVector(value_out.name_elem_cls().c_str(), (n2 + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
+		p_active_out_b = std::shared_ptr<DVVector>(new DVVector("bool", (n2 + BLOCK_SIZE * 2 - 1) / (BLOCK_SIZE * 2)));
+		Functor src2({ {"vec", p_in_value} }, { "idx" }, "        return vec[idx];\n");
+		if (!s_scan_block(n2, src2, *p_in_key, *p_in_active, *p_in_value, *p_key_out_b, *p_value_out_b, *p_active_out_b,
 			binary_pred, binary_op, 0, 0)) return false;
 	}
 
 	for (int i = (int)bufs_key.size() - 2; i >= 0; i--)
-		if (!s_additional(ctx, *bufs_key[i], *bufs_value[i], *bufs_active[i],
+		if (!s_additional(*bufs_key[i], *bufs_value[i], *bufs_active[i],
 			*bufs_key[i+1], *bufs_value[i+1], *bufs_active[i+1], binary_pred, binary_op, 0, 0, bufs_key[i]->size())) return false;
 
 	if (bufs_key.size() > 0)
-		if (!s_additional(ctx, key, value_out, dvactive, *bufs_key[0], *bufs_value[0], *bufs_active[0], binary_pred, binary_op, begin_key, begin_out, n)) return false;
+		if (!s_additional(key, value_out, dvactive, *bufs_key[0], *bufs_value[0], *bufs_active[0], binary_pred, binary_op, begin_key, begin_out, n)) return false;
 
 	return true;
 }

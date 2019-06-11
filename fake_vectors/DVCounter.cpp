@@ -1,13 +1,13 @@
 #include <memory.h>
 #include "fake_vectors/DVCounter.h"
 
-DVCounter::DVCounter(TRTCContext& ctx, const DeviceViewable& dvobj_init, size_t size) :
-	DVVectorLike(ctx, dvobj_init.name_view_cls().c_str(), dvobj_init.name_view_cls().c_str(), size)
+DVCounter::DVCounter(const DeviceViewable& dvobj_init, size_t size) :
+	DVVectorLike(dvobj_init.name_view_cls().c_str(), dvobj_init.name_view_cls().c_str(), size)
 {
 	m_value_init = dvobj_init.view();
 
 	std::string name_struct = name_view_cls();
-	ctx.query_struct(name_struct.c_str(), { "_size", "_value_init" }, m_offsets);
+	TRTC_Query_Struct(name_struct.c_str(), { "_size", "_value_init" }, m_offsets);
 }
 
 std::string DVCounter::name_view_cls() const

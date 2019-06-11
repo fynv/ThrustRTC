@@ -1,8 +1,8 @@
 #include <memory.h>
 #include "DVPermutation.h"
 
-DVPermutation::DVPermutation(TRTCContext& ctx, const DVVectorLike& vec_value, const DVVectorLike& vec_index)
-	: DVVectorLike(ctx, vec_value.name_elem_cls().c_str(), vec_value.name_ref_type().c_str(), vec_index.size())
+DVPermutation::DVPermutation(const DVVectorLike& vec_value, const DVVectorLike& vec_index)
+	: DVVectorLike(vec_value.name_elem_cls().c_str(), vec_value.name_ref_type().c_str(), vec_index.size())
 {
 	m_readable = vec_value.is_readable();
 	m_writable = vec_value.is_writable();
@@ -12,7 +12,7 @@ DVPermutation::DVPermutation(TRTCContext& ctx, const DVVectorLike& vec_value, co
 	m_view_index = vec_index.view();
 
 	std::string name_struct = name_view_cls();
-	ctx.query_struct(name_struct.c_str(), { "_view_vec_value", "_view_vec_index" }, m_offsets);
+	TRTC_Query_Struct(name_struct.c_str(), { "_view_vec_value", "_view_vec_index" }, m_offsets);
 }
 
 std::string DVPermutation::name_view_cls() const

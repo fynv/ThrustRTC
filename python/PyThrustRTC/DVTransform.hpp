@@ -4,11 +4,10 @@
 
 static PyObject* n_dvtransform_create(PyObject* self, PyObject* args)
 {
-	TRTCContext* ctx = (TRTCContext*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
-	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 1));
-	const char* elem_cls = PyUnicode_AsUTF8(PyTuple_GetItem(args, 2));
-	Functor* op = (Functor*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 3)); 
-	DVTransform* ret = new DVTransform(*ctx, *vec_in, elem_cls, *op);
+	DVVectorLike* vec_in = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
+	const char* elem_cls = PyUnicode_AsUTF8(PyTuple_GetItem(args, 1));
+	Functor* op = (Functor*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 2)); 
+	DVTransform* ret = new DVTransform(*vec_in, elem_cls, *op);
 	return PyLong_FromVoidPtr(ret);
 }
 

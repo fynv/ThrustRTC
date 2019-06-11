@@ -2,17 +2,19 @@
 #include "cuda_occupancy.h"
 #include <unordered_map>
 
-static void s_get_occ_device_properties(cudaOccDeviceProp &occ_prop, int dev_id)
+static void s_get_occ_device_properties(cudaOccDeviceProp &occ_prop)
 {
-	static std::unordered_map<int, cudaOccDeviceProp> s_dev_pro_map;
-	decltype(s_dev_pro_map)::iterator it = s_dev_pro_map.find(dev_id);
+	CUdevice cuDevice;
+	cuCtxGetDevice(&cuDevice);
+
+	static std::unordered_map<CUdevice, cudaOccDeviceProp> s_dev_pro_map;
+	decltype(s_dev_pro_map)::iterator it = s_dev_pro_map.find(cuDevice);
 	if (it != s_dev_pro_map.end())
 	{
 		occ_prop = it->second;
 		return;
 	}
-	CUdevice cuDevice;
-	cuDeviceGet(&cuDevice, dev_id);
+
 	cuDeviceGetAttribute(&occ_prop.computeMajor, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevice);
 	cuDeviceGetAttribute(&occ_prop.computeMinor, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR, cuDevice);
 	cuDeviceGetAttribute(&occ_prop.maxThreadsPerBlock, CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK, cuDevice);
@@ -26,7 +28,7 @@ static void s_get_occ_device_properties(cudaOccDeviceProp &occ_prop, int dev_id)
 	cuDeviceGetAttribute(&i32value, CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_MULTIPROCESSOR, cuDevice);
 	occ_prop.sharedMemPerMultiprocessor = (size_t)i32value;
 	cuDeviceGetAttribute(&occ_prop.numSms, CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT, cuDevice);
-	s_dev_pro_map[dev_id] = occ_prop;
+	s_dev_pro_map[cuDevice] = occ_prop;
 	return;
 }
 
@@ -43,10 +45,10 @@ static void s_get_occ_func_attributes(cudaOccFuncAttributes &occ_attrib, CUfunct
 	occ_attrib.maxDynamicSharedSizeBytes = (size_t)i32value;
 }
 
-void launch_calc(int dev_id, CUfunction func, unsigned sharedMemBytes, int& sizeBlock)
+void launch_calc(CUfunction func, unsigned sharedMemBytes, int& sizeBlock)
 {
 	cudaOccDeviceProp occ_prop;
-	s_get_occ_device_properties(occ_prop, dev_id);
+	s_get_occ_device_properties(occ_prop);
 	cudaOccFuncAttributes occ_attrib;
 	s_get_occ_func_attributes(occ_attrib, func);
 
@@ -65,10 +67,10 @@ void launch_calc(int dev_id, CUfunction func, unsigned sharedMemBytes, int& size
 		0, size_t(sharedMemBytes));	
 }
 
-void persist_calc(int dev_id, CUfunction func, unsigned sharedMemBytes, int sizeBlock, int& numBlocks)
+void persist_calc(CUfunction func, unsigned sharedMemBytes, int sizeBlock, int& numBlocks)
 {
 	cudaOccDeviceProp occ_prop;
-	s_get_occ_device_properties(occ_prop, dev_id);
+	s_get_occ_device_properties(occ_prop);
 	cudaOccFuncAttributes occ_attrib;
 	s_get_occ_func_attributes(occ_attrib, func);
 

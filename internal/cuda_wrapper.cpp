@@ -18,6 +18,8 @@ CUresult(*cuDeviceGetCount)(int *count);
 CUresult(*cuDeviceGet)(CUdevice *device, int ordinal);
 CUresult(*cuDeviceGetAttribute)(int *pi, CUdevice_attribute attrib, CUdevice dev);
 CUresult(*cuCtxCreate)(CUcontext *pctx, unsigned int flags, CUdevice dev);
+CUresult(*cuCtxGetCurrent)(CUcontext *pctx);
+CUresult(*cuCtxGetDevice)(CUdevice *device);
 CUresult(*cuCtxGetCacheConfig)(CUfunc_cache *pconfig);
 CUresult(*cuModuleLoadDataEx)(CUmodule *module, const void *image, unsigned int numOptions, CUjit_option *options, void **optionValues);
 CUresult(*cuModuleUnload)(CUmodule hmod);
@@ -57,6 +59,8 @@ bool init_cuda()
 	cuDeviceGet = (decltype(cuDeviceGet))GetProcAddress(hinstLib, "cuDeviceGet");
 	cuDeviceGetAttribute = (decltype(cuDeviceGetAttribute))GetProcAddress(hinstLib, "cuDeviceGetAttribute");
 	cuCtxCreate = (decltype(cuCtxCreate))GetProcAddress(hinstLib, "cuCtxCreate_v2");
+	cuCtxGetCurrent = (decltype(cuCtxGetCurrent))GetProcAddress(hinstLib, "cuCtxGetCurrent");
+	cuCtxGetDevice = (decltype(cuCtxGetDevice))GetProcAddress(hinstLib, "cuCtxGetDevice");
 	cuCtxGetCacheConfig = (decltype(cuCtxGetCacheConfig))GetProcAddress(hinstLib, "cuCtxGetCacheConfig");
 	cuModuleLoadDataEx = (decltype(cuModuleLoadDataEx))GetProcAddress(hinstLib, "cuModuleLoadDataEx");
 	cuModuleUnload = (decltype(cuModuleUnload))GetProcAddress(hinstLib, "cuModuleUnload");
@@ -81,6 +85,8 @@ bool init_cuda()
 	cuDeviceGet = (decltype(cuDeviceGet))dlsym(handle, "cuDeviceGet");
 	cuDeviceGetAttribute = (decltype(cuDeviceGetAttribute))dlsym(handle, "cuDeviceGetAttribute");
 	cuCtxCreate = (decltype(cuCtxCreate))dlsym(handle, "cuCtxCreate_v2");
+	cuCtxGetCurrent = (decltype(cuCtxGetCurrent))dlsym(handle, "cuCtxGetCurrent");
+	cuCtxGetDevice = (decltype(cuCtxGetDevice))dlsym(handle, "cuCtxGetDevice");
 	cuCtxGetCacheConfig = (decltype(cuCtxGetCacheConfig))dlsym(handle, "cuCtxGetCacheConfig");
 	cuModuleLoadDataEx = (decltype(cuModuleLoadDataEx))dlsym(handle, "cuModuleLoadDataEx");
 	cuModuleUnload = (decltype(cuModuleUnload))dlsym(handle, "cuModuleUnload");
