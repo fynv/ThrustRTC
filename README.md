@@ -54,8 +54,8 @@ ThrustRTC, Python (host) + C++ (device):
 ```python
 import ThrustRTC as trtc
 
-A = trtc.device_vector_from_list(ctx, [1, -3, 2, -1], 'int32_t')
-trtc.Replace_If(A, trtc.Functor( ctx, {}, ['x'], '        return x<0;\n'), trtc.DVInt32(0))
+A = trtc.device_vector_from_list([1, -3, 2, -1], 'int32_t')
+trtc.Replace_If(A, trtc.Functor({}, ['x'], '        return x<0;\n'), trtc.DVInt32(0))
 
 # A contains [1, 0, 2, 0]
 ```
