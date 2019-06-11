@@ -400,7 +400,7 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 	return true;
 }
 
-KernelId_t TRTCContext::_build_kernel(const std::vector<AssignedParam>& arg_map, const char* code_body)
+KernelId_t TRTCContext::_build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body)
 {
 	std::string saxpy;
 	for (size_t i = 0; i < m_code_blocks.size(); i++)
@@ -417,17 +417,17 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<AssignedParam>& arg_map,
 
 	if (num_params > 0)
 	{
-		saxpy += arg_map[0].arg->name_view_cls();
+		saxpy += arg_map[0].obj->name_view_cls();
 		saxpy += " ";
-		saxpy += arg_map[0].param_name;
+		saxpy += arg_map[0].obj_name;
 	}
 
 	for (size_t i = 1; i < num_params; i++)
 	{
 		saxpy += ", ";
-		saxpy += arg_map[i].arg->name_view_cls();
+		saxpy += arg_map[i].obj->name_view_cls();
 		saxpy += " ";
-		saxpy += arg_map[i].param_name;
+		saxpy += arg_map[i].obj_name;
 	}
 
 	saxpy += ")\n{\n";
@@ -533,7 +533,7 @@ int TRTCContext::_persist_calc(KernelId_t kid, int sizeBlock, unsigned sharedMem
 	return kernel->numBlocks;
 }
 
-bool TRTCContext::_launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, unsigned sharedMemBytes)
+bool TRTCContext::_launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<CapturedDeviceViewable>& arg_map, unsigned sharedMemBytes)
 {
 	Kernel *kernel = m_kernel_cache[kid];
 	size_t num_params = arg_map.size();
@@ -542,7 +542,7 @@ bool TRTCContext::_launch_kernel(KernelId_t kid, dim_type gridDim, dim_type bloc
 
 	for (size_t i = 0; i < num_params; i++)
 	{
-		argbufs[i] = arg_map[i].arg->view();
+		argbufs[i] = arg_map[i].obj->view();
 		converted_args[i] = argbufs[i].data();
 	}
 	CUresult res = cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
@@ -550,7 +550,7 @@ bool TRTCContext::_launch_kernel(KernelId_t kid, dim_type gridDim, dim_type bloc
 	return res == CUDA_SUCCESS;
 }
 
-bool TRTCContext::calc_optimal_block_size(const std::vector<AssignedParam>& arg_map, const char* code_body, int& sizeBlock, unsigned sharedMemBytes)
+bool TRTCContext::calc_optimal_block_size(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, int& sizeBlock, unsigned sharedMemBytes)
 {
 	KernelId_t kid = _build_kernel(arg_map, code_body);
 	if (kid == (KernelId_t)(-1)) return false;
@@ -558,7 +558,7 @@ bool TRTCContext::calc_optimal_block_size(const std::vector<AssignedParam>& arg_
 	return true;
 }
 
-bool TRTCContext::calc_number_blocks(const std::vector<AssignedParam>& arg_map, const char* code_body, int sizeBlock, int& numBlocks, unsigned sharedMemBytes)
+bool TRTCContext::calc_number_blocks(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, int sizeBlock, int& numBlocks, unsigned sharedMemBytes)
 {
 	KernelId_t kid = _build_kernel(arg_map, code_body);
 	if (kid == (KernelId_t)(-1)) return false;
@@ -566,18 +566,18 @@ bool TRTCContext::calc_number_blocks(const std::vector<AssignedParam>& arg_map, 
 	return true;
 }
 
-bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes)
+bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, unsigned sharedMemBytes)
 {
 	KernelId_t kid = _build_kernel(arg_map, code_body);
 	if (kid == (KernelId_t)(-1)) return false;
 	return _launch_kernel(kid, gridDim, blockDim, arg_map, sharedMemBytes);
 }
 
-bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<AssignedParam>& _arg_map, const char* name_iter, const char* _body)
+bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<CapturedDeviceViewable>& _arg_map, const char* name_iter, const char* _body)
 {
 	DVSizeT dvbegin(begin), dvend(end);
 	Functor func(_arg_map, { name_iter }, _body);
-	std::vector<AssignedParam> arg_map = { {"begin", &dvbegin}, {"end", &dvend}, {"func", &func} };
+	std::vector<CapturedDeviceViewable> arg_map = { {"begin", &dvbegin}, {"end", &dvend}, {"func", &func} };
 	KernelId_t kid = _build_kernel(arg_map,
 		"    size_t tid =  threadIdx.x + blockIdx.x*blockDim.x + begin;\n"
 		"    if(tid>=end) return;\n"
@@ -589,11 +589,11 @@ bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<Assigne
 	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
 }
 
-bool TRTCContext::launch_for_n(size_t n, const std::vector<AssignedParam>& _arg_map, const char* name_iter, const char* _body)
+bool TRTCContext::launch_for_n(size_t n, const std::vector<CapturedDeviceViewable>& _arg_map, const char* name_iter, const char* _body)
 {
 	DVSizeT dv_n(n);
 	Functor func(_arg_map, { name_iter }, _body);
-	std::vector<AssignedParam> arg_map = { {"n", &dv_n}, {"func", &func} };
+	std::vector<CapturedDeviceViewable> arg_map = { {"n", &dv_n}, {"func", &func} };
 	KernelId_t kid = _build_kernel(arg_map,
 		"    size_t tid =  threadIdx.x + blockIdx.x*blockDim.x;\n"
 		"    if(tid>=n) return;\n"

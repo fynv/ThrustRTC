@@ -26,23 +26,22 @@ h_data = np.random.randn(2000).astype(np.float32) * 30.0 +100.0
 Second, we copy these data to GPU memory by creating a *DVVector* object:
 
 ```python
-ctx = trtc.Context()
-d_data = trtc.device_vector_from_numpy(ctx, h_data)
+d_data = trtc.device_vector_from_numpy(h_data)
 ```
 
 To build a histogram, we first sort the data, so elements of similar values are brought together:
 
 ```python
-trtc.Sort(ctx, d_data)
+trtc.Sort(d_data)
 ```
 
 The cumulative number of elements can be calculated by doing a binary-search of the upper-bounds of each bin of the histogram.
 First, we can construct a Fake-Vector of the upper-bounds using a combination of *DVCounter* and *DVTransform*:
 
 ```python
-d_counter = trtc.DVCounter(ctx, trtc.DVFloat(0.0), 21)
-d_range_ends = trtc.DVTransform(ctx, d_counter, "float", 
-    trtc.Functor(ctx, {}, ['x'], '        return x*10.0;\n' ))
+d_counter = trtc.DVCounter(trtc.DVFloat(0.0), 21)
+d_range_ends = trtc.DVTransform(d_counter, "float", 
+    trtc.Functor({}, ['x'], '        return x*10.0;\n' ))
 ```
 
 Now *d_range_ends* has 21 elements 0, 10, 20.. 200.
@@ -50,15 +49,15 @@ Now *d_range_ends* has 21 elements 0, 10, 20.. 200.
 Calculate the cumulative histogram using binary-search:
 
 ```python
-d_cumulative_histogram =  trtc.device_vector(ctx, "int32_t", 21)
-trtc.Upper_Bound_V(ctx, d_data, d_range_ends, d_cumulative_histogram)
+d_cumulative_histogram =  trtc.device_vector("int32_t", 21)
+trtc.Upper_Bound_V(d_data, d_range_ends, d_cumulative_histogram)
 ```
 
 The final histogram we need can be calculated by doing an adjacent-difference to the cumulative histogram:
 
 ```python
-d_histogram = trtc.device_vector(ctx, "int32_t", 21)
-trtc.Adjacent_Difference(ctx, d_cumulative_histogram, d_histogram)
+d_histogram = trtc.device_vector("int32_t", 21)
+trtc.Adjacent_Difference(d_cumulative_histogram, d_histogram)
 ```
 
 Finally, we copy the result to host-memory and plot it:
@@ -96,26 +95,25 @@ h_y = np.random.rand(1000).astype(np.float32)*1000.0
 Copy these data to GPU Memroy:
 
 ```python
-ctx = trtc.Context()
-d_x = trtc.device_vector_from_numpy(ctx, h_x)
-d_y = trtc.device_vector_from_numpy(ctx, h_y)
+d_x = trtc.device_vector_from_numpy(h_x)
+d_y = trtc.device_vector_from_numpy(h_y)
 ```
 
 We create a zipped vector combining x and y, data points can be accessed in pairs later on.
 
 ```python
-d_points = trtc.DVZipped(ctx, [d_x, d_y], ['x','y'])
+d_points = trtc.DVZipped([d_x, d_y], ['x','y'])
 ```
 
 Create some point operators that will be used later:
 
 ```python
-    point_plus = trtc.Functor(ctx, { }, ['pos1', "pos2"],
+    point_plus = trtc.Functor({ }, ['pos1', "pos2"],
 '''
         return decltype(pos1)({pos1.x + pos2.x, pos1.y + pos2.y});
 ''')
 
-    point_div = trtc.Functor(ctx, { }, ['pos', "count"],
+    point_div = trtc.Functor({ }, ['pos', "count"],
 '''
         return decltype(pos)({pos.x/(float)count, pos.y/(float)count});
 ''')
@@ -130,12 +128,12 @@ the element that has the biggest distance to the nearest center that has been ch
 n = d_x.size()
 
 center_ids = [0] * k
-d_min_dis = trtc.device_vector(ctx, "float", n)
+d_min_dis = trtc.device_vector("float", n)
 
 for i in range(1, k):
     d_count = trtc.DVInt32(i)
-    d_center_ids =  trtc.device_vector_from_list(ctx, center_ids[0:i], 'int32_t')
-    calc_min_dis = trtc.Functor(ctx, {"points": d_points, "center_ids": d_center_ids, "count": d_count }, ['pos'], 
+    d_center_ids =  trtc.device_vector_from_list(center_ids[0:i], 'int32_t')
+    calc_min_dis = trtc.Functor({"points": d_points, "center_ids": d_center_ids, "count": d_count }, ['pos'], 
 '''
         float minDis = FLT_MAX;
         for (int i=0; i<count; i++)
@@ -147,11 +145,11 @@ for i in range(1, k):
         }
         return minDis;
 ''')
-    trtc.Transform(ctx, d_points, d_min_dis, calc_min_dis)
-    center_ids[i] = trtc.Max_Element(ctx, d_min_dis)
+    trtc.Transform(d_points, d_min_dis, calc_min_dis)
+    center_ids[i] = trtc.Max_Element(d_min_dis)
 
 d_count = trtc.DVInt32(k)
-d_center_ids =  trtc.device_vector_from_list(ctx, center_ids, 'int32_t')
+d_center_ids =  trtc.device_vector_from_list(center_ids, 'int32_t')
 ```
 
 Create a pair of Vectors each containing k elements, to store the coordinates of group centers,
@@ -159,29 +157,29 @@ then *Gather()* their initial values using the input points and the center ids w
 the previous step:
 
 ```python
-d_group_aves_x =  trtc.device_vector(ctx, "float", k)
-d_group_aves_y =  trtc.device_vector(ctx, "float", k)
-d_group_aves = trtc.DVZipped(ctx, [d_group_aves_x, d_group_aves_y], ['x','y'])
+d_group_aves_x =  trtc.device_vector("float", k)
+d_group_aves_y =  trtc.device_vector("float", k)
+d_group_aves = trtc.DVZipped([d_group_aves_x, d_group_aves_y], ['x','y'])
 
-trtc.Gather(ctx, d_center_ids, d_points, d_group_aves)
+trtc.Gather(d_center_ids, d_points, d_group_aves)
 ```
 
 Create all the buffers before doing the iterations:
 
 ```python
 # initialize labels
-d_labels =  trtc.device_vector(ctx, "int32_t", n)
-trtc.Fill(ctx, d_labels, trtc.DVInt32(-1))
+d_labels =  trtc.device_vector("int32_t", n)
+trtc.Fill(d_labels, trtc.DVInt32(-1))
 
 # buffer for new-calculated lables
-d_labels_new =  trtc.device_vector(ctx, "int32_t", n)
+d_labels_new =  trtc.device_vector("int32_t", n)
 
-d_labels_sink = trtc.DVDiscard(ctx, "int32_t", k)
-d_group_sums = trtc.device_vector(ctx, d_points.name_elem_cls(), k)
-d_group_cumulate_counts = trtc.device_vector(ctx, "int32_t", k)
-d_group_counts = trtc.device_vector(ctx, "int32_t", k)
+d_labels_sink = trtc.DVDiscard("int32_t", k)
+d_group_sums = trtc.device_vector(d_points.name_elem_cls(), k)
+d_group_cumulate_counts = trtc.device_vector("int32_t", k)
+d_group_counts = trtc.device_vector("int32_t", k)
 
-d_counter = trtc.DVCounter(ctx, trtc.DVInt32(0), k)
+d_counter = trtc.DVCounter(trtc.DVInt32(0), k)
 ```
 
 We then do the iterations. In each iteration, we do the following:
@@ -197,7 +195,7 @@ We then do the iterations. In each iteration, we do the following:
 ```python
 while True:
     # calculate new labels
-    calc_new_labels = trtc.Functor(ctx, {"aves": d_group_aves, "count": d_count }, ['pos'], 
+    calc_new_labels = trtc.Functor({"aves": d_group_aves, "count": d_count }, ['pos'], 
 '''
         float minDis = FLT_MAX;
         int label = -1;
@@ -213,17 +211,17 @@ while True:
         }
         return label;
 ''')
-    trtc.Transform(ctx, d_points, d_labels_new, calc_new_labels)
-    if trtc.Equal(ctx, d_labels, d_labels_new):
+    trtc.Transform(d_points, d_labels_new, calc_new_labels)
+    if trtc.Equal(d_labels, d_labels_new):
         break
-    trtc.Copy(ctx, d_labels_new, d_labels)
+    trtc.Copy(d_labels_new, d_labels)
 
     # recalculate group-average values
-    trtc.Sort_By_Key(ctx, d_labels, d_points)
-    trtc.Reduce_By_Key(ctx, d_labels, d_points, d_labels_sink, d_group_sums, trtc.EqualTo(), point_plus)
-    trtc.Upper_Bound_V(ctx, d_labels, d_counter, d_group_cumulate_counts)
-    trtc.Adjacent_Difference(ctx, d_group_cumulate_counts, d_group_counts)
-    trtc.Transform_Binary(ctx, d_group_sums, d_group_counts, d_group_aves, point_div)
+    trtc.Sort_By_Key(d_labels, d_points)
+    trtc.Reduce_By_Key(d_labels, d_points, d_labels_sink, d_group_sums, trtc.EqualTo(), point_plus)
+    trtc.Upper_Bound_V(d_labels, d_counter, d_group_cumulate_counts)
+    trtc.Adjacent_Difference(d_group_cumulate_counts, d_group_counts)
+    trtc.Transform_Binary(d_group_sums, d_group_counts, d_group_aves, point_div)
 ```
 
 Finally, copy back all the results that we are interested in and plot them:

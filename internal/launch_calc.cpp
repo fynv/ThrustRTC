@@ -1,3 +1,4 @@
+#include "TRTC_api.h"
 #include "launch_calc.h"
 #include "cuda_occupancy.h"
 #include <unordered_map>

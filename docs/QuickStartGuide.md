@@ -68,7 +68,7 @@ Zip packages are available at:
   
   If the library is not at the default location, you need to call:
 
-  * TRTCContext::set_libnvrtc_path() from C++ or 
+  * set_libnvrtc_path() from C++ or 
   * ThrustRTC.set_libnvrtc_path() from Python
 
   at run-time to specify the path of the library.
@@ -78,153 +78,19 @@ For Python
 * numpy
 * numba (optional)
 
-## Context Objects
+## Context and General Kernel Launching
 
-In ThrustRTC, a Context object mains a list of headers that need to be included from device code, global constants, and most importantly, a cache of loaded kernels. When user submits a kernel that is already loaded in the current context, it will used directly and will not be compiled and loaded again.
+ThrustRTC is based on a special running context built upon NVRTC and NVIDIA graphics driver. 
+There was actually a "Context" object. However, after a refactoring, it is now hidden behind the API as a global singleton.
 
-### Creation
+There are still global functions to modify the one and the only one context. The context will evolve as the program runs. 
+Headers and global constants can be added to the context, loaded kerenels will be cached. When user submits a kernel that 
+is already loaded in the context, it will be used directly and will not be compiled and loaded again.
 
-In C++, a Context object can be created using its default constructor:
-
-```cpp
-#include "TRTCContext.h"
-
-int main()
-{
-	TRTCContext ctx;
-	...
-}
-```
-
-Very similarly in Python:
-
-```python
-import ThrustRTC as trtc
-
-ctx = trtc.Context()
-```
-
-**Note:** The remaining of this section is about how to write and launch your own kernels using a context object.
+The following of this sections will talk about how to write and launch your own kernels using this context. 
 If you are only interested in using the built-in algorithms, you can skip them an go ahead from [Device Viewable Objects](#device-viewable-objects).
 
-### Launching a Kernel
-
-User can use a Context object to launch a kernel providing the following information:
-
-* Grid Dimensions
-* Block Dimensions
-* An argument map
-  * In C++: a list of AssignedParam structs, each containing a name of a parameter and a pointer to a Device-Viewable Object
-  * In Python: a dictionary of Device-Viewable Objects with their names as keys
-* Body of the kernel function represented as a string 
-* Size of dynamically allocated shared-memory in bytes 
-
-```cpp
-#include <stdio.h>
-#include "TRTCContext.h"
-#include "DVVector.h"
-
-int main()
-{
-	TRTCContext ctx;
-
-	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f };
-	DVVector dvec_in(ctx, "float", 5, test_f);
-	DVVector dvec_out(ctx, "float", 5);
-	DVFloat dv_k(10.0);
-
-	ctx.launch_kernel({ 1, 1, 1 }, { 128, 1, 1 }, { { "arr_in", &dvec_in }, {"arr_out", &dvec_out }, {"k", &dv_k }},
-		"    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
-		"    if (idx >= arr_in.size()) return;\n"
-		"    arr_out[idx] = arr_in[idx]*k;\n"
-		);
-
-	dvec_out.to_host(test_f);
-	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);
-
-	return 0;
-}
-
-```
-
-```python
-import ThrustRTC as trtc
-
-ctx = trtc.Context()
-
-dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
-dvec_out = trtc.device_vector(ctx, 'float', 5)
-dv_k = trtc.DVFloat(10.0)
-
-ctx.launch_kernel(1,128, {'arr_in': dvec_in, 'arr_out': dvec_out, 'k': dv_k }, 
-	'''
-	size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx >= arr_in.size()) return;
-	arr_out[idx] = arr_in[idx]*k;
-	''')
-
-print (dvec_out.to_host())
-```
-
-### Launching a Paralleled For Loop
-
-A paralleled for-loop is a special case of a kernel that has only 1 dimension.
-
-User can use a Context object to launch a paralleled for-loop providing the following information:
-
-* An iteration range specified by a begin/end pair, or just "n"
-* An argument map, the same as launching a kernel
-* Name of the iterator variable 
-* Body of the for loop represented as a string 
-
-```cpp
-#include <stdio.h>
-#include "TRTCContext.h"
-#include "DVVector.h"
-
-int main()
-{
-	TRTCContext ctx;
-
-	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f };
-	DVVector dvec_in(ctx, "float", 5, test_f);
-	DVVector dvec_out(ctx, "float", 5);
-	DVFloat dv_k(10.0);
-
-	ctx.launch_for_n(5, { { "arr_in", &dvec_in }, {"arr_out", &dvec_out }, {"k", &dv_k } }, "idx",
-		"    arr_out[idx] = arr_in[idx]*k;\n"
-	);
-
-	dvec_out.to_host(test_f);
-	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);
-
-	return 0;
-}
-```
-
-```python
-import ThrustRTC as trtc
-
-ctx = trtc.Context()
-
-dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
-dvec_out = trtc.device_vector(ctx, 'float', 5)
-dv_k = trtc.DVFloat(10.0)
-
-ctx.launch_for_n(5, {'arr_in': dvec_in, 'arr_out': dvec_out, 'k': dv_k }, "idx",
-	'''
-	arr_out[idx] = arr_in[idx]*k;
-	''')
-
-print (dvec_out.to_host())
-
-```
-
-### Kernel and For-Loop Objects
-
-Kernel and For-Loop objects can be used to separate their definition from launching.
-
-Note that these objects are just catching the source code, no compilation will happen before they are sent to a context for launching.
+### Kernel Objects
 
 A Kernel object can be created given the following:
 
@@ -233,7 +99,6 @@ A Kernel object can be created given the following:
 
 Then it can be launched given the following:
 
-* The Context object
 * Grid Dimensions
 * Block Dimensions
 * Device Viewable Objects as arguments
@@ -247,8 +112,6 @@ Example using Kernel objects:
 
 int main()
 {
-	TRTCContext ctx;
-
 	TRTC_Kernel ker(
 	{ "arr_in", "arr_out", "k" },
 	"    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
@@ -256,11 +119,11 @@ int main()
 	"    arr_out[idx] = arr_in[idx]*k;\n");
 
 	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
-	DVVector dvec_in_f(ctx, "float", 5, test_f);
-	DVVector dvec_out_f(ctx, "float", 5);
+	DVVector dvec_in_f("float", 5, test_f);
+	DVVector dvec_out_f("float", 5);
 	DVFloat k1(10.0);
 	const DeviceViewable* args_f[] = { &dvec_in_f, &dvec_out_f, &k1 };
-	ker.launch(ctx, { 1, 1, 1 }, { 128, 1, 1 }, args_f);
+	ker.launch( { 1, 1, 1 }, { 128, 1, 1 }, args_f);
 	dvec_out_f.to_host(test_f);
 	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);
 
@@ -271,8 +134,6 @@ int main()
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
-
 kernel = trtc.Kernel(['arr_in', 'arr_out', 'k'],
 	'''
 	size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -280,13 +141,15 @@ kernel = trtc.Kernel(['arr_in', 'arr_out', 'k'],
 	arr_out[idx] = arr_in[idx]*k;
 	''')
 
-dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
-dvec_out = trtc.device_vector(ctx, 'float', 5)
+dvec_in = trtc.device_vector_from_list([ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
+dvec_out = trtc.device_vector('float', 5)
 dv_k = trtc.DVFloat(10.0)
 
-kernel.launch(ctx, 1,128, [dvec_in, dvec_out, dv_k])
+kernel.launch( 1,128, [dvec_in, dvec_out, dv_k])
 print (dvec_out.to_host())
 ```
+
+### For-Loop Objects
 
 A For-Loop object can be created given the following:
 
@@ -296,7 +159,6 @@ A For-Loop object can be created given the following:
 
 Then it can be launched given the following:
 
-* The Context object
 * An iteration range specified by a begin/end pair, or just "n"
 * Device Viewable Objects as arguments
 
@@ -309,17 +171,15 @@ Example using For-Loop objects:
 
 int main()
 {
-	TRTCContext ctx;
-
 	TRTC_For f({ "arr_in", "arr_out", "k" }, "idx",
 		"    arr_out[idx] = arr_in[idx]*k;\n");
 
 	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
-	DVVector dvec_in_f(ctx, "float", 5, test_f);
-	DVVector dvec_out_f(ctx, "float", 5);
+	DVVector dvec_in_f("float", 5, test_f);
+	DVVector dvec_out_f("float", 5);
 	DVDouble k1(10.0);
 	const DeviceViewable* args_f[] = { &dvec_in_f, &dvec_out_f, &k1 };
-	f.launch_n(ctx, 5, args_f);
+	f.launch_n(5, args_f);
 	dvec_out_f.to_host(test_f);
 	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);
 
@@ -331,18 +191,16 @@ int main()
 import ThrustRTC as trtc
 import numpy as np
 
-ctx = trtc.Context()
-
 forLoop = trtc.For(['arr_in','arr_out','k'], "idx",
 	'''
 	arr_out[idx] = arr_in[idx]*k;
 	''')
 
-dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
-dvec_out = trtc.device_vector(ctx, 'float', 5)
+dvec_in = trtc.device_vector_from_list( [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
+dvec_out = trtc.device_vector( 'float', 5)
 dv_k = trtc.DVFloat(10.0)
 
-forLoop.launch_n(ctx, 5, [dvec_in, dvec_out, dv_k])
+forLoop.launch_n( 5, [dvec_in, dvec_out, dv_k])
 
 print (dvec_out.to_host())
 ```
@@ -390,13 +248,13 @@ The names of elements need to be specified at the creation of Tuples.
 ```cpp
 DVInt32 d_int(123);
 DVFloat d_float(456.0f);
-DVTuple d_tuple(ctx, { {"a", &d_int}, {"b",&d_float} });
+DVTuple d_tuple( { {"a", &d_int}, {"b",&d_float} });
 ```
 
 ```python
 d_int = trtc.DVInt32(123);
 d_float = trtc.DVFloat(456.0);
-trtc.DVTuple(ctx, {'a': d_int, 'b': d_float}
+trtc.DVTuple( {'a': d_int, 'b': d_float}
 ```
 
 ### Advanced Types
@@ -426,16 +284,14 @@ a storage.
 
 In C++ code, a DVVector object can be created given the following:
 
-* The Context object
 * Name of the type of elements: it can be anything that CUDA recognizes as a type.
 * Number of elements 
 * A pointer to a host array as source (optional)
 
 ```cpp
-TRTCContext ctx;
 int hIn[8] = { 10, 20, 30, 40, 50, 60, 70, 80 };
-DVVector dIn(ctx, "int32_t", 8, hIn);
-DVVector dOut(ctx, "int32_t", 8);
+DVVector dIn("int32_t", 8, hIn);
+DVVector dOut("int32_t", 8);
 ```
 
 In Python, there are several ways to create a DVVector object.
@@ -443,9 +299,8 @@ In Python, there are several ways to create a DVVector object.
 * Create from Numpy
 
 ```python
-ctx = trtc.Context()
 harr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype='float32')
-darr = trtc.device_vector_from_numpy(ctx, harr)
+darr = trtc.device_vector_from_numpy(harr)
 ```
 
 The supported Numpy dtypes are:
@@ -467,8 +322,7 @@ The supported Numpy dtypes are:
 * Create from Python List
 
 ```python
-ctx = trtc.Context()
-dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
+dvec_in = trtc.device_vector_from_list([ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
 ```
 
 The C++ type specified here should be one of the basic types corresponding to a supported Numpy dtype, as listed above.
@@ -476,8 +330,7 @@ The C++ type specified here should be one of the basic types corresponding to a 
 * Create with Specified Type and Size
 
 ```python
-ctx = trtc.Context()
-dvec_out = trtc.device_vector(ctx, 'float', 5)
+dvec_out = trtc.device_vector('float', 5)
 ```
 In this case, the C++ type specified can be any type that CUDA recognizes.
 
@@ -490,17 +343,15 @@ Optionally, a raw C++ pointer to an host array can be passed as the source to co
 The C++ version needs a host buffer of enough size.
 
 ```cpp
-TRTCContext ctx;
 int hIn[8] = { 10, 20, 30, 40, 50, 60, 70, 80 };
-DVVector dIn(ctx, "int32_t", 8, hIn);
+DVVector dIn("int32_t", 8, hIn);
 dIn.to_host(hIn);
 ```
 
 The Python version returns a Numpy NDArray. The type of elements must be a supported one.
 
 ```python
-ctx = trtc.Context()
-dvec_in = trtc.device_vector_from_list(ctx, [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
+dvec_in = trtc.device_vector_from_list( [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
 print(dvec_in.to_host())
 ```
 
@@ -523,12 +374,10 @@ import ThrustRTC as trtc
 import numpy as np
 from numba import cuda
 
-ctx = trtc.Context()
-
 nparr = np.array([1, 0, 2, 2, 1, 3], dtype=np.int32)
 nbarr = cuda.to_device(nparr)
-darr = trtc.DVNumbaVector(ctx, nbarr)
-trtc.Inclusive_Scan(ctx, darr, darr)
+darr = trtc.DVNumbaVector(nbarr)
+trtc.Inclusive_Scan(darr, darr)
 print(nbarr.copy_to_host())
 ``` 
 
@@ -546,10 +395,9 @@ A DVConstant object can be created using a constant Device Viewable Object and a
 
 int main()
 {
-	TRTCContext ctx;
-	DVConstant src(ctx, DVInt32(123), 10)
-	DVVector dst(ctx, "int32_t", 10);
-	TRTC_Copy(ctx, src, dst);
+	DVConstant src(DVInt32(123), 10)
+	DVVector dst("int32_t", 10);
+	TRTC_Copy(src, dst);
 	...
 }
 
@@ -558,10 +406,9 @@ int main()
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
-src = trtc.DVConstant(ctx, trtc.DVInt32(123), 10)
-dst = trtc.device_vector(ctx, 'int32_t', 10)
-trtc.Copy(ctx, src, dst)
+src = trtc.DVConstant(trtc.DVInt32(123), 10)
+dst = trtc.device_vector('int32_t', 10)
+trtc.Copy(src, dst)
 
 ```
 
@@ -580,10 +427,9 @@ and accessed as a Vector of sequentially changing values.
 
 int main()
 {
-	TRTCContext ctx;
-	DVCounter src(ctx, DVInt32(1), 10)
-	DVVector dst(ctx, "int32_t", 10);
-	TRTC_Copy(ctx, src, dst);
+	DVCounter src(DVInt32(1), 10)
+	DVVector dst("int32_t", 10);
+	TRTC_Copy(src, dst);
 	...
 }
 
@@ -592,10 +438,9 @@ int main()
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
-src = trtc.DVCounter(ctx, trtc.DVInt32(1), 10)
-dst = trtc.device_vector(ctx, 'int32_t', 10)
-trtc.Copy(ctx, src, dst)
+src = trtc.DVCounter(trtc.DVInt32(1), 10)
+dst = trtc.device_vector('int32_t', 10)
+trtc.Copy(src, dst)
 
 ```
 
@@ -621,18 +466,16 @@ and then accessed the source Vector in permuted order.
 
 int main()
 {
-	TRTCContext ctx;
-
 	float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
-	DVVector dvalues(ctx, "float", 8, hvalues);
+	DVVector dvalues("float", 8, hvalues);
 
 	int hindices[4] = { 2,6,1,3 };
-	DVVector dindices(ctx, "int32_t", 4, hindices);
+	DVVector dindices("int32_t", 4, hindices);
 
-	DVPermutation src(ctx, dvalues, dindices);
-	DVVector dst(ctx, "float", 4);
+	DVPermutation src(dvalues, dindices);
+	DVVector dst("float", 4);
 	
-	TRTC_Copy(ctx, src, dst);
+	TRTC_Copy(src, dst);
 	...
 }
 
@@ -641,14 +484,12 @@ int main()
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
+dvalues = trtc.device_vector_from_list([10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0], 'float')
+dindices =  trtc.device_vector_from_list([2,6,1,3], 'int32_t')
+src = trtc.DVPermutation(dvalues, dindices)
+dst = trtc.device_vector('float', 4)
 
-dvalues = trtc.device_vector_from_list(ctx, [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0], 'float')
-dindices =  trtc.device_vector_from_list(ctx, [2,6,1,3], 'int32_t')
-src = trtc.DVPermutation(ctx, dvalues, dindices)
-dst = trtc.device_vector(ctx, 'float', 4)
-
-trtc.Copy(ctx, src, dst)
+trtc.Copy(src, dst)
 
 ```
 
@@ -666,15 +507,13 @@ A DVReverse object can be created using a Vector as source and access it in reve
 
 int main()
 {
-	TRTCContext ctx;
-
 	int hvalues[4] = { 3, 7, 2, 5 };
-	DVVector dvalues(ctx, "int32_t", 4, hvalues);
+	DVVector dvalues("int32_t", 4, hvalues);
 
-	DVReverse src(ctx, dvalues);
-	DVVector dst(ctx, "int32_t", 4);
+	DVReverse src(dvalues);
+	DVVector dst("int32_t", 4);
 	
-	TRTC_Copy(ctx, src, dst);
+	TRTC_Copy(src, dst);
 	...
 }
 
@@ -683,13 +522,11 @@ int main()
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
+dvalues = trtc.device_vector_from_list([3, 7, 2, 5], 'int32_t')
+src = trtc.DVReverse(dvalues)
+dst = trtc.device_vector('int32_t', 4)
 
-dvalues = trtc.device_vector_from_list(ctx, [3, 7, 2, 5], 'int32_t')
-src = trtc.DVReverse(ctx, dvalues)
-dst = trtc.device_vector(ctx, 'int32_t', 4)
-
-trtc.Copy(ctx, src, dst)
+trtc.Copy(src, dst)
 
 ```
 
@@ -709,17 +546,15 @@ then access the transformed values of the source Vector.
 
 int main()
 {
-	TRTCContext ctx;
-
 	float hvalues[8] = { 1.0f, 4.0f, 9.0f, 16.0f };
-	DVVector dvalues(ctx, "float", 4, hvalues);
+	DVVector dvalues("float", 4, hvalues);
 
-	Functor square_root{ ctx, {}, { "x" }, "        return sqrtf(x);\n" };
+	Functor square_root{ {}, { "x" }, "        return sqrtf(x);\n" };
 
-	DVTransform src(ctx, dvalues, "float", square_root);
-	DVVector dst(ctx, "float", 4);
+	DVTransform src(dvalues, "float", square_root);
+	DVVector dst("float", 4);
 	
-	TRTC_Copy(ctx, src, dst);
+	TRTC_Copy(src, dst);
 	...
 }
 
@@ -729,19 +564,17 @@ int main()
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
+dvalues = trtc.device_vector_from_list([1.0, 4.0, 9.0, 16.0], 'float')
 
-dvalues = trtc.device_vector_from_list(ctx, [1.0, 4.0, 9.0, 16.0], 'float')
-
-square_root = trtc.Functor( ctx, {}, ['x'], 
+square_root = trtc.Functor({}, ['x'], 
 '''
          return sqrtf(x);
 ''')
 
-src = trtc.DVTransform(ctx, dvalues, 'float', square_root)
-dst = trtc.device_vector(ctx, 'float', 4)
+src = trtc.DVTransform(dvalues, 'float', square_root)
+dst = trtc.device_vector('float', 4)
 
-trtc.Copy(ctx, src, dst)
+trtc.Copy(src, dst)
 
 ```
 
@@ -760,20 +593,18 @@ elements combined from the elements from each of these Vectors.
 
 int main()
 {
-	TRTCContext ctx;
-
 	int h_int_in[5] = { 0, 1, 2, 3, 4};
-	DVVector d_int_in(ctx, "int32_t", 5, h_int_in);
+	DVVector d_int_in("int32_t", 5, h_int_in);
 	float h_float_in[5] = { 0.0f, 10.0f, 20.0f, 30.0f, 40.0f };
-	DVVector d_float_in(ctx, "float", 5, h_float_in);
+	DVVector d_float_in("float", 5, h_float_in);
 
-	DVVector d_int_out(ctx, "int32_t", 5);
-	DVVector d_float_out(ctx, "float", 5);
+	DVVector d_int_out("int32_t", 5);
+	DVVector d_float_out("float", 5);
 
-	DVZipped src(ctx, { &d_int_in, &d_float_in }, { "a", "b" });
-	DVZipped dst(ctx, { &d_int_out, &d_float_out }, { "a", "b" });
+	DVZipped src({ &d_int_in, &d_float_in }, { "a", "b" });
+	DVZipped dst({ &d_int_out, &d_float_out }, { "a", "b" });
 
-	TRTC_Copy(ctx, src, dst);
+	TRTC_Copy(src, dst);
 	...
 }
 
@@ -783,18 +614,16 @@ int main()
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
+d_int_in = trtc.device_vector_from_list([0, 1, 2, 3, 4], 'int32_t')
+d_float_in = trtc.device_vector_from_list([ 0.0, 10.0, 20.0, 30.0, 40.0], 'float')
 
-d_int_in = trtc.device_vector_from_list(ctx, [0, 1, 2, 3, 4], 'int32_t')
-d_float_in = trtc.device_vector_from_list(ctx, [ 0.0, 10.0, 20.0, 30.0, 40.0], 'float')
+d_int_out = trtc.device_vector('int32_t', 5)
+d_float_out = trtc.device_vector('float', 5)
 
-d_int_out = trtc.device_vector(ctx, 'int32_t', 5)
-d_float_out = trtc.device_vector(ctx, 'float', 5)
+src = trtc.DVZipped([d_int_in, d_float_in], ['a','b'])
+dst = trtc.DVZipped([d_int_out, d_float_out], ['a','b'])
 
-src = trtc.DVZipped(ctx, [d_int_in, d_float_in], ['a','b'])
-dst = trtc.DVZipped(ctx, [d_int_out, d_float_out], ['a','b'])
-
-trtc.Copy(ctx, src, dst)
+trtc.Copy(src, dst)
 
 ```
 
@@ -805,7 +634,6 @@ It is corresponding to *iterator_adaptor*.
 
 A DVCustomVector object can be created given:
 
-* The Context object.
 * A map of Device Viewable Object to be captured, usually used as source of data
 * Name of the index variable, which is a *size_t* variable used by *operator[]*
 * The code-body of *operator[]* represented as a string.
@@ -821,35 +649,31 @@ A DVCustomVector object can be created given:
 
 int main()
 {
-	TRTCContext ctx;
-
 	int h_in[5] = { 0, 1, 2, 3, 4};
-	DVVector d_in(ctx, "int32_t", 5, h_in);
+	DVVector d_in("int32_t", 5, h_in);
 
-	DVCustomVector src(ctx, { {"src", &d_in} }, "idx",
+	DVCustomVector src({ {"src", &d_in} }, "idx",
 	"        return src[idx % src.size()];\n", "int32_t", d_in.size() * 5);
 
-	DVVector dst(ctx, "int32_t", 25);
+	DVVector dst("int32_t", 25);
 	
-	TRTC_Copy(ctx, src, dst);
+	TRTC_Copy(src, dst);
 }
 ```
 
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
+d_in = trtc.device_vector_from_list([0, 1, 2, 3, 4], 'int32_t')
 
-d_in = trtc.device_vector_from_list(ctx, [0, 1, 2, 3, 4], 'int32_t')
-
-src = trtc.DVCustomVector(ctx, {'src':d_in }, 'idx',
+src = trtc.DVCustomVector({'src':d_in }, 'idx',
 '''
        return src[idx % src.size()]; 
 ''',  "int32_t", d_in.size() * 5) 
 
-dst = trtc.device_vector(ctx, 'int32_t', 25)
+dst = trtc.device_vector('int32_t', 25)
 
-trtc.Copy(ctx, src, dst)
+trtc.Copy(src, dst)
 ```
 
 ## Functors
@@ -863,17 +687,16 @@ built-in Functors.
 
 An user defined functor can be created given:
 
-* The Context object.
 * A map of Device Viewable Object to be captured, can be empty.
 * A list of names of Functor parameters, that are the parameters of *operator()*.
 * The code-body of *operator()* represented as a string.
 
 ```cpp
-Functor is_even = { ctx, {},{ "x" }, "        return x % 2 == 0;\n" };
+Functor is_even = { {},{ "x" }, "        return x % 2 == 0;\n" };
 ```
 
 ```python
-is_even = trtc.Functor( ctx, {}, ['x'], 
+is_even = trtc.Functor( {}, ['x'], 
 '''
          return x % 2 == 0;
 ''')
@@ -940,15 +763,13 @@ The simpliest transformation algorithm is Fill, which sets all elements of a Vec
 value.
 
 ```cpp
-TRTCContext ctx;
-DVVector vec_to_fill(ctx, "int32_t", 5);
-TRTC_Fill(ctx, vec_to_fill, DVInt32(123));
+DVVector vec_to_fill("int32_t", 5);
+TRTC_Fill(vec_to_fill, DVInt32(123));
 ```
 
 ```python
-ctx = trtc.Context()
-darr = trtc.device_vector(ctx, 'int32_t', 5)
-trtc.Fill(ctx, darr, trtc.DVInt32(123))
+darr = trtc.device_vector('int32_t', 5)
+trtc.Fill(darr, trtc.DVInt32(123))
 ```
 
 The above code sets all elements of the Vector to 123. Other transformations include Sequence,
@@ -967,26 +788,24 @@ The following source code demonstrates several of the transformation algorithms.
 
 int main()
 {
-	TRTCContext ctx;
-
-	DVVector X(ctx, "int32_t", 10);
-	DVVector Y(ctx, "int32_t", 10);
-	DVVector Z(ctx, "int32_t", 10);
+	DVVector X("int32_t", 10);
+	DVVector Y("int32_t", 10);
+	DVVector Z("int32_t", 10);
 
 	// initialize X to 0,1,2,3, ....
-	TRTC_Sequence(ctx, X);
+	TRTC_Sequence(X);
 
 	// compute Y = -X
-	TRTC_Transform(ctx, X, Y, Functor("Negate"));
+	TRTC_Transform(X, Y, Functor("Negate"));
 
 	// fill Z with twos
-	TRTC_Fill(ctx, Z, DVInt32(2));
+	TRTC_Fill(Z, DVInt32(2));
 
 	// compute Y = X mod 2
-	TRTC_Transform_Binary(ctx, X, Z, Y, Functor("Modulus"));
+	TRTC_Transform_Binary(X, Z, Y, Functor("Modulus"));
 
 	// replace all the ones in Y with tens
-	TRTC_Replace(ctx, Y, DVInt32(1), DVInt32(10));
+	TRTC_Replace(Y, DVInt32(1), DVInt32(10));
 
 	// print Y
 	int results[10];
@@ -1003,26 +822,24 @@ int main()
 ```python
 import ThrustRTC as trtc
 
-ctx = trtc.Context()
-
-X = trtc.device_vector(ctx, 'int32_t', 10)
-Y = trtc.device_vector(ctx, 'int32_t', 10)
-Z = trtc.device_vector(ctx, 'int32_t', 10)
+X = trtc.device_vector('int32_t', 10)
+Y = trtc.device_vector('int32_t', 10)
+Z = trtc.device_vector('int32_t', 10)
 
 # initialize X to 0,1,2,3, ....
-trtc.Sequence(ctx, X)
+trtc.Sequence(X)
 
 # compute Y = -X
-trtc.Transform(ctx, X, Y, trtc.Negate())
+trtc.Transform(X, Y, trtc.Negate())
 
 # fill Z with twos
-trtc.Fill(ctx, Z, trtc.DVInt32(2))
+trtc.Fill(Z, trtc.DVInt32(2))
 
 # compute Y = X mod 2
-trtc.Transform_Binary(ctx, X, Z, Y, trtc.Modulus())
+trtc.Transform_Binary(X, Z, Y, trtc.Modulus())
 
 # replace all the ones in Y with tens
-trtc.Replace(ctx, Y, trtc.DVInt32(1), trtc.DVInt32(10))
+trtc.Replace(Y, trtc.DVInt32(1), trtc.DVInt32(10))
 
 # print Y
 print(Y.to_host())
@@ -1037,23 +854,23 @@ operation. The sum of a Vector D can be done by the following code:
 
 ```cpp
 ViewBuf ret;
-TRTC_Reduce(ctx, D, DVInt32(0), Functor("Plus"), ret);
+TRTC_Reduce(D, DVInt32(0), Functor("Plus"), ret);
 int sum = *((int*)ret.data());
 ```
 
 ```python
-sum = trtc.Reduce(ctx, D, trtc.DVInt32(0), trtc.Plus())
+sum = trtc.Reduce(D, trtc.DVInt32(0), trtc.Plus())
 ```
 
-The first argument is the context for execution. The second argument is the input Vector. 
-The third and fourth arguments provide the initial value and reduction operator respectively.
-Actually, this kind of reduction is so common that it is the default choice when no initial 
-value or operator is provided. The following three lines are therefore equivalent:
+The first argument is the input Vector. The second and third arguments provide the initial 
+value and reduction operator respectively. Actually, this kind of reduction is so common 
+that it is the default choice when no initial value or operator is provided. The following 
+three lines are therefore equivalent:
 
 ```python
-sum = trtc.Reduce(ctx, D, trtc.DVInt32(0), trtc.Plus())
-sum = trtc.Reduce(ctx, D, trtc.DVInt32(0))
-sum = trtc.Reduce(ctx, D)
+sum = trtc.Reduce(D, trtc.DVInt32(0), trtc.Plus())
+sum = trtc.Reduce(D, trtc.DVInt32(0))
+sum = trtc.Reduce(D)
 ```
 
 Although Reduce() is sufficient to implement a wide variety of reductions, ThrustRTC provides
@@ -1061,7 +878,7 @@ a few additional functions for convenience. For example, Count() returns the num
 instances of a specific value in a given Vector.
 
 ```python
-vec = trtc.device_vector_from_list(ctx, [ 0, 1, 0, 1, 1], 'int32_t')
+vec = trtc.device_vector_from_list([ 0, 1, 0, 1, 1], 'int32_t')
 result = trtc.Count(vec, trtc.DVInt32(1))
 ```
 
@@ -1076,15 +893,15 @@ which illustrates an *inclusive scan* operation using the default **plus** opera
 
 ```cpp
 int data[6] = { 1, 0, 2, 2, 1, 3 };
-DVVector d_data(ctx, "int32_t", 6, data);
-TRTC_Inclusive_Scan(ctx, d_data, d_data); // in-place scan
+DVVector d_data("int32_t", 6, data);
+TRTC_Inclusive_Scan(d_data, d_data); // in-place scan
 d_data.to_host(data);
 // data is now {1, 1, 3, 5, 6, 9}
 ```
 
 ```python
-data = trtc.device_vector_from_list(ctx, [1, 0, 2, 2, 1, 3], 'int32_t')
-trtc.Inclusive_Scan(ctx, data, data) # in-place scan
+data = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
+trtc.Inclusive_Scan(data, data) # in-place scan
 #  data is now {1, 1, 3, 5, 6, 9}
 ```
 In an inclusive scan each element of the output is the corresponding partial sum of the
@@ -1092,8 +909,8 @@ input Vector. For example, data[2] = data[0] + data[1] + data[2]. An exclusive
 scan is similar, but shifted by one place to the right:
 
 ```python
-data = trtc.device_vector_from_list(ctx, [1, 0, 2, 2, 1, 3], 'int32_t')
-trtc.Exclusive_Scan(ctx, data, data) # in-place scan
+data = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
+trtc.Exclusive_Scan(data, data) # in-place scan
 # data is now {0, 1, 1, 3, 5, 6}
 ```
 
@@ -1119,16 +936,16 @@ criterion. All sorting algorithms of ThrustRTC are stable.
 
 ```cpp
 int hvalues[6]= { 1, 4, 2, 8, 5, 7 };
-DVVector dvalues(ctx, "int32_t", 6, hvalues);
+DVVector dvalues("int32_t", 6, hvalues);
 
-TRTC_Sort(ctx, dvalues);
+TRTC_Sort(dvalues);
 dvalues.to_host(hvalues);
 // hvalues is now {1, 2, 4, 5, 7, 8}
 ```
 
 ```python
-dvalues = trtc.device_vector_from_list(ctx, [ 1, 4, 2, 8, 5, 7 ], 'int32_t')
-trtc.Sort(ctx, dvalues)
+dvalues = trtc.device_vector_from_list([ 1, 4, 2, 8, 5, 7 ], 'int32_t')
+trtc.Sort(dvalues)
 # dvalues is now {1, 2, 4, 5, 7, 8}
 ```
 
@@ -1136,10 +953,10 @@ In addition, ThrustRTC provides Sort_By_Key(), which sort key-value pairs stored
 
 ```cpp
 int hkeys[6] = { 1, 4, 2, 8, 5, 7 };
-DVVector dkeys(ctx, "int32_t", 6, hkeys);
+DVVector dkeys("int32_t", 6, hkeys);
 char hvalues[6] = { 'a', 'b', 'c', 'd', 'e', 'f' };
-DVVector dvalues(ctx, "int8_t", 6, hvalues);
-TRTC_Sort_By_Key(ctx, dkeys, dvalues);
+DVVector dvalues("int8_t", 6, hvalues);
+TRTC_Sort_By_Key(dkeys, dvalues);
 dkeys.to_host(hkeys);
 dvalues.to_host(hvalues);
 // hkeys is now { 1, 2, 4, 5, 7, 8}
@@ -1147,9 +964,9 @@ dvalues.to_host(hvalues);
 ```
 
 ```python
-dkeys = trtc.device_vector_from_list(ctx, [ 1, 4, 2, 8, 5, 7 ], 'int32_t')
-dvalues = trtc.device_vector_from_list(ctx, [ 1, 2, 3, 4, 5, 6], 'int32_t')
-trtc.Sort_By_Key(ctx, dkeys, dvalues)
+dkeys = trtc.device_vector_from_list([ 1, 4, 2, 8, 5, 7 ], 'int32_t')
+dvalues = trtc.device_vector_from_list([ 1, 2, 3, 4, 5, 6], 'int32_t')
+trtc.Sort_By_Key(dkeys, dvalues)
 // dkeys is now { 1, 2, 4, 5, 7, 8}
 // dvalues is now {'1', '3', '2', '5', '6', '4'}
 ```
@@ -1159,14 +976,14 @@ comparison operators:
 
 ```cpp
 int hvalues[6] = { 1, 4, 2, 8, 5, 7 };
-DVVector dvalues(ctx, "int32_t", 6, hvalues);
-TRTC_Sort(ctx, dvalues, Functor("Greater"));
+DVVector dvalues("int32_t", 6, hvalues);
+TRTC_Sort(dvalues, Functor("Greater"));
 dvalues.to_host(hvalues);
 // hvalues is now {8, 7, 5, 4, 2, 1}
 ```
 
 ```python
-dvalues = trtc.device_vector_from_list(ctx, [ 1, 4, 2, 8, 5, 7 ], 'int32_t')
-trtc.Sort(ctx, dvalues, trtc.Greater())
+dvalues = trtc.device_vector_from_list([ 1, 4, 2, 8, 5, 7 ], 'int32_t')
+trtc.Sort(dvalues, trtc.Greater())
 # dvalues is now {8, 7, 5, 4, 2, 1}
 ```

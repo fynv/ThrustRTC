@@ -18,6 +18,14 @@ public:
 	virtual ViewBuf view() const = 0;
 };
 
+
+struct CapturedDeviceViewable
+{
+	const char* obj_name;
+	const DeviceViewable* obj;
+};
+
+
 class BuiltIn : public DeviceViewable
 {
 public:

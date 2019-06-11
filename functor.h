@@ -6,7 +6,7 @@
 class THRUST_RTC_API Functor : public DeviceViewable
 {
 public:
-	Functor(const std::vector<AssignedParam>& arg_map, const std::vector<const char*>& functor_params, const char* code_body);
+	Functor(const std::vector<CapturedDeviceViewable>& arg_map, const std::vector<const char*>& functor_params, const char* code_body);
 	Functor(const char* name_built_in_view_cls);
 
 	virtual std::string name_view_cls() const;

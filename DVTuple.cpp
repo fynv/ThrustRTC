@@ -1,16 +1,16 @@
 #include "memory.h"
 #include "DVTuple.h"
 
-DVTuple::DVTuple(const std::vector<AssignedParam>& elem_map)
+DVTuple::DVTuple(const std::vector<CapturedDeviceViewable>& elem_map)
 {
 	std::string struct_body;
 	m_view_elems.resize(elem_map.size());
 	std::vector<const char*> name_elems(elem_map.size());
 	for (size_t i = 0; i < elem_map.size(); i++)
 	{
-		struct_body += std::string("    ") + elem_map[i].arg->name_view_cls() + " " + elem_map[i].param_name + ";\n";
-		m_view_elems[i] = elem_map[i].arg->view();
-		name_elems[i] = elem_map[i].param_name;
+		struct_body += std::string("    ") + elem_map[i].obj->name_view_cls() + " " + elem_map[i].obj_name + ";\n";
+		m_view_elems[i] = elem_map[i].obj->view();
+		name_elems[i] = elem_map[i].obj_name;
 	}
 
 	m_name_view_cls = TRTC_Add_Struct(struct_body.c_str());

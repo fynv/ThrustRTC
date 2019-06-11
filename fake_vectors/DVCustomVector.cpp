@@ -2,7 +2,7 @@
 #include <memory.h>
 #include "DVCustomVector.h"
 
-DVCustomVector::DVCustomVector(const std::vector<AssignedParam>& arg_map, 
+DVCustomVector::DVCustomVector(const std::vector<CapturedDeviceViewable>& arg_map,
 	const char* name_idx, const char* code_body, const char* elem_cls, size_t size, bool read_only)
 	: DVVectorLike(elem_cls, read_only ? elem_cls : (std::string(elem_cls) + "&").c_str(), size), m_size(size), m_read_only(read_only)
 {
@@ -11,9 +11,9 @@ DVCustomVector::DVCustomVector(const std::vector<AssignedParam>& arg_map,
 	std::vector<const char*> args(arg_map.size());
 	for (size_t i = 0; i < arg_map.size(); i++)
 	{
-		functor_body += std::string("    ") + arg_map[i].arg->name_view_cls() + " " + arg_map[i].param_name + ";\n";
-		m_view_args[i] = arg_map[i].arg->view();
-		args[i] = arg_map[i].param_name;
+		functor_body += std::string("    ") + arg_map[i].obj->name_view_cls() + " " + arg_map[i].obj_name + ";\n";
+		m_view_args[i] = arg_map[i].obj->view();
+		args[i] = arg_map[i].obj_name;
 	}
 
 	functor_body += "    __device__ inline "+ m_ref_type + " operator()(size_t " + name_idx + ")\n    {\n";

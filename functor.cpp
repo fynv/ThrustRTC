@@ -1,16 +1,16 @@
 #include "memory.h"
 #include "functor.h"
 
-Functor::Functor(const std::vector<AssignedParam>& arg_map, const std::vector<const char*>& functor_params, const char* code_body)
+Functor::Functor(const std::vector<CapturedDeviceViewable>& arg_map, const std::vector<const char*>& functor_params, const char* code_body)
 {
 	std::string struct_body;
 	m_view_args.resize(arg_map.size());
 	std::vector<const char*> members(arg_map.size());
 	for (size_t i = 0; i < arg_map.size(); i++)
 	{
-		struct_body += std::string("    ") + arg_map[i].arg->name_view_cls() + " " + arg_map[i].param_name + ";\n";
-		m_view_args[i] = arg_map[i].arg->view();
-		members[i] = arg_map[i].param_name;
+		struct_body += std::string("    ") + arg_map[i].obj->name_view_cls() + " " + arg_map[i].obj_name + ";\n";
+		m_view_args[i] = arg_map[i].obj->view();
+		members[i] = arg_map[i].obj_name;
 	}
 
 	if (functor_params.size() > 0)

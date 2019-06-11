@@ -15,12 +15,6 @@ struct dim_type
 	unsigned int x, y, z;
 };
 
-struct AssignedParam
-{
-	const char* param_name;
-	const DeviceViewable* arg;
-};
-
 void THRUST_RTC_API set_libnvrtc_path(const char* path);
 
 void THRUST_RTC_API TRTC_Set_Verbose(bool verbose = true);

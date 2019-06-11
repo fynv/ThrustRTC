@@ -8,7 +8,7 @@
 class THRUST_RTC_API DVCustomVector : public DVVectorLike
 {
 public:
-	DVCustomVector(const std::vector<AssignedParam>& arg_map, const char* name_idx, const char* code_body, 
+	DVCustomVector(const std::vector<CapturedDeviceViewable>& arg_map, const char* name_idx, const char* code_body,
 		const char* elem_cls, size_t size = (size_t)(-1), bool read_only = true);
 
 	virtual std::string name_view_cls() const;

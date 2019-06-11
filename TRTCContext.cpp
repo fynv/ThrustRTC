@@ -24,11 +24,11 @@ public:
 	// reflection 
 	size_t size_of(const char* cls);
 	bool query_struct(const char* name_struct, const std::vector<const char*>& name_members, size_t* offsets);
-	bool calc_optimal_block_size(const std::vector<AssignedParam>& arg_map, const char* code_body, int& sizeBlock, unsigned sharedMemBytes = 0);
-	bool calc_number_blocks(const std::vector<AssignedParam>& arg_map, const char* code_body, int sizeBlock, int& numBlocks, unsigned sharedMemBytes = 0);
-	bool launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, const char* code_body, unsigned sharedMemBytes = 0);
-	bool launch_for(size_t begin, size_t end, const std::vector<AssignedParam>& arg_map, const char* name_iter, const char* code_body);
-	bool launch_for_n(size_t n, const std::vector<AssignedParam>& arg_map, const char* name_iter, const char* code_body);
+	bool calc_optimal_block_size(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, int& sizeBlock, unsigned sharedMemBytes = 0);
+	bool calc_number_blocks(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, int sizeBlock, int& numBlocks, unsigned sharedMemBytes = 0);
+	bool launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, unsigned sharedMemBytes = 0);
+	bool launch_for(size_t begin, size_t end, const std::vector<CapturedDeviceViewable>& arg_map, const char* name_iter, const char* code_body);
+	bool launch_for_n(size_t n, const std::vector<CapturedDeviceViewable>& arg_map, const char* name_iter, const char* code_body);
 
 	void add_include_dir(const char* path);
 	void add_built_in_header(const char* name, const char* content);
@@ -42,10 +42,10 @@ private:
 	~TRTCContext();
 
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
-	KernelId_t _build_kernel(const std::vector<AssignedParam>& arg_map, const char* code_body);
+	KernelId_t _build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body);
 	int _launch_calc(KernelId_t kid, unsigned sharedMemBytes);
 	int _persist_calc(KernelId_t kid, int numBlocks, unsigned sharedMemBytes);
-	bool _launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<AssignedParam>& arg_map, unsigned sharedMemBytes);
+	bool _launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<CapturedDeviceViewable>& arg_map, unsigned sharedMemBytes);
 
 	static const char* s_libnvrtc_path;
 
@@ -139,11 +139,11 @@ m_param_names(param_names.size()), m_code_body(code_body)
 bool TRTC_Kernel::calc_optimal_block_size(const DeviceViewable** args, int& sizeBlock, unsigned sharedMemBytes)
 {
 	TRTCContext& ctx = TRTCContext::get_context();
-	std::vector<AssignedParam> arg_map(m_param_names.size());
+	std::vector<CapturedDeviceViewable> arg_map(m_param_names.size());
 	for (size_t i = 0; i < m_param_names.size(); i++)
 	{
-		arg_map[i].param_name = m_param_names[i].c_str();
-		arg_map[i].arg = args[i];
+		arg_map[i].obj_name = m_param_names[i].c_str();
+		arg_map[i].obj = args[i];
 	}
 	return ctx.calc_optimal_block_size(arg_map, m_code_body.c_str(), sizeBlock, sharedMemBytes);
 }
@@ -151,11 +151,11 @@ bool TRTC_Kernel::calc_optimal_block_size(const DeviceViewable** args, int& size
 bool TRTC_Kernel::calc_number_blocks(const DeviceViewable** args, int sizeBlock, int& numBlocks, unsigned sharedMemBytes)
 {
 	TRTCContext& ctx = TRTCContext::get_context();
-	std::vector<AssignedParam> arg_map(m_param_names.size());
+	std::vector<CapturedDeviceViewable> arg_map(m_param_names.size());
 	for (size_t i = 0; i < m_param_names.size(); i++)
 	{
-		arg_map[i].param_name = m_param_names[i].c_str();
-		arg_map[i].arg = args[i];
+		arg_map[i].obj_name = m_param_names[i].c_str();
+		arg_map[i].obj = args[i];
 	}
 	return ctx.calc_number_blocks(arg_map, m_code_body.c_str(), sizeBlock, numBlocks, sharedMemBytes);
 }
@@ -163,11 +163,11 @@ bool TRTC_Kernel::calc_number_blocks(const DeviceViewable** args, int sizeBlock,
 bool TRTC_Kernel::launch(dim_type gridDim, dim_type blockDim, const DeviceViewable** args, unsigned sharedMemBytes)
 {
 	TRTCContext& ctx = TRTCContext::get_context();
-	std::vector<AssignedParam> arg_map(m_param_names.size());
+	std::vector<CapturedDeviceViewable> arg_map(m_param_names.size());
 	for (size_t i = 0; i < m_param_names.size(); i++)
 	{
-		arg_map[i].param_name = m_param_names[i].c_str();
-		arg_map[i].arg = args[i];
+		arg_map[i].obj_name = m_param_names[i].c_str();
+		arg_map[i].obj = args[i];
 	}
 	return ctx.launch_kernel(gridDim, blockDim, arg_map, m_code_body.c_str(), sharedMemBytes);
 }
@@ -182,11 +182,11 @@ m_param_names(param_names.size()), m_name_iter(name_iter), m_code_body(code_body
 bool TRTC_For::launch(size_t begin, size_t end, const DeviceViewable** args)
 {
 	TRTCContext& ctx = TRTCContext::get_context();
-	std::vector<AssignedParam> arg_map(m_param_names.size());
+	std::vector<CapturedDeviceViewable> arg_map(m_param_names.size());
 	for (size_t i = 0; i < m_param_names.size(); i++)
 	{
-		arg_map[i].param_name = m_param_names[i].c_str();
-		arg_map[i].arg = args[i];
+		arg_map[i].obj_name = m_param_names[i].c_str();
+		arg_map[i].obj = args[i];
 	}
 	return ctx.launch_for(begin, end, arg_map, m_name_iter.c_str(), m_code_body.c_str());
 }
@@ -195,11 +195,11 @@ bool TRTC_For::launch(size_t begin, size_t end, const DeviceViewable** args)
 bool TRTC_For::launch_n(size_t n, const DeviceViewable** args)
 {
 	TRTCContext& ctx = TRTCContext::get_context();
-	std::vector<AssignedParam> arg_map(m_param_names.size());
+	std::vector<CapturedDeviceViewable> arg_map(m_param_names.size());
 	for (size_t i = 0; i < m_param_names.size(); i++)
 	{
-		arg_map[i].param_name = m_param_names[i].c_str();
-		arg_map[i].arg = args[i];
+		arg_map[i].obj_name = m_param_names[i].c_str();
+		arg_map[i].obj = args[i];
 	}
 	return ctx.launch_for_n(n, arg_map, m_name_iter.c_str(), m_code_body.c_str());
 }
