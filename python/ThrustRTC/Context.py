@@ -19,8 +19,8 @@ def Add_Constant_Object(name, dv):
     native.n_add_constant_object(name, dv.m_cptr)
 
 class Kernel:
-    def __init__(self, param_descs, body):
-        self.m_cptr = native.n_kernel_create(param_descs, body)
+    def __init__(self, param_names, body):
+        self.m_cptr = native.n_kernel_create(param_names, body)
 
     def __del__(self):
         native.n_kernel_destroy(self.m_cptr)
