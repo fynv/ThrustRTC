@@ -11,6 +11,12 @@ namespace ThrustRTCLR
 		unsigned int x, y, z;
 	};
 
+	public value struct CapturedDeviceViewable_clr
+	{
+		IntPtr obj_name;
+		IntPtr obj;
+	};
+
 	public ref class Native
 	{
 	public:
@@ -32,7 +38,7 @@ namespace ThrustRTCLR
 		static bool kernel_launch(IntPtr p_kernel, dim_type_clr gridDim, dim_type_clr blockDim, IntPtr p_args, uint32_t sharedMemBytes);
 
 		// For-loop
-		static IntPtr for_create(array<IntPtr>^ param_names, IntPtr p_name_iter, IntPtr p_code_body);
+		static IntPtr for_create(array<IntPtr>^ p_param_names, IntPtr p_name_iter, IntPtr p_code_body);
 		static void for_destroy(IntPtr p_kernel);
 		static int for_num_params(IntPtr p_kernel);
 		static bool for_launch(IntPtr p_kernel, size_t begin, size_t end, IntPtr p_args);
@@ -73,6 +79,17 @@ namespace ThrustRTCLR
 		// DVVector
 		static IntPtr dvvector_create(IntPtr p_elem_cls, size_t size, IntPtr p_hdata);
 		static void dvvector_to_host(IntPtr p_dvvec, IntPtr p_hdata, size_t begin, size_t end);
+
+		// Functor
+		static IntPtr functor_create(array<CapturedDeviceViewable_clr>^ p_arg_map, array<IntPtr>^ p_functor_params, IntPtr p_code_body);
+		static IntPtr built_in_functor_create(IntPtr p_name_built_in_view_cls);
+
+		// Transformations
+		static bool fiil(IntPtr p_vec, IntPtr p_value, size_t begin, size_t end);
+		static bool replace(IntPtr p_vec, IntPtr p_old_value, IntPtr p_new_value, size_t begin, size_t end);
+		static bool replace_if(IntPtr p_vec, IntPtr p_pred, IntPtr p_new_value, size_t begin, size_t end);
+		static bool replace_copy(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_old_value, IntPtr p_new_value, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool replace_copy_if(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_pred, IntPtr p_new_value, size_t begin_in, size_t end_in, size_t begin_out);
 
 	};
 }

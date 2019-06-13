@@ -41,6 +41,12 @@
     <ClCompile Include="DVVector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Transformations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Functor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

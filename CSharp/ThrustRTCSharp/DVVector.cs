@@ -12,7 +12,7 @@ namespace ThrustRTCSharp
     {
         public DVVectorLike(IntPtr cptr) : base(cptr) {}
 
-        public String name_elem_cls()
+        public string name_elem_cls()
         {
             return Native.dvvectorlike_name_elem_cls(m_cptr);
         }
@@ -25,7 +25,7 @@ namespace ThrustRTCSharp
 
     public class DVVector : DVVectorLike
     {
-        public DVVector(String elem_cls, ulong size, IntPtr hdata = default(IntPtr))
+        public DVVector(string elem_cls, ulong size, IntPtr hdata = default(IntPtr))
             : base(Native.dvvector_create(Marshal.StringToHGlobalAnsi(elem_cls), size, hdata)) {}
 
         public DVVector(sbyte[] hdata) : this("int8_t", (ulong)hdata.Length, Marshal.UnsafeAddrOfPinnedArrayElement(hdata, 0)) { }
@@ -47,7 +47,7 @@ namespace ThrustRTCSharp
 
         public object to_host(long begin = 0, long end = -1)
         {
-            String type = name_elem_cls();
+            string type = name_elem_cls();
             if (end == -1) end = (long)size();
             if (end < begin) return null;
             ulong h_size = (ulong)(end - begin);

@@ -12,7 +12,7 @@ namespace ThrustRTCSharp
     {
         public readonly IntPtr m_cptr;
 
-        public String name_view_cls()
+        public string name_view_cls()
         {
             return Native.dv_name_view_cls(m_cptr);
         }

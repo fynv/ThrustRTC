@@ -138,6 +138,7 @@
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="DeviceViewable.cpp" />
     <ClCompile Include="DVVector.cpp" />
+    <ClCompile Include="Functor.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -145,6 +146,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Context.cpp" />
+    <ClCompile Include="Transformations.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

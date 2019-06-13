@@ -22,7 +22,7 @@ namespace ThrustRTCSharp
 
     public partial class TRTC
     {
-        static void set_libnvrtc_path(String path)
+        static void set_libnvrtc_path(string path)
         {
             IntPtr p_path = Marshal.StringToHGlobalAnsi(path);
             Native.set_libnvrtc_path(p_path);
@@ -33,26 +33,26 @@ namespace ThrustRTCSharp
             Native.set_verbose(verbose);
         }
 
-        static public void Add_Include_Dir(String dir)
+        static public void Add_Include_Dir(string dir)
         {
             IntPtr p_dir = Marshal.StringToHGlobalAnsi(dir);
             Native.add_include_dir(p_dir);
         }
 
-        static public void Add_Built_In_Header(String filename, String filecontent)
+        static public void Add_Built_In_Header(string filename, string filecontent)
         {
             IntPtr p_filename = Marshal.StringToHGlobalAnsi(filename);
             IntPtr p_filecontent = Marshal.StringToHGlobalAnsi(filecontent);
             Native.add_built_in_header(p_filename, p_filecontent);
         }
 
-        static public void Add_Inlcude_Filename(String filename)
+        static public void Add_Inlcude_Filename(string filename)
         {
             IntPtr p_filename = Marshal.StringToHGlobalAnsi(filename);
             Native.add_include_filename(p_filename);
         }
 
-        static public void Add_Code_Block(String code)
+        static public void Add_Code_Block(string code)
         {
             IntPtr p_code = Marshal.StringToHGlobalAnsi(code);
             Native.add_code_block(p_code);
@@ -61,7 +61,7 @@ namespace ThrustRTCSharp
 
     partial class Internal
     {
-        static public IntPtr[] ConvertStrList(String[] strs)
+        static public IntPtr[] ConvertStrList(string[] strs)
         {
             IntPtr[] p_strs = new IntPtr[strs.Length];
             for (int i = 0; i < strs.Length; i++)
@@ -94,7 +94,7 @@ namespace ThrustRTCSharp
     {
         public readonly IntPtr m_cptr;
 
-        public Kernel(String[] param_names, String body)
+        public Kernel(string[] param_names, string body)
         {
             IntPtr[] p_param_names = Internal.ConvertStrList(param_names);
             IntPtr p_body = Marshal.StringToHGlobalAnsi(body);
@@ -134,7 +134,7 @@ namespace ThrustRTCSharp
     {
         public readonly IntPtr m_cptr;
 
-        public For(String[] param_names, String name_iter, String body)
+        public For(string[] param_names, string name_iter, string body)
         {
             IntPtr[] p_param_names = Internal.ConvertStrList(param_names);
             IntPtr p_name_iter = Marshal.StringToHGlobalAnsi(name_iter);

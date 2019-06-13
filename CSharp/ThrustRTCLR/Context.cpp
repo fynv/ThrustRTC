@@ -103,12 +103,12 @@ namespace ThrustRTCLR
 		return kernel->launch(to_cpp(gridDim), to_cpp(blockDim), args, sharedMemBytes);
 	}
 
-	IntPtr Native::for_create(array<IntPtr>^ param_names, IntPtr p_name_iter, IntPtr p_code_body)
+	IntPtr Native::for_create(array<IntPtr>^ p_param_names, IntPtr p_name_iter, IntPtr p_code_body)
 	{
-		int num_params = param_names->Length;
+		int num_params = p_param_names->Length;
 		std::vector<const char*> params(num_params);
 		for (int i = 0; i < num_params; i++)
-			params[i] = just_cast_it<const char>(param_names[i]);
+			params[i] = just_cast_it<const char>(p_param_names[i]);
 		const char* idx = just_cast_it<const char>(p_name_iter);
 		const char* body = just_cast_it<const char>(p_code_body);
 		TRTC_For* cptr = new TRTC_For(params, idx, body);
