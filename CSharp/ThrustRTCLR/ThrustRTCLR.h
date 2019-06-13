@@ -36,6 +36,7 @@ namespace ThrustRTCLR
 		static void for_destroy(IntPtr p_kernel);
 		static int for_num_params(IntPtr p_kernel);
 		static bool for_launch(IntPtr p_kernel, size_t begin, size_t end, IntPtr p_args);
+		static bool for_launch_n(IntPtr p_kernel, size_t n, IntPtr p_args);
 
 		// DeviceViewable
 		static String^ dv_name_view_cls(IntPtr p_dv);

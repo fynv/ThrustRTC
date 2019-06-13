@@ -134,5 +134,12 @@ namespace ThrustRTCLR
 		return kernel->launch(begin, end, args);
 	}
 
+	bool Native::for_launch_n(IntPtr p_kernel, size_t n, IntPtr p_args)
+	{
+		TRTC_For* kernel = just_cast_it<TRTC_For>(p_kernel);
+		const DeviceViewable** args = just_cast_it<const DeviceViewable*>(p_args);
+		return kernel->launch_n(n, args);
+	}
+
 }
 

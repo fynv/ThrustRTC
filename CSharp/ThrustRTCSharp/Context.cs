@@ -157,5 +157,11 @@ namespace ThrustRTCSharp
             IntPtr p_args = Internal.ConvertDVList(args);
             return Native.for_launch(m_cptr, begin, end, p_args);
         }
+
+        public bool launch_n(ulong n, DeviceViewable[] args)
+        {
+            IntPtr p_args = Internal.ConvertDVList(args);
+            return Native.for_launch_n(m_cptr, n, p_args);
+        }
     }
 }
