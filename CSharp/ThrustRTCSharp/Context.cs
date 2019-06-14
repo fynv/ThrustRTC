@@ -28,7 +28,7 @@ namespace ThrustRTCSharp
             Native.set_libnvrtc_path(p_path);
         }
 
-        static public void Set_Verbose(bool verbose)
+        static public void Set_Verbose(bool verbose = true)
         {
             Native.set_verbose(verbose);
         }

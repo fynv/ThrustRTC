@@ -47,6 +47,12 @@
     <ClCompile Include="Functor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DVTuple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FakeVectors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

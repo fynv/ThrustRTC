@@ -2,6 +2,7 @@
 #include "ThrustRTCLR.h"
 #include "fill.h"
 #include "replace.h"
+#include "copy.h"
 
 namespace ThrustRTCLR
 {
@@ -50,6 +51,14 @@ namespace ThrustRTCLR
 		Functor* pred = just_cast_it<Functor>(p_pred);
 		DeviceViewable* new_value = just_cast_it<DeviceViewable>(p_new_value);
 		return TRTC_Replace_Copy_If(*vec_in, *vec_out, *pred, *new_value, begin_in, end_in, begin_out);
+	}
+
+
+	bool Native::copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out)
+	{
+		DVVectorLike* vec_in = just_cast_it<DVVectorLike>(p_vec_in);
+		DVVectorLike* vec_out = just_cast_it<DVVectorLike>(p_vec_out);
+		return TRTC_Copy(*vec_in, *vec_out, begin_in, end_in, begin_out);
 	}
 }
 

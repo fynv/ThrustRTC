@@ -34,6 +34,11 @@ namespace ThrustRTCSharp
         {
             return Native.replace_copy_if(vec_in.m_cptr, vec_out.m_cptr, pred.m_cptr, new_value.m_cptr, (ulong)begin_in, (ulong)end_in, (ulong)begin_out);
         }
+
+        public static bool Copy(DVVectorLike vec_in, DVVectorLike vec_out, long begin_in = 0, long end_in = -1, long begin_out = 0)
+        {
+            return Native.copy(vec_in.m_cptr, vec_out.m_cptr, (ulong)begin_in, (ulong)end_in, (ulong)begin_out);
+        }
     }
 
 }

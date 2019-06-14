@@ -137,7 +137,9 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="DeviceViewable.cpp" />
+    <ClCompile Include="DVTuple.cpp" />
     <ClCompile Include="DVVector.cpp" />
+    <ClCompile Include="FakeVectors.cpp" />
     <ClCompile Include="Functor.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

@@ -72,13 +72,23 @@ namespace ThrustRTCLR
 		static IntPtr dvbool_create(bool v);
 		static bool dvbool_value(IntPtr p);
 
-		// DVVectorLike
+		// DVVector
 		static String^ dvvectorlike_name_elem_cls(IntPtr p_dvvec);
 		static size_t dvvectorlike_size(IntPtr p_dvvec);
-		
-		// DVVector
 		static IntPtr dvvector_create(IntPtr p_elem_cls, size_t size, IntPtr p_hdata);
 		static void dvvector_to_host(IntPtr p_dvvec, IntPtr p_hdata, size_t begin, size_t end);
+
+		// Tuple
+		static IntPtr dvtuple_create(array<CapturedDeviceViewable_clr>^ p_elem_map);
+
+		// Fake-Vectors
+		static IntPtr dvconstant_create(IntPtr p_dvobj, size_t size);
+		static IntPtr dvcounter_create(IntPtr p_dvobj_init, size_t size);
+		static IntPtr dvdiscard_create(IntPtr p_elem_cls, size_t size);
+		static IntPtr dvpermutation_create(IntPtr p_vec_value, IntPtr p_vec_index);
+		static IntPtr dvreverse_create(IntPtr p_vec_value);
+		static IntPtr dvtransform_create(IntPtr p_vec_in, IntPtr p_elem_cls, IntPtr p_op);
+		static IntPtr dvzipped_create(array<IntPtr>^ p_vecs, array<IntPtr>^ p_elem_names);
 
 		// Functor
 		static IntPtr functor_create(array<CapturedDeviceViewable_clr>^ p_arg_map, array<IntPtr>^ p_functor_params, IntPtr p_code_body);
@@ -90,6 +100,8 @@ namespace ThrustRTCLR
 		static bool replace_if(IntPtr p_vec, IntPtr p_pred, IntPtr p_new_value, size_t begin, size_t end);
 		static bool replace_copy(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_old_value, IntPtr p_new_value, size_t begin_in, size_t end_in, size_t begin_out);
 		static bool replace_copy_if(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_pred, IntPtr p_new_value, size_t begin_in, size_t end_in, size_t begin_out);
+		
+		static bool copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
 
 	};
 }
