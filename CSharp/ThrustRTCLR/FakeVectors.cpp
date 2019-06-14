@@ -5,7 +5,6 @@
 #include "fake_vectors/DVDiscard.h"
 #include "fake_vectors/DVPermutation.h"
 #include "fake_vectors/DVReverse.h"
-#include "functor.h"
 #include "fake_vectors/DVTransform.h"
 #include "fake_vectors/DVZipped.h"
 #include "fake_vectors/DVCustomVector.h"

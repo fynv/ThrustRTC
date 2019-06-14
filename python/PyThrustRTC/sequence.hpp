@@ -3,8 +3,7 @@
 #include "sequence.h"
 
 static PyObject* n_sequence(PyObject* self, PyObject* args)
-{
-	
+{	
 	DVVectorLike* vec = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
 	PyObject* py_value_init = PyTuple_GetItem(args, 1);
 	DeviceViewable* value_init = nullptr;

@@ -1,6 +1,6 @@
 #include "tabulate.h"
 
-bool TRTC_tabulate(DVVectorLike& vec, const Functor& op, size_t begin, size_t end)
+bool TRTC_Tabulate(DVVectorLike& vec, const Functor& op, size_t begin, size_t end)
 {
 	static TRTC_For s_for({ "view_vec", "op" }, "idx",
 		"    view_vec[idx] = op(view_vec[idx]);\n"

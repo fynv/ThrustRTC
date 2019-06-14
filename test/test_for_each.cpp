@@ -5,8 +5,6 @@
 
 int main()
 {
-	
-
 	Functor printf_functor = {{}, { "x" }, "        printf(\"%d\\n\", x);\n" };
 
 	int hvec[5] = { 1, 2, 3, 1, 2 };

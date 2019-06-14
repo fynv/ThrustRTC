@@ -5,8 +5,6 @@
 
 int main()
 {
-	
-
 	int hvec1[8] = { 1, 2, 1, 2, 1, 2, 1, 2 };
 	DVVector vec1_in("int32_t", 8, hvec1);
 	DVVector vec1_out("int32_t", 8);

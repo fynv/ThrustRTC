@@ -2,6 +2,10 @@
 #include "ThrustRTCLR.h"
 #include "fill.h"
 #include "replace.h"
+#include "for_each.h"
+#include "adjacent_difference.h"
+#include "sequence.h"
+
 #include "copy.h"
 
 namespace ThrustRTCLR
@@ -53,6 +57,48 @@ namespace ThrustRTCLR
 		return TRTC_Replace_Copy_If(*vec_in, *vec_out, *pred, *new_value, begin_in, end_in, begin_out);
 	}
 
+	bool Native::for_each(IntPtr p_vec, IntPtr p_f, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		Functor* f = just_cast_it<Functor>(p_f);
+		return TRTC_For_Each(*vec, *f, begin, end);
+	}
+
+	bool Native::adjacent_difference(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out)
+	{
+		DVVectorLike* vec_in = just_cast_it<DVVectorLike>(p_vec_in);
+		DVVectorLike* vec_out = just_cast_it<DVVectorLike>(p_vec_out);
+		return TRTC_Adjacent_Difference(*vec_in, *vec_out, begin_in, end_in, begin_out);
+	}
+
+	bool Native::adjacent_difference(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_binary_op, size_t begin_in, size_t end_in, size_t begin_out)
+	{
+		DVVectorLike* vec_in = just_cast_it<DVVectorLike>(p_vec_in);
+		DVVectorLike* vec_out = just_cast_it<DVVectorLike>(p_vec_out);
+		Functor* binary_op = just_cast_it<Functor>(p_binary_op);
+		return TRTC_Adjacent_Difference(*vec_in, *vec_out, *binary_op, begin_in, end_in, begin_out);
+	}
+
+	bool Native::sequence(IntPtr p_vec, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		return TRTC_Sequence(*vec, begin, end);
+	}
+
+	bool Native::sequence(IntPtr p_vec, IntPtr p_value_init, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		DeviceViewable* value_init = just_cast_it<DeviceViewable>(p_value_init);
+		return TRTC_Sequence(*vec, *value_init, begin, end);
+	}
+
+	bool Native::sequence(IntPtr p_vec, IntPtr p_value_init, IntPtr p_value_step, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		DeviceViewable* value_init = just_cast_it<DeviceViewable>(p_value_init);
+		DeviceViewable* value_step = just_cast_it<DeviceViewable>(p_value_step);
+		return TRTC_Sequence(*vec, *value_init, *value_step, begin, end);
+	}
 
 	bool Native::copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out)
 	{
@@ -60,5 +106,6 @@ namespace ThrustRTCLR
 		DVVectorLike* vec_out = just_cast_it<DVVectorLike>(p_vec_out);
 		return TRTC_Copy(*vec_in, *vec_out, begin_in, end_in, begin_out);
 	}
+
 }
 

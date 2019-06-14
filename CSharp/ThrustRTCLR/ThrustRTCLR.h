@@ -101,7 +101,14 @@ namespace ThrustRTCLR
 		static bool replace_if(IntPtr p_vec, IntPtr p_pred, IntPtr p_new_value, size_t begin, size_t end);
 		static bool replace_copy(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_old_value, IntPtr p_new_value, size_t begin_in, size_t end_in, size_t begin_out);
 		static bool replace_copy_if(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_pred, IntPtr p_new_value, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool for_each(IntPtr p_vec, IntPtr p_f, size_t begin, size_t end);
+		static bool adjacent_difference(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool adjacent_difference(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_binary_op, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool sequence(IntPtr p_vec, size_t begin, size_t end);
+		static bool sequence(IntPtr p_vec, IntPtr p_value_init, size_t begin, size_t end);
+		static bool sequence(IntPtr p_vec, IntPtr p_value_init, IntPtr p_value_step, size_t begin, size_t end);
 		
+		// Copying
 		static bool copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
 
 	};
