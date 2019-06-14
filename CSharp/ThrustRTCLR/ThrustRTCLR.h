@@ -107,6 +107,13 @@ namespace ThrustRTCLR
 		static bool sequence(IntPtr p_vec, size_t begin, size_t end);
 		static bool sequence(IntPtr p_vec, IntPtr p_value_init, size_t begin, size_t end);
 		static bool sequence(IntPtr p_vec, IntPtr p_value_init, IntPtr p_value_step, size_t begin, size_t end);
+		static bool tabulate(IntPtr p_vec, IntPtr p_op, size_t begin, size_t end);
+		static bool transform(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_op, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool transform_binary(IntPtr p_vec_in1, IntPtr p_vec_in2, IntPtr p_vec_out, IntPtr p_op, size_t begin_in1, size_t end_in1, size_t begin_in2, size_t begin_out);
+		static bool transform_if(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_op, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool transform_if_stencil(IntPtr p_vec_in, IntPtr p_vec_stencil, IntPtr p_vec_out, IntPtr p_op, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_out);
+		static bool transform_binary_if_stencil(IntPtr p_vec_in1, IntPtr p_vec_in2, IntPtr p_vec_stencil, IntPtr p_vec_out, IntPtr p_op, IntPtr p_pred, size_t begin_in1, size_t end_in1, size_t begin_in2, size_t begin_stencil, size_t begin_out);
+
 		
 		// Copying
 		static bool copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
