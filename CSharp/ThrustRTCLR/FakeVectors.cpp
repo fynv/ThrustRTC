@@ -8,6 +8,7 @@
 #include "functor.h"
 #include "fake_vectors/DVTransform.h"
 #include "fake_vectors/DVZipped.h"
+#include "fake_vectors/DVCustomVector.h"
 
 namespace ThrustRTCLR
 {
@@ -71,4 +72,22 @@ namespace ThrustRTCLR
 
 		return (IntPtr)(new DVZipped(vecs, elem_names));
 	}
+
+	IntPtr Native::dvcustomvector_create(array<CapturedDeviceViewable_clr>^ p_arg_map, IntPtr p_name_idx, IntPtr p_code_body, IntPtr p_elem_cls, size_t size, bool read_only)
+	{
+		int num_params = p_arg_map->Length;
+		std::vector<CapturedDeviceViewable> arg_map(num_params);
+		for (int i = 0; i < num_params; i++)
+		{
+			arg_map[i].obj_name = just_cast_it<const char>(p_arg_map[i].obj_name);
+			arg_map[i].obj = just_cast_it<DeviceViewable>(p_arg_map[i].obj);
+		}
+		
+		const char* name_idx = just_cast_it<const char>(p_name_idx);
+		const char* code_body = just_cast_it<const char>(p_code_body);
+		const char* elem_cls = just_cast_it<const char>(p_elem_cls);
+
+		return (IntPtr)(new DVCustomVector(arg_map, name_idx, code_body, elem_cls, size, read_only));
+	}
+
 }

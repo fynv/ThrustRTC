@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test_transform_iter", "test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test_zipped", "test\test_zipped\test_zipped.csproj", "{E4CB76ED-F75E-4DF0-8AD2-E4EB864CEE2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test_custom_vector", "test\test_custom_vector\test_custom_vector.csproj", "{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -207,6 +209,18 @@ Global
 		{E4CB76ED-F75E-4DF0-8AD2-E4EB864CEE2E}.Release|x64.Build.0 = Release|Any CPU
 		{E4CB76ED-F75E-4DF0-8AD2-E4EB864CEE2E}.Release|x86.ActiveCfg = Release|Any CPU
 		{E4CB76ED-F75E-4DF0-8AD2-E4EB864CEE2E}.Release|x86.Build.0 = Release|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Debug|x64.Build.0 = Debug|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Debug|x86.Build.0 = Debug|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Release|x64.ActiveCfg = Release|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Release|x64.Build.0 = Release|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Release|x86.ActiveCfg = Release|Any CPU
+		{CCBA2135-D04C-4AFD-9D24-B2CC471D9C97}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

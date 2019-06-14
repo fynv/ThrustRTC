@@ -89,6 +89,7 @@ namespace ThrustRTCLR
 		static IntPtr dvreverse_create(IntPtr p_vec_value);
 		static IntPtr dvtransform_create(IntPtr p_vec_in, IntPtr p_elem_cls, IntPtr p_op);
 		static IntPtr dvzipped_create(array<IntPtr>^ p_vecs, array<IntPtr>^ p_elem_names);
+		static IntPtr dvcustomvector_create(array<CapturedDeviceViewable_clr>^ p_arg_map, IntPtr p_name_idx, IntPtr p_code_body, IntPtr p_elem_cls, size_t size, bool read_only);
 
 		// Functor
 		static IntPtr functor_create(array<CapturedDeviceViewable_clr>^ p_arg_map, array<IntPtr>^ p_functor_params, IntPtr p_code_body);

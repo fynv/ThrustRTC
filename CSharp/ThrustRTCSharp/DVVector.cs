@@ -17,9 +17,9 @@ namespace ThrustRTCSharp
             return Native.dvvectorlike_name_elem_cls(m_cptr);
         }
 
-        public ulong size()
+        public long size()
         {
-            return Native.dvvectorlike_size(m_cptr);
+            return (long)Native.dvvectorlike_size(m_cptr);
         }
     }
 

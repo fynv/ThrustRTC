@@ -90,4 +90,31 @@ namespace ThrustRTCSharp
 
         private readonly DVVectorLike[] m_vecs;
     }
+
+    public class DVCustomVector : DVVectorLike
+    {
+        static IntPtr create(DeviceViewable[] objs, string[] name_objs, string name_idx, string code_body, string elem_cls, long size, bool read_only)
+        {
+            CapturedDeviceViewable_clr[] arg_map = new CapturedDeviceViewable_clr[objs.Length];
+            for (int i = 0; i < objs.Length; i++)
+            {
+                arg_map[i].obj = objs[i].m_cptr;
+                arg_map[i].obj_name = Marshal.StringToHGlobalAnsi(name_objs[i]);
+            }
+
+            return Native.dvcustomvector_create(arg_map,
+                Marshal.StringToHGlobalAnsi(name_idx),
+                Marshal.StringToHGlobalAnsi(code_body),
+                Marshal.StringToHGlobalAnsi(elem_cls), (ulong)size, read_only);
+        }
+
+        public DVCustomVector(DeviceViewable[] objs, string[] name_objs, string name_idx, string code_body, string elem_cls, long size = -1, bool read_only = true)
+            : base(create(objs, name_objs, name_idx, code_body, elem_cls, size, read_only))
+        {
+            m_objs = objs;
+        }
+
+        private readonly DeviceViewable[] m_objs;
+
+    }
 }
