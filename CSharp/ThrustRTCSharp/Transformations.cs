@@ -94,12 +94,6 @@ namespace ThrustRTCSharp
         {
             return Native.transform_binary_if_stencil(vec_in1.m_cptr, vec_in2.m_cptr, vec_stencil.m_cptr, vec_out.m_cptr, op.m_cptr, pred.m_cptr, (ulong)begin_in1, (ulong)end_in1, (ulong)begin_in2, (ulong)begin_stencil, (ulong)begin_out);
         }
-
-
-        public static bool Copy(DVVectorLike vec_in, DVVectorLike vec_out, long begin_in = 0, long end_in = -1, long begin_out = 0)
-        {
-            return Native.copy(vec_in.m_cptr, vec_out.m_cptr, (ulong)begin_in, (ulong)end_in, (ulong)begin_out);
-        }
     }
 
 }

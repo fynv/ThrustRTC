@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ThrustRTCLR.h"
+
 #include "fill.h"
 #include "replace.h"
 #include "for_each.h"
@@ -7,8 +8,6 @@
 #include "sequence.h"
 #include "tabulate.h"
 #include "transform.h"
-
-#include "copy.h"
 
 namespace ThrustRTCLR
 {
@@ -156,11 +155,5 @@ namespace ThrustRTCLR
 		return TRTC_Transform_Binary_If_Stencil(*vec_in1, *vec_in2, *vec_stencil, *vec_out, *op, *pred, begin_in1, end_in1, begin_in2, begin_stencil, begin_out);
 	}
 
-	bool Native::copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out)
-	{
-		DVVectorLike* vec_in = just_cast_it<DVVectorLike>(p_vec_in);
-		DVVectorLike* vec_out = just_cast_it<DVVectorLike>(p_vec_out);
-		return TRTC_Copy(*vec_in, *vec_out, begin_in, end_in, begin_out);
-	}
 }
 
