@@ -116,10 +116,13 @@ namespace ThrustRTCLR
 
 		// Copying
 		static bool gather(IntPtr p_vec_map, IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_map, size_t end_map, size_t begin_in, size_t begin_out);
-		static bool gather_if(IntPtr p_vec_map, IntPtr p_vec_stencil, IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_map, size_t end_map, size_t begin_stencil,size_t begin_in, size_t begin_out);
+		static bool gather_if(IntPtr p_vec_map, IntPtr p_vec_stencil, IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_map, size_t end_map, size_t begin_stencil, size_t begin_in, size_t begin_out);
 		static bool gather_if(IntPtr p_vec_map, IntPtr p_vec_stencil, IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_pred, size_t begin_map, size_t end_map, size_t begin_stencil, size_t begin_in, size_t begin_out);
-
+		static bool scatter(IntPtr p_vec_in, IntPtr p_vec_map, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_map, size_t begin_out);
+		static bool scatter_if(IntPtr p_vec_in, IntPtr p_vec_map, IntPtr p_vec_stencil, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_map, size_t begin_stencil, size_t begin_out);
+		static bool scatter_if(IntPtr p_vec_in, IntPtr p_vec_map, IntPtr p_vec_stencil, IntPtr p_vec_out, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_map, size_t begin_stencil, size_t begin_out);
 		static bool copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool swap(IntPtr p_vec1, IntPtr p_vec2, size_t begin1, size_t end1, size_t begin2);
 
 	};
 }
