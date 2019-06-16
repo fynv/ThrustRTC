@@ -66,6 +66,7 @@ All operations explicitly work on vectors types. Working-ranges can be specified
 ## Quick Start Guide
 
 [Quick Start Guide - for Python users](https://fynv.github.io/ThrustRTC/QuickStartGuide.html)
+
 [Quick Start Guide - for C# users](https://fynv.github.io/ThrustRTC/QuickStartGuide_cs.html)
 
 ## Demos

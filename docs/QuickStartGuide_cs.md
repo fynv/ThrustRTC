@@ -505,15 +505,13 @@ int main()
 ```
 
 ```cs
-# Python
-import ThrustRTC as trtc
+// C#
+DVVector dvalues = new DVVector(new float[]{10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0});
+DVVector dindices =  new DVVector( new int[]{2,6,1,3} );
+DVPermutation src = new DVPermutation(dvalues, dindices);
+DVVector dst = new DVVector("float", 4);
 
-dvalues = trtc.device_vector_from_list([10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0], 'float')
-dindices =  trtc.device_vector_from_list([2,6,1,3], 'int32_t')
-src = trtc.DVPermutation(dvalues, dindices)
-dst = trtc.device_vector('float', 4)
-
-trtc.Copy(src, dst)
+TRTC.Copy(src, dst);
 
 ```
 
@@ -968,11 +966,11 @@ dvalues.to_host(hvalues);
 // hvalues is now {1, 2, 4, 5, 7, 8}
 ```
 
-```python
-# Python
-dvalues = trtc.device_vector_from_list([ 1, 4, 2, 8, 5, 7 ], 'int32_t')
-trtc.Sort(dvalues)
-# dvalues is now {1, 2, 4, 5, 7, 8}
+```cs
+// C#
+DVVector dvalues = new DVVector(new int[]{ 1, 4, 2, 8, 5, 7 });
+TRTC.Sort(dvalues)
+// dvalues is now {1, 2, 4, 5, 7, 8}
 ```
 
 In addition, ThrustRTC provides Sort_By_Key(), which sort key-value pairs stored in separate places.
