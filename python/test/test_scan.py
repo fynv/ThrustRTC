@@ -1,7 +1,5 @@
 import ThrustRTC as trtc
 
-
-
 darr = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
 trtc.Inclusive_Scan(darr, darr)
 print (darr.to_host())

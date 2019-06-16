@@ -147,6 +147,22 @@ namespace ThrustRTCLR
 		static Object^ all_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
 		static Object^ any_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
 		static Object^ none_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+
+		// PrefixSums
+		static bool inclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool inclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_binary_op, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool exclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool exclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_init, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool exclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_op, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool inclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
+		static bool inclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_binary_pred, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
+		static bool inclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_binary_pred, IntPtr p_binary_op, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
+		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
+		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
+		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, size_t begin_key,  size_t end_key, size_t begin_value, size_t begin_out);
+		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, IntPtr p_binary_op, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
+
+
 	};
 }
 

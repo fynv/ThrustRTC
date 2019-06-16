@@ -6,8 +6,6 @@
 
 int main()
 {
-	
-
 	{
 		DVCounter d_in(DVInt32(1), 1000);
 		int out[1000];

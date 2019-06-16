@@ -1,7 +1,5 @@
 import ThrustRTC as trtc
 
-
-
 d_keys = trtc.device_vector_from_list([0, 0, 0, 1, 1, 2, 3, 3, 3, 3], 'int32_t')
 
 d_values = trtc.device_vector_from_list([1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ], 'int32_t')
