@@ -62,6 +62,9 @@
     <ClCompile Include="PrefixSums.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Reordering.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

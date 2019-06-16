@@ -162,7 +162,27 @@ namespace ThrustRTCLR
 		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, size_t begin_key,  size_t end_key, size_t begin_value, size_t begin_out);
 		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, IntPtr p_binary_op, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
 
-
+		// Reordering
+		static uint32_t copy_if(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_out);
+		static uint32_t copy_if_stencil(IntPtr p_vec_in, IntPtr p_vec_stencil, IntPtr p_vec_out, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_out);
+		static uint32_t remove(IntPtr p_vec, IntPtr p_value, size_t begin, size_t end);
+		static uint32_t remove_copy(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_value, size_t begin_in, size_t end_in, size_t begin_out);
+		static uint32_t remove_if(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static uint32_t remove_copy_if(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_out);
+		static uint32_t remove_if_stencil(IntPtr p_vec, IntPtr p_stencil, IntPtr p_pred, size_t begin, size_t end, size_t begin_stencil);
+		static uint32_t remove_copy_if_stencil(IntPtr p_vec_in, IntPtr p_stencil, IntPtr p_vec_out, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_out);
+		static uint32_t unique(IntPtr p_vec, size_t begin, size_t end);
+		static uint32_t unique(IntPtr p_vec, IntPtr p_binary_pred, size_t begin, size_t end);
+		static uint32_t unique_copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
+		static uint32_t unique_copy(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_binary_pred, size_t begin_in, size_t end_in, size_t begin_out);
+		static uint32_t unique_by_key(IntPtr p_keys, IntPtr p_values, size_t begin_key, size_t end_key, size_t begin_value);
+		static uint32_t unique_by_key(IntPtr p_keys, IntPtr p_values, IntPtr p_binary_pred, size_t begin_key, size_t end_key, size_t begin_value);
+		static uint32_t unique_by_key_copy(IntPtr p_keys_in, IntPtr p_values_in, IntPtr p_keys_out, IntPtr p_values_out, size_t begin_key_in, size_t end_key_in, size_t begin_value_in, size_t begin_key_out, size_t begin_value_out);
+		static uint32_t unique_by_key_copy(IntPtr p_keys_in, IntPtr p_values_in, IntPtr p_keys_out, IntPtr p_values_out, IntPtr p_binary_pred, size_t begin_key_in, size_t end_key_in, size_t begin_value_in, size_t begin_key_out, size_t begin_value_out);
+		static uint32_t partition(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static uint32_t partition_stencil(IntPtr p_vec, IntPtr p_stencil, IntPtr p_pred, size_t begin, size_t end, size_t begin_stencil);
+		static uint32_t partition_copy(IntPtr p_vec_in, IntPtr p_vec_true, IntPtr p_vec_false, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_true, size_t begin_false);
+		static uint32_t partition_copy_stencil(IntPtr p_vec_in, IntPtr p_stencil, IntPtr p_vec_true, IntPtr p_vec_false, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_true, size_t begin_false);
 	};
 }
 
