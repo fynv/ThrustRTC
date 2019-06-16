@@ -45,6 +45,10 @@ namespace test_partition
                 print_array((int[])d_odds.to_host(0, 10 - count));
             }
 
+            {
+                DVVector d_value = new DVVector(new int[] { 2, 4, 6, 8, 10, 1, 3, 5, 7, 9 });
+                Console.WriteLine(TRTC.Partition_Point(d_value, is_even));
+            }
         }
 
         static void print_array<T>(T[] arr)

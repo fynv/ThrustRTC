@@ -34,7 +34,7 @@ namespace ThrustRTCLR
 		static void kernel_destroy(IntPtr p_kernel);
 		static int kernel_num_params(IntPtr p_kernel);
 		static int kernel_calc_optimal_block_size(IntPtr p_kernel, IntPtr p_args, uint32_t sharedMemBytes);
-		static int kernel_calc_number_blocks(IntPtr p_kernel, IntPtr p_args,  int sizeBlock, uint32_t sharedMemBytes);
+		static int kernel_calc_number_blocks(IntPtr p_kernel, IntPtr p_args, int sizeBlock, uint32_t sharedMemBytes);
 		static bool kernel_launch(IntPtr p_kernel, dim_type_clr gridDim, dim_type_clr blockDim, IntPtr p_args, uint32_t sharedMemBytes);
 
 		// For-loop
@@ -159,7 +159,7 @@ namespace ThrustRTCLR
 		static bool inclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_binary_pred, IntPtr p_binary_op, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
 		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
 		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
-		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, size_t begin_key,  size_t end_key, size_t begin_value, size_t begin_out);
+		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
 		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, IntPtr p_binary_op, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
 
 		// Reordering
@@ -183,6 +183,27 @@ namespace ThrustRTCLR
 		static uint32_t partition_stencil(IntPtr p_vec, IntPtr p_stencil, IntPtr p_pred, size_t begin, size_t end, size_t begin_stencil);
 		static uint32_t partition_copy(IntPtr p_vec_in, IntPtr p_vec_true, IntPtr p_vec_false, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_true, size_t begin_false);
 		static uint32_t partition_copy_stencil(IntPtr p_vec_in, IntPtr p_stencil, IntPtr p_vec_true, IntPtr p_vec_false, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_true, size_t begin_false);
+
+		// Searching
+		static Object^ find(IntPtr p_vec, IntPtr p_value, size_t begin, size_t end);
+		static Object^ find_if(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static Object^ find_if_not(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static Tuple<int64_t, int64_t>^ mismatch(IntPtr p_vec1, IntPtr p_vec2, size_t begin1, size_t end1, size_t begin2);
+		static Tuple<int64_t, int64_t>^ mismatch(IntPtr p_vec1, IntPtr p_vec2, IntPtr p_pred, size_t begin1, size_t end1, size_t begin2);
+		static Object^ lower_bound(IntPtr p_vec, IntPtr p_value, size_t begin, size_t end);
+		static Object^ lower_bound(IntPtr p_vec, IntPtr p_value, IntPtr p_comp, size_t begin, size_t end);
+		static Object^ upper_bound(IntPtr p_vec, IntPtr p_value, size_t begin, size_t end);
+		static Object^ upper_bound(IntPtr p_vec, IntPtr p_value, IntPtr p_comp, size_t begin, size_t end);
+		static Object^ binary_search(IntPtr p_vec, IntPtr p_value, size_t begin, size_t end);
+		static Object^ binary_search(IntPtr p_vec, IntPtr p_value, IntPtr p_comp, size_t begin, size_t end);
+		static bool lower_bound_v(IntPtr p_vec, IntPtr p_values, IntPtr p_result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result);
+		static bool lower_bound_v(IntPtr p_vec, IntPtr p_values, IntPtr p_result, IntPtr p_comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result);
+		static bool upper_bound_v(IntPtr p_vec, IntPtr p_values, IntPtr p_result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result);
+		static bool upper_bound_v(IntPtr p_vec, IntPtr p_values, IntPtr p_result, IntPtr p_comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result);
+		static bool binary_search_v(IntPtr p_vec, IntPtr p_values, IntPtr p_result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result);
+		static bool binary_search_v(IntPtr p_vec, IntPtr p_values, IntPtr p_result, IntPtr p_comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result);
+		static Object^ partition_point(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+
 	};
 }
 
