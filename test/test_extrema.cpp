@@ -6,8 +6,6 @@
 
 int main()
 {
-	
-
 	{
 		int h_data[6] = { 1, 0, 2, 2, 1, 3 };
 		DVVector d_data("int32_t", 6, h_data);

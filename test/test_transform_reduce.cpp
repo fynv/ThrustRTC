@@ -5,7 +5,6 @@
 
 int main()
 {
-	
 
 	Functor absolute_value = { {},{ "x" }, "        return x<(decltype(x))0 ? -x : x;\n" };
 

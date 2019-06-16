@@ -5,8 +5,6 @@
 
 int main()
 {
-	
-
 	Functor identity("Identity");
 
 	bool A[3] = { true, true, false };

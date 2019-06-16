@@ -124,6 +124,29 @@ namespace ThrustRTCLR
 		static bool copy(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
 		static bool swap(IntPtr p_vec1, IntPtr p_vec2, size_t begin1, size_t end1, size_t begin2);
 
+		// Redutions
+		static size_t count(IntPtr p_vec, IntPtr p_value, size_t begin, size_t end);
+		static size_t count_if(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static Object^ reduce(IntPtr p_vec, size_t begin, size_t end);
+		static Object^ reduce(IntPtr p_vec, IntPtr p_init, size_t begin, size_t end);
+		static Object^ reduce(IntPtr p_vec, IntPtr p_init, IntPtr p_binary_op, size_t begin, size_t end);
+		static uint32_t reduce_by_key(IntPtr p_key_in, IntPtr p_value_in, IntPtr p_key_out, IntPtr p_value_out, size_t begin_key_in, size_t end_key_in, size_t begin_value_in, size_t begin_key_out, size_t begin_value_out);
+		static uint32_t reduce_by_key(IntPtr p_key_in, IntPtr p_value_in, IntPtr p_key_out, IntPtr p_value_out, IntPtr p_binary_pred, size_t begin_key_in, size_t end_key_in, size_t begin_value_in, size_t begin_key_out, size_t begin_value_out);
+		static uint32_t reduce_by_key(IntPtr p_key_in, IntPtr p_value_in, IntPtr p_key_out, IntPtr p_value_out, IntPtr p_binary_pred, IntPtr p_binary_op, size_t begin_key_in, size_t end_key_in, size_t begin_value_in, size_t begin_key_out, size_t begin_value_out);
+		static Object^ equal(IntPtr p_vec1, IntPtr p_vec2, size_t begin1, size_t end1, size_t begin2);
+		static Object^ equal(IntPtr p_vec1, IntPtr p_vec2, IntPtr p_binary_pred, size_t begin1, size_t end1, size_t begin2);
+		static size_t min_element(IntPtr p_vec, size_t begin, size_t end);
+		static size_t min_element(IntPtr p_vec, IntPtr p_comp, size_t begin, size_t end);
+		static size_t max_element(IntPtr p_vec, size_t begin, size_t end);
+		static size_t max_element(IntPtr p_vec, IntPtr p_comp, size_t begin, size_t end);
+		static Tuple<int64_t, int64_t>^ minmax_element(IntPtr p_vec, size_t begin, size_t end);
+		static Tuple<int64_t, int64_t>^ minmax_element(IntPtr p_vec, IntPtr p_comp, size_t begin, size_t end);
+		static Object^ inner_product(IntPtr p_vec1, IntPtr p_vec2, IntPtr p_init, size_t begin1, size_t end1, size_t begin2);
+		static Object^ inner_product(IntPtr p_vec1, IntPtr p_vec2, IntPtr p_init, IntPtr p_binary_op1, IntPtr p_binary_op2, size_t begin1, size_t end1, size_t begin2);
+		static Object^ transform_reduce(IntPtr p_vec, IntPtr p_unary_op, IntPtr p_init, IntPtr p_binary_op, size_t begin, size_t end);
+		static Object^ all_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static Object^ any_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static Object^ none_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
 	};
 }
 

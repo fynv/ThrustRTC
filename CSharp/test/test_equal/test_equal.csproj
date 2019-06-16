@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{13FDD644-4E0E-4E28-9E20-8F130FA93E0C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ThrustRTCSharp</RootNamespace>
-    <AssemblyName>ThrustRTCSharp</AssemblyName>
+    <ProjectGuid>{46E6FDFA-FB7F-487C-9126-F968F65EB2D7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>test_equal</RootNamespace>
+    <AssemblyName>test_equal</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,13 +24,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,21 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Context.cs" />
-    <Compile Include="Copying.cs" />
-    <Compile Include="DeviceViewable.cs" />
-    <Compile Include="DVTuple.cs" />
-    <Compile Include="DVVector.cs" />
-    <Compile Include="FakeVectors.cs" />
-    <Compile Include="Functor.cs" />
+    <Compile Include="test_equal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reductions.cs" />
-    <Compile Include="Transformations.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThrustRTCLR\ThrustRTCLR.vcxproj">
-      <Project>{0a667427-fe32-453c-b92c-3b20fb0467a9}</Project>
-      <Name>ThrustRTCLR</Name>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ThrustRTCSharp\ThrustRTCSharp.csproj">
+      <Project>{13fdd644-4e0e-4e28-9e20-8f130fa93e0c}</Project>
+      <Name>ThrustRTCSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

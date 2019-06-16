@@ -56,6 +56,9 @@
     <ClCompile Include="Copying.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Reductions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
