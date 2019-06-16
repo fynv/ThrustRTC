@@ -2,7 +2,9 @@
 
 ## Quick Start Guide
 
-[https://fynv.github.io/ThrustRTC/QuickStartGuide.html](https://fynv.github.io/ThrustRTC/QuickStartGuide.html)
+[Quick Start Guide - for Python users](https://fynv.github.io/ThrustRTC/QuickStartGuide.html)
+
+[Quick Start Guide - for C# users](https://fynv.github.io/ThrustRTC/QuickStartGuide_cs.html)
 
 ## Demos
 
