@@ -4,6 +4,7 @@
 #include "mismatch.h"
 #include "binary_search.h"
 #include "partition.h"
+#include "sort.h"
 
 namespace ThrustRTCLR
 {
@@ -184,6 +185,25 @@ namespace ThrustRTCLR
 		Functor* pred = just_cast_it<Functor>(p_pred);
 		size_t result;
 		if (!TRTC_Partition_Point(*vec, *pred, result, begin, end))
+			return nullptr;
+		return (int64_t)result;
+	}
+
+	Object^ Native::is_sorted_until(IntPtr p_vec, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		size_t result;
+		if (!TRTC_Is_Sorted_Until(*vec, result, begin, end))
+			return nullptr;
+		return (int64_t)result;
+	}
+
+	Object^ Native::is_sorted_until(IntPtr p_vec, IntPtr p_comp, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		Functor* comp = just_cast_it<Functor>(p_comp);
+		size_t result;
+		if (!TRTC_Is_Sorted_Until(*vec, *comp, result, begin, end))
 			return nullptr;
 		return (int64_t)result;
 	}

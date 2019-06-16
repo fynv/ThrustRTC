@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ThrustRTCLR.h"
 #include "scan.h"
+#include "transform_scan.h"
 
 namespace ThrustRTCLR
 {
@@ -112,6 +113,25 @@ namespace ThrustRTCLR
 		Functor* binary_pred = just_cast_it<Functor>(p_binary_pred);
 		Functor* binary_op = just_cast_it<Functor>(p_binary_op);
 		return TRTC_Exclusive_Scan_By_Key(*vec_key, *vec_value, *vec_out, *init, *binary_pred, *binary_op, begin_key, end_key, begin_value, begin_out);
+	}
+
+	bool Native::transform_inclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_unary_op, IntPtr p_binary_op, size_t begin_in, size_t end_in, size_t begin_out)
+	{
+		DVVectorLike* vec_in = just_cast_it<DVVectorLike>(p_vec_in);
+		DVVectorLike* vec_out = just_cast_it<DVVectorLike>(p_vec_out);
+		Functor* unary_op = just_cast_it<Functor>(p_unary_op);
+		Functor* binary_op = just_cast_it<Functor>(p_binary_op);
+		return TRTC_Transform_Inclusive_Scan(*vec_in, *vec_out, *unary_op, *binary_op, begin_in, end_in, begin_out);
+	}
+
+	bool Native::transform_exclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_unary_op, IntPtr p_init, IntPtr p_binary_op, size_t begin_in, size_t end_in, size_t begin_out)
+	{
+		DVVectorLike* vec_in = just_cast_it<DVVectorLike>(p_vec_in);
+		DVVectorLike* vec_out = just_cast_it<DVVectorLike>(p_vec_out);
+		Functor* unary_op = just_cast_it<Functor>(p_unary_op);
+		DeviceViewable* init = just_cast_it<DeviceViewable>(p_init);
+		Functor* binary_op = just_cast_it<Functor>(p_binary_op);
+		return TRTC_Transform_Exclusive_Scan(*vec_in, *vec_out, *unary_op, *init, *binary_op, begin_in, end_in, begin_out);
 	}
 
 }

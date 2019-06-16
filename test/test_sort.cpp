@@ -7,7 +7,6 @@
 int main()
 {
 	
-	
 	{
 		int hvalues[6]= { 1, 4, 2, 8, 5, 7 };
 		DVVector dvalues("int32_t", 6, hvalues);

@@ -99,5 +99,15 @@ namespace ThrustRTCSharp
         {
             return Native.partition_point(vec.m_cptr, pred.m_cptr, (ulong)begin, (ulong)end);
         }
+
+        public static object Is_Sorted_Until(DVVectorLike vec, long begin = 0, long end = -1)
+        {
+            return Native.is_sorted_until(vec.m_cptr, (ulong)begin, (ulong)end);
+        }
+
+        public static object Is_Sorted_Until(DVVectorLike vec, Functor comp, long begin = 0, long end = -1)
+        {
+            return Native.is_sorted_until(vec.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end);
+        }
     }
 }

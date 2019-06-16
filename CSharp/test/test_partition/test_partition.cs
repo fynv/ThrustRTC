@@ -49,6 +49,16 @@ namespace test_partition
                 DVVector d_value = new DVVector(new int[] { 2, 4, 6, 8, 10, 1, 3, 5, 7, 9 });
                 Console.WriteLine(TRTC.Partition_Point(d_value, is_even));
             }
+
+            {
+                DVVector d_value = new DVVector(new int[] { 2, 4, 6, 8, 10, 1, 3, 5, 7, 9 });
+                Console.WriteLine(TRTC.Is_Partitioned(d_value, is_even));
+            }
+
+            {
+                DVVector d_value = new DVVector(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+                Console.WriteLine(TRTC.Is_Partitioned(d_value, is_even));
+            }
         }
 
         static void print_array<T>(T[] arr)

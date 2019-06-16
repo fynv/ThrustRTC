@@ -68,6 +68,12 @@
     <ClCompile Include="Searching.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Merging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sorting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

@@ -120,5 +120,20 @@ namespace ThrustRTCSharp
             return Native.none_of(vec.m_cptr, pred.m_cptr, (ulong)begin, (ulong)end);
         }
 
+        public static object Is_Partitioned(DVVectorLike vec, Functor pred, long begin = 0, long end = -1)
+        {
+            return Native.is_partitioned(vec.m_cptr, pred.m_cptr, (ulong)begin, (ulong)end);
+        }
+
+        public static object Is_Sorted(DVVectorLike vec, long begin = 0, long end = -1)
+        {
+            return Native.is_sorted(vec.m_cptr, (ulong)begin, (ulong)end);
+        }
+
+        public static object Is_Sorted(DVVectorLike vec, Functor comp, long begin = 0, long end = -1)
+        {
+            return Native.is_sorted(vec.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end);
+        }
+
     }
 }

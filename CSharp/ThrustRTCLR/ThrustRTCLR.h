@@ -147,6 +147,9 @@ namespace ThrustRTCLR
 		static Object^ all_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
 		static Object^ any_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
 		static Object^ none_of(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static Object^ is_partitioned(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static Object^ is_sorted(IntPtr p_vec, size_t begin, size_t end);
+		static Object^ is_sorted(IntPtr p_vec, IntPtr p_comp, size_t begin, size_t end);
 
 		// PrefixSums
 		static bool inclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, size_t begin_in, size_t end_in, size_t begin_out);
@@ -161,6 +164,8 @@ namespace ThrustRTCLR
 		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
 		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
 		static bool exclusive_scan_by_key(IntPtr p_vec_key, IntPtr p_vec_value, IntPtr p_vec_out, IntPtr p_init, IntPtr p_binary_pred, IntPtr p_binary_op, size_t begin_key, size_t end_key, size_t begin_value, size_t begin_out);
+		static bool transform_inclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_unary_op, IntPtr p_binary_op, size_t begin_in, size_t end_in, size_t begin_out);
+		static bool transform_exclusive_scan(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_unary_op, IntPtr p_init, IntPtr p_binary_op, size_t begin_in, size_t end_in, size_t begin_out);
 
 		// Reordering
 		static uint32_t copy_if(IntPtr p_vec_in, IntPtr p_vec_out, IntPtr p_pred, size_t begin_in, size_t end_in, size_t begin_out);
@@ -203,6 +208,20 @@ namespace ThrustRTCLR
 		static bool binary_search_v(IntPtr p_vec, IntPtr p_values, IntPtr p_result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result);
 		static bool binary_search_v(IntPtr p_vec, IntPtr p_values, IntPtr p_result, IntPtr p_comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result);
 		static Object^ partition_point(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end);
+		static Object^ is_sorted_until(IntPtr p_vec, size_t begin, size_t end);
+		static Object^ is_sorted_until(IntPtr p_vec, IntPtr p_comp, size_t begin, size_t end);
+
+		// Merging
+		static bool merge(IntPtr p_vec1, IntPtr p_vec2, IntPtr p_vec_out, size_t begin1, size_t end1, size_t begin2, size_t end2, size_t begin_out);
+		static bool merge(IntPtr p_vec1, IntPtr p_vec2, IntPtr p_vec_out, IntPtr p_comp, size_t begin1, size_t end1, size_t begin2, size_t end2, size_t begin_out);
+		static bool merge_by_key(IntPtr p_key1, IntPtr p_keys2, IntPtr p_value1, IntPtr p_value2, IntPtr p_keys_out, IntPtr p_value_out, size_t begin_keys1, size_t end_keys1, size_t begin_keys2, size_t end_keys2, size_t begin_value1, size_t begin_value2, size_t begin_keys_out, size_t begin_value_out);
+		static bool merge_by_key(IntPtr p_key1, IntPtr p_keys2, IntPtr p_value1, IntPtr p_value2, IntPtr p_keys_out, IntPtr p_value_out, IntPtr p_comp, size_t begin_keys1, size_t end_keys1, size_t begin_keys2, size_t end_keys2, size_t begin_value1, size_t begin_value2, size_t begin_keys_out, size_t begin_value_out);
+
+		// Sorting
+		static bool sort(IntPtr p_vec, size_t begin, size_t end);
+		static bool sort(IntPtr p_vec, IntPtr p_comp, size_t begin, size_t end);
+		static bool sort_by_key(IntPtr p_keys, IntPtr p_values, size_t begin_keys, size_t end_keys, size_t begin_values);
+		static bool sort_by_key(IntPtr p_keys, IntPtr p_values, IntPtr p_comp, size_t begin_keys, size_t end_keys, size_t begin_values);
 
 	};
 }

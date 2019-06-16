@@ -7,6 +7,8 @@
 #include "inner_product.h"
 #include "transform_reduce.h"
 #include "logical.h"
+#include "partition.h"
+#include "sort.h"
 
 namespace ThrustRTCLR
 {
@@ -252,6 +254,35 @@ namespace ThrustRTCLR
 		Functor* pred = just_cast_it<Functor>(p_pred);
 		bool ret;
 		if (!TRTC_None_Of(*vec, *pred, ret, begin, end))
+			return nullptr;
+		return ret;
+	}
+
+	Object^ Native::is_partitioned(IntPtr p_vec, IntPtr p_pred, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		Functor* pred = just_cast_it<Functor>(p_pred);
+		bool ret;
+		if (!TRTC_Is_Partitioned(*vec, *pred, ret, begin, end))
+			return nullptr;
+		return ret;
+	}
+
+	Object^ Native::is_sorted(IntPtr p_vec, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		bool ret;
+		if (!TRTC_Is_Sorted(*vec, ret, begin, end))
+			return nullptr;
+		return ret;
+	}
+
+	Object^ Native::is_sorted(IntPtr p_vec, IntPtr p_comp, size_t begin, size_t end)
+	{
+		DVVectorLike* vec = just_cast_it<DVVectorLike>(p_vec);
+		Functor* comp = just_cast_it<Functor>(p_comp);
+		bool ret;
+		if (!TRTC_Is_Sorted(*vec, *comp, ret, begin, end))
 			return nullptr;
 		return ret;
 	}
