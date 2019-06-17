@@ -24,31 +24,31 @@ namespace ThrustRTCSharp
             Native.set_libnvrtc_path(p_path);
         }
 
-        static public void Set_Verbose(bool verbose = true)
+        public static void Set_Verbose(bool verbose = true)
         {
             Native.set_verbose(verbose);
         }
 
-        static public void Add_Include_Dir(string dir)
+        public static void Add_Include_Dir(string dir)
         {
             IntPtr p_dir = Marshal.StringToHGlobalAnsi(dir);
             Native.add_include_dir(p_dir);
         }
 
-        static public void Add_Built_In_Header(string filename, string filecontent)
+        public static void Add_Built_In_Header(string filename, string filecontent)
         {
             IntPtr p_filename = Marshal.StringToHGlobalAnsi(filename);
             IntPtr p_filecontent = Marshal.StringToHGlobalAnsi(filecontent);
             Native.add_built_in_header(p_filename, p_filecontent);
         }
 
-        static public void Add_Inlcude_Filename(string filename)
+        public static void Add_Inlcude_Filename(string filename)
         {
             IntPtr p_filename = Marshal.StringToHGlobalAnsi(filename);
             Native.add_include_filename(p_filename);
         }
 
-        static public void Add_Code_Block(string code)
+        public static void Add_Code_Block(string code)
         {
             IntPtr p_code = Marshal.StringToHGlobalAnsi(code);
             Native.add_code_block(p_code);
@@ -57,7 +57,7 @@ namespace ThrustRTCSharp
 
     partial class Internal
     {
-        static public IntPtr[] ConvertStrList(string[] strs)
+        public static IntPtr[] ConvertStrList(string[] strs)
         {
             IntPtr[] p_strs = new IntPtr[strs.Length];
             for (int i = 0; i < strs.Length; i++)
@@ -65,7 +65,7 @@ namespace ThrustRTCSharp
             return p_strs;
         }
 
-        static public IntPtr ConvertDVList(DeviceViewable[] args)
+        public static IntPtr ConvertDVList(DeviceViewable[] args)
         {
             if (args.Length > 0)
             {
@@ -80,7 +80,7 @@ namespace ThrustRTCSharp
             }
         }
 
-        static public dim_type_clr ConvertDimType(dim_type dim)
+        public static dim_type_clr ConvertDimType(dim_type dim)
         {
             return new dim_type_clr { x = dim.x, y = dim.y, z = dim.z };
         }
