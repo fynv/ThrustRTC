@@ -127,10 +127,6 @@ int main()
 ```cs
 // C#
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThrustRTCSharp;
 
 namespace test_trtc
@@ -211,10 +207,6 @@ int main()
 ```cs
 // C#
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThrustRTCSharp;
 
 namespace test_for
