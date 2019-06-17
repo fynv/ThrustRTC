@@ -745,7 +745,7 @@ is_even = trtc.Functor( {}, ['x'],
 A temporary structure will be created internally, which looks like:
 
 ```cpp
-// C++
+// CUDA C++, internal code 
 struct
 {
 	template<typename T>
@@ -805,8 +805,8 @@ value.
 
 ```cpp
 // C++
-DVVector vec_to_fill("int32_t", 5);
-TRTC_Fill(vec_to_fill, DVInt32(123));
+DVVector darr("int32_t", 5);
+TRTC_Fill(darr, DVInt32(123));
 ```
 
 ```python
@@ -951,9 +951,9 @@ d_data.to_host(data);
 
 ```python
 # Python
-data = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
-trtc.Inclusive_Scan(data, data) # in-place scan
-#  data is now {1, 1, 3, 5, 6, 9}
+d_data = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
+trtc.Inclusive_Scan(d_data, d_data) # in-place scan
+#  d_data is now {1, 1, 3, 5, 6, 9}
 ```
 In an inclusive scan each element of the output is the corresponding partial sum of the
 input Vector. For example, data[2] = data[0] + data[1] + data[2]. An exclusive
@@ -961,9 +961,9 @@ scan is similar, but shifted by one place to the right:
 
 ```python
 # Python
-data = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
-trtc.Exclusive_Scan(data, data) # in-place scan
-# data is now {0, 1, 1, 3, 5, 6}
+d_data = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
+trtc.Exclusive_Scan(d_data, d_data) # in-place scan
+# d_data is now {0, 1, 1, 3, 5, 6}
 ```
 
 So now data[2] = data[0] + data[1]. As these examples show, Inclusive_Scan()

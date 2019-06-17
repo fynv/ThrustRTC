@@ -391,13 +391,13 @@ dIn.to_host(hIn);
 ```
 
 In C#, there are 2 versions of *to_host()*. 
-The first versions is similar to C++. A raw pointer to the recieving buffer is required.
+The first versions is similar to C++. A raw pointer (IntPtr) to the recieving buffer is required.
 The second version creates a C# array accoring to the data-type of the array and returns 
 it as an *object*:
 
 ```cs
 // C#
-DVVector dvec = new DVVector(new float[]{1.0, 2.0, 3.0, 4.0, 5.0 });
+DVVector dvec = new DVVector(new float[]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f });
 float[] hvec = (float[]) dvec.to_host();
 ```
 
@@ -506,13 +506,11 @@ int main()
 
 ```cs
 // C#
-DVVector dvalues = new DVVector(new float[]{10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0});
-DVVector dindices =  new DVVector( new int[]{2,6,1,3} );
+DVVector dvalues = new DVVector(new float[] { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f });
+DVVector dindices = new DVVector(new int[] { 2, 6, 1, 3 });
 DVPermutation src = new DVPermutation(dvalues, dindices);
 DVVector dst = new DVVector("float", 4);
-
 TRTC.Copy(src, dst);
-
 ```
 
 ### DVReverse
@@ -628,17 +626,16 @@ int main()
 
 ```cs
 // C#
-DVVector d_int_in = new DVVector(new int[]{0, 1, 2, 3, 4});
-DVVector d_float_in = new DVVector(new float[]{ 0.0, 10.0, 20.0, 30.0, 40.0});
+DVVector d_int_in = new DVVector(new int[] { 0, 1, 2, 3, 4 });
+DVVector d_float_in = new DVVector(new float[] { 0.0f, 10.0f, 20.0f, 30.0f, 40.0f });
 
 DVVector d_int_out = new DVVector("int32_t", 5);
 DVVector d_float_out = new DVVector("float", 5);
 
-DVZipped src = new DVZipped(new DVVectorLike[]{d_int_in, d_float_in}, new string[]{'a','b'});
-DVZipped dst = new DVZipped(new DVVectorLike[]{d_int_out, d_float_out}, new string[]{'a','b'});
+DVZipped src = new DVZipped(new DVVectorLike[] { d_int_in, d_float_in }, new string[] { "a", "b" });
+DVZipped dst = new DVZipped(new DVVectorLike[] { d_int_out, d_float_out }, new string[] { "a", "b" });
 
 TRTC.Copy(src, dst);
-
 ```
 
 ### DVCustomVector
@@ -678,14 +675,11 @@ int main()
 
 ```cs
 // C#
-DVVector d_in = new DVVector(new int[]{0, 1, 2, 3, 4});
-
-DVCustomVector src = new DVCustomVector( new DeviceViewable[]{d_in}, new string[]{"src"} , "idx",
-    "      return src[idx % src.size()];\n",  "int32_t", d_in.size() * 5);
-
-DVVector dst = new DVVector("int32_t", 25);
-
-TRTC.Copy(src, dst)
+DVVector d_in = new DVVector(new int[] { 0, 1, 2, 3, 4 });
+DVCustomVector src = new DVCustomVector(new DeviceViewable[] { d_in }, new string[] { "src" }, "idx",
+    "        return src[idx % src.size()];\n", "int32_t", d_in.size() * 5);
+DVVector dst= new DVVector("int32_t", 25);
+TRTC.Copy(src, dst);
 ```
 
 ## Functors
@@ -718,7 +712,7 @@ Functor is_even = new Functor( new string[]{"x"}, "         return x % 2 == 0;\n
 A temporary structure will be created internally, which looks like:
 
 ```cpp
-// C++
+// CUDA C++, internal code 
 struct
 {
 	template<typename T>
@@ -777,8 +771,8 @@ value.
 
 ```cpp
 // C++
-DVVector vec_to_fill("int32_t", 5);
-TRTC_Fill(vec_to_fill, DVInt32(123));
+DVVector darr("int32_t", 5);
+TRTC_Fill(darr, DVInt32(123));
 ```
 
 ```cs
@@ -921,9 +915,9 @@ d_data.to_host(data);
 
 ```cs
 // C#
-DVVector data = new DVVector(new int[]{1, 0, 2, 2, 1, 3});
-TRTC.Inclusive_Scan(data, data);// in-place scan
-//  data is now {1, 1, 3, 5, 6, 9}
+DVVector d_data = new DVVector(new int[]{1, 0, 2, 2, 1, 3});
+TRTC.Inclusive_Scan(d_data, d_data);// in-place scan
+//  d_data is now {1, 1, 3, 5, 6, 9}
 ```
 In an inclusive scan each element of the output is the corresponding partial sum of the
 input Vector. For example, data[2] = data[0] + data[1] + data[2]. An exclusive
@@ -931,9 +925,9 @@ scan is similar, but shifted by one place to the right:
 
 ```cs
 // C#
-DVVector data = new DVVector(new int[]{1, 0, 2, 2, 1, 3});
-TRTC.Exclusive_Scan(data, data); // in-place scan
-// data is now {0, 1, 1, 3, 5, 6}
+DVVector d_data = new DVVector(new int[]{1, 0, 2, 2, 1, 3});
+TRTC.Exclusive_Scan(d_data, d_data); // in-place scan
+// d_data is now {0, 1, 1, 3, 5, 6}
 ```
 
 So now data[2] = data[0] + data[1]. As these examples show, Inclusive_Scan()
