@@ -300,7 +300,7 @@ DVTuple d_tuple = new DVTuple(new DeviceViewable[]{d_int, d_float}, new string[]
 Besides the basic types and Tuples, Vectors and Functors are also Device Viewable Objects.
 These objects will be explained in separated sections.
 
-Hierarchy of Device Viewable Objects
+An incomplete hierarchy of Device Viewable Objects:
 
 <img src="DeviceViewable.png" width="500px">
 
