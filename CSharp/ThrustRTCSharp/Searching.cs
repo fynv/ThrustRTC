@@ -5,104 +5,104 @@ namespace ThrustRTCSharp
 {
     public partial class TRTC
     {
-        public static object Find(DVVectorLike vec, DeviceViewable value, long begin = 0, long end = -1)
+        public static object Find(DVVectorLike vec, DeviceViewable value)
         {
-            return Native.find(vec.m_cptr, value.m_cptr, (ulong)begin, (ulong)end);
+            return Native.find(vec.m_cptr, value.m_cptr);
         }
 
-        public static object Find_If(DVVectorLike vec, Functor pred, long begin = 0, long end = -1)
+        public static object Find_If(DVVectorLike vec, Functor pred)
         {
-            return Native.find_if(vec.m_cptr, pred.m_cptr, (ulong)begin, (ulong)end);
+            return Native.find_if(vec.m_cptr, pred.m_cptr);
         }
 
-        public static object Find_If_Not(DVVectorLike vec, Functor pred, long begin = 0, long end = -1)
+        public static object Find_If_Not(DVVectorLike vec, Functor pred)
         {
-            return Native.find_if_not(vec.m_cptr, pred.m_cptr, (ulong)begin, (ulong)end);
+            return Native.find_if_not(vec.m_cptr, pred.m_cptr);
         }
 
-        public static Tuple<long, long> Mismatch(DVVectorLike vec1, DVVectorLike vec2, long begin1 = 0, long end1 = -1, long begin2 = 0)
+        public static object Mismatch(DVVectorLike vec1, DVVectorLike vec2)
         {
-            return Native.mismatch(vec1.m_cptr, vec2.m_cptr, (ulong)begin1, (ulong)end1, (ulong)begin2);
+            return Native.mismatch(vec1.m_cptr, vec2.m_cptr);
         }
 
-        public static Tuple<long, long> Mismatch(DVVectorLike vec1, DVVectorLike vec2, Functor pred, long begin1 = 0, long end1 = -1, long begin2 = 0)
+        public static object Mismatch(DVVectorLike vec1, DVVectorLike vec2, Functor pred)
         {
-            return Native.mismatch(vec1.m_cptr, vec2.m_cptr, pred.m_cptr, (ulong)begin1, (ulong)end1, (ulong)begin2);
+            return Native.mismatch(vec1.m_cptr, vec2.m_cptr, pred.m_cptr);
         }
 
-        public static object Lower_Bound(DVVectorLike vec, DeviceViewable value, long begin = 0, long end = -1)
+        public static object Lower_Bound(DVVectorLike vec, DeviceViewable value)
         {
-            return Native.lower_bound(vec.m_cptr, value.m_cptr, (ulong)begin, (ulong)end);
+            return Native.lower_bound(vec.m_cptr, value.m_cptr);
         }
 
-        public static object Lower_Bound(DVVectorLike vec, DeviceViewable value, Functor comp, long begin = 0, long end = -1)
+        public static object Lower_Bound(DVVectorLike vec, DeviceViewable value, Functor comp)
         {
-            return Native.lower_bound(vec.m_cptr, value.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end);
+            return Native.lower_bound(vec.m_cptr, value.m_cptr, comp.m_cptr);
         }
 
-        public static object Upper_Bound(DVVectorLike vec, DeviceViewable value, long begin = 0, long end = -1)
+        public static object Upper_Bound(DVVectorLike vec, DeviceViewable value)
         {
-            return Native.upper_bound(vec.m_cptr, value.m_cptr, (ulong)begin, (ulong)end);
+            return Native.upper_bound(vec.m_cptr, value.m_cptr);
         }
 
-        public static object Upper_Bound(DVVectorLike vec, DeviceViewable value, Functor comp, long begin = 0, long end = -1)
+        public static object Upper_Bound(DVVectorLike vec, DeviceViewable value, Functor comp)
         {
-            return Native.upper_bound(vec.m_cptr, value.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end);
+            return Native.upper_bound(vec.m_cptr, value.m_cptr, comp.m_cptr);
         }
 
-        public static object Binary_Search(DVVectorLike vec, DeviceViewable value, long begin = 0, long end = -1)
+        public static object Binary_Search(DVVectorLike vec, DeviceViewable value)
         {
-            return Native.binary_search(vec.m_cptr, value.m_cptr, (ulong)begin, (ulong)end);
+            return Native.binary_search(vec.m_cptr, value.m_cptr);
         }
 
-        public static object Binary_Search(DVVectorLike vec, DeviceViewable value, Functor comp, long begin = 0, long end = -1)
+        public static object Binary_Search(DVVectorLike vec, DeviceViewable value, Functor comp)
         {
-            return Native.binary_search(vec.m_cptr, value.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end);
+            return Native.binary_search(vec.m_cptr, value.m_cptr, comp.m_cptr);
         }
 
-        public static object Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, long begin = 0, long end = -1, long begin_values = 0, long end_values = -1, long begin_result = 0)
+        public static object Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
         {
-            return Native.lower_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr, (ulong)begin, (ulong)end, (ulong)begin_values, (ulong)(end_values), (ulong)begin_result);
+            return Native.lower_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr);
         }
 
-        public static object Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp, long begin = 0, long end = -1, long begin_values = 0, long end_values = -1, long begin_result = 0)
+        public static object Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
         {
-            return Native.lower_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end, (ulong)begin_values, (ulong)(end_values), (ulong)begin_result);
+            return Native.lower_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr);
         }
 
-        public static object Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, long begin = 0, long end = -1, long begin_values = 0, long end_values = -1, long begin_result = 0)
+        public static object Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
         {
-            return Native.upper_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr, (ulong)begin, (ulong)end, (ulong)begin_values, (ulong)(end_values), (ulong)begin_result);
+            return Native.upper_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr);
         }
 
-        public static object Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp, long begin = 0, long end = -1, long begin_values = 0, long end_values = -1, long begin_result = 0)
+        public static object Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
         {
-            return Native.upper_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end, (ulong)begin_values, (ulong)(end_values), (ulong)begin_result);
+            return Native.upper_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr);
         }
 
-        public static object Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, long begin = 0, long end = -1, long begin_values = 0, long end_values = -1, long begin_result = 0)
+        public static object Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
         {
-            return Native.binary_search_v(vec.m_cptr, values.m_cptr, result.m_cptr, (ulong)begin, (ulong)end, (ulong)begin_values, (ulong)(end_values), (ulong)begin_result);
+            return Native.binary_search_v(vec.m_cptr, values.m_cptr, result.m_cptr);
         }
 
-        public static object Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp, long begin = 0, long end = -1, long begin_values = 0, long end_values = -1, long begin_result = 0)
+        public static object Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
         {
-            return Native.binary_search_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end, (ulong)begin_values, (ulong)(end_values), (ulong)begin_result);
+            return Native.binary_search_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr);
         }
 
-        public static object Partition_Point(DVVectorLike vec, Functor pred, long begin = 0, long end = -1)
+        public static object Partition_Point(DVVectorLike vec, Functor pred)
         {
-            return Native.partition_point(vec.m_cptr, pred.m_cptr, (ulong)begin, (ulong)end);
+            return Native.partition_point(vec.m_cptr, pred.m_cptr);
         }
 
-        public static object Is_Sorted_Until(DVVectorLike vec, long begin = 0, long end = -1)
+        public static object Is_Sorted_Until(DVVectorLike vec)
         {
-            return Native.is_sorted_until(vec.m_cptr, (ulong)begin, (ulong)end);
+            return Native.is_sorted_until(vec.m_cptr);
         }
 
-        public static object Is_Sorted_Until(DVVectorLike vec, Functor comp, long begin = 0, long end = -1)
+        public static object Is_Sorted_Until(DVVectorLike vec, Functor comp)
         {
-            return Native.is_sorted_until(vec.m_cptr, comp.m_cptr, (ulong)begin, (ulong)end);
+            return Native.is_sorted_until(vec.m_cptr, comp.m_cptr);
         }
     }
 }

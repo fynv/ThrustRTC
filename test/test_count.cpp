@@ -6,8 +6,6 @@
 
 int main()
 {
-	
-
 	int hin[2000];
 	for (int i = 0; i < 2000; i++)
 		hin[i] = i % 100;

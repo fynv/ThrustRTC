@@ -51,6 +51,18 @@ ViewBuf DVVector::view() const
 DVVectorAdaptor::DVVectorAdaptor(const char* elem_cls, size_t size, void* ddata)
 	: DVVectorLike(elem_cls, (std::string(elem_cls) + "&").c_str(), size), m_data(ddata){}
 
+DVVectorAdaptor::DVVectorAdaptor(const DVVector& vec, size_t begin, size_t end)
+	: DVVectorLike(vec.name_elem_cls().c_str(), vec.name_ref_type().c_str(), (end == (size_t)(-1)? vec.size() : end) - begin)
+{
+	m_data = (char*)vec.data() + begin * vec.elem_size();
+}
+
+DVVectorAdaptor::DVVectorAdaptor(const DVVectorAdaptor& vec, size_t begin, size_t end)
+	: DVVectorLike(vec.name_elem_cls().c_str(), vec.name_ref_type().c_str(), (end == (size_t)(-1) ? vec.size() : end) - begin)
+{
+	m_data = (char*)vec.data() + begin * vec.elem_size();
+}
+
 
 std::string DVVectorAdaptor::name_view_cls() const
 {

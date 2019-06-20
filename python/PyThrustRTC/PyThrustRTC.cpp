@@ -12,6 +12,7 @@ static PyObject* n_set_libnvrtc_path(PyObject* self, PyObject* args)
 #include "DeviceViewable.hpp"
 #include "DVVector.hpp"
 #include "DVTuple.hpp"
+#include "DVRange.hpp"
 #include "DVConstant.hpp"
 #include "DVCounter.hpp"
 #include "DVDiscard.hpp"
@@ -79,6 +80,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_dvvector_to_host", n_dvvector_to_host, METH_VARARGS, "" },
 	{ "n_dvvector_from_dvs", n_dvvector_from_dvs, METH_VARARGS, "" },
 	{ "n_dvvectoradaptor_create", n_dvvectoradaptor_create, METH_VARARGS, "" },
+	{ "n_dvrange_create", n_dvrange_create, METH_VARARGS, "" },
 	{ "n_dvtuple_create", n_dvtuple_create, METH_VARARGS, "" },
 	{ "n_dvconstant_create", n_dvconstant_create, METH_VARARGS, "" },
 	{ "n_dvcounter_create", n_dvcounter_create, METH_VARARGS, "" },

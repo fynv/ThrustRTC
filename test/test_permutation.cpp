@@ -6,8 +6,6 @@
 
 int main()
 {
-	
-
 	float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
 	DVVector dvalues("float", 8, hvalues);
 

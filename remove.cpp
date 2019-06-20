@@ -2,66 +2,50 @@
 #include "remove.h"
 #include "general_copy_if.h"
 
-uint32_t TRTC_Remove(DVVectorLike& vec, const DeviceViewable& value, size_t begin, size_t end)
+uint32_t TRTC_Remove(DVVectorLike& vec, const DeviceViewable& value)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	size_t n = end - begin;
-	DVVector cpy(vec.name_elem_cls().c_str(), n);
-	TRTC_Copy(vec, cpy, begin, end);
+	DVVector cpy(vec.name_elem_cls().c_str(), vec.size());
+	TRTC_Copy(vec, cpy);
 	Functor src_scan({ {"src", &cpy}, {"value", &value} }, { "idx" },
 		"        return src[idx]!=value? (uint32_t)1:(uint32_t)0;\n");
-	return general_copy_if(n, src_scan, cpy, vec, 0, begin);
+	return general_copy_if(vec.size(), src_scan, cpy, vec);
 }
 
-uint32_t TRTC_Remove_Copy(const DVVectorLike& vec_in, DVVectorLike& vec_out, const DeviceViewable& value, size_t begin_in , size_t end_in, size_t begin_out)
+uint32_t TRTC_Remove_Copy(const DVVectorLike& vec_in, DVVectorLike& vec_out, const DeviceViewable& value)
 {
-	if (end_in == (size_t)(-1)) end_in = vec_in.size();
-	size_t n = end_in - begin_in;
-	DVSizeT dvbegin_in(begin_in);
-	Functor src_scan({ {"src", &vec_in}, {"begin_src", &dvbegin_in}, {"value", &value} }, { "idx" },
-		"        return src[idx + begin_src]!=value? (uint32_t)1:(uint32_t)0;\n");
-	return general_copy_if(n, src_scan, vec_in, vec_out, begin_in, begin_out);
+	Functor src_scan({ {"src", &vec_in}, {"value", &value} }, { "idx" },
+		"        return src[idx]!=value? (uint32_t)1:(uint32_t)0;\n");
+	return general_copy_if(vec_in.size(), src_scan, vec_in, vec_out);
 }
 
-uint32_t TRTC_Remove_If(DVVectorLike& vec, const Functor& pred, size_t begin, size_t end)
+uint32_t TRTC_Remove_If(DVVectorLike& vec, const Functor& pred)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	size_t n = end - begin;
-	DVVector cpy(vec.name_elem_cls().c_str(), n);
-	TRTC_Copy(vec, cpy, begin, end);
+	DVVector cpy(vec.name_elem_cls().c_str(), vec.size());
+	TRTC_Copy(vec, cpy);
 	Functor src_scan({ {"src", &cpy}, {"pred", &pred} }, { "idx" },
 		"        return !pred(src[idx])? (uint32_t)1:(uint32_t)0;\n");
-	return general_copy_if(n, src_scan, cpy, vec, 0, begin);
+	return general_copy_if(vec.size(), src_scan, cpy, vec);
 }
 
-uint32_t TRTC_Remove_Copy_If(const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_out)
+uint32_t TRTC_Remove_Copy_If(const DVVectorLike& vec_in, DVVectorLike& vec_out, const Functor& pred)
 {
-	if (end_in == (size_t)(-1)) end_in = vec_in.size();
-	size_t n = end_in - begin_in;
-	DVSizeT dvbegin_in(begin_in);
-	Functor src_scan({ {"src", &vec_in}, {"begin_src", &dvbegin_in}, {"pred", &pred} }, { "idx" },
-		"        return !pred(src[idx + begin_src])? (uint32_t)1:(uint32_t)0;\n");
-	return general_copy_if(n, src_scan, vec_in, vec_out, begin_in, begin_out);
+	Functor src_scan({ {"src", &vec_in}, {"pred", &pred} }, { "idx" },
+		"        return !pred(src[idx])? (uint32_t)1:(uint32_t)0;\n");
+	return general_copy_if(vec_in.size(), src_scan, vec_in, vec_out);
 }
 
-uint32_t TRTC_Remove_If_Stencil(DVVectorLike& vec, const DVVectorLike& stencil, const Functor& pred, size_t begin, size_t end, size_t begin_stencil)
+uint32_t TRTC_Remove_If_Stencil(DVVectorLike& vec, const DVVectorLike& stencil, const Functor& pred)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	size_t n = end - begin;
-	DVVector cpy(vec.name_elem_cls().c_str(), n);
-	TRTC_Copy(vec, cpy, begin, end);
-	DVSizeT dvbegin_stencil(begin_stencil);
-	Functor src_scan({ {"src", &stencil},  {"begin_src", &dvbegin_stencil}, {"pred", &pred} }, { "idx" },
-		"        return !pred(src[idx + begin_src])? (uint32_t)1:(uint32_t)0;\n");
-	return general_copy_if(n, src_scan, cpy, vec, 0, begin);
+	DVVector cpy(vec.name_elem_cls().c_str(), vec.size());
+	TRTC_Copy(vec, cpy);
+	Functor src_scan({ {"src", &stencil}, {"pred", &pred} }, { "idx" },
+		"        return !pred(src[idx])? (uint32_t)1:(uint32_t)0;\n");
+	return general_copy_if(vec.size(), src_scan, cpy, vec);
 }
 
-uint32_t TRTC_Remove_Copy_If_Stencil(const DVVectorLike& vec_in, const DVVectorLike& stencil, DVVectorLike& vec_out, const Functor& pred, size_t begin_in, size_t end_in, size_t begin_stencil, size_t begin_out)
+uint32_t TRTC_Remove_Copy_If_Stencil(const DVVectorLike& vec_in, const DVVectorLike& stencil, DVVectorLike& vec_out, const Functor& pred)
 {
-	if (end_in == (size_t)(-1)) end_in = vec_in.size();
-	size_t n = end_in - begin_in;
-	DVSizeT dvbegin_stencil(begin_stencil);
-	Functor src_scan({ {"src", &stencil}, {"begin_src", &dvbegin_stencil}, {"pred", &pred} }, { "idx" },
-		"        return !pred(src[idx + begin_src])? (uint32_t)1:(uint32_t)0;\n");
-	return general_copy_if(n, src_scan, vec_in, vec_out, begin_in, begin_out);
+	Functor src_scan({ {"src", &stencil}, {"pred", &pred} }, { "idx" },
+		"        return !pred(src[idx])? (uint32_t)1:(uint32_t)0;\n");
+	return general_copy_if(vec_in.size(), src_scan, vec_in, vec_out);
 }

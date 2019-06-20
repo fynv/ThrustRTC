@@ -4,8 +4,6 @@
 
 int main()
 {
-	
-
 	TRTC_For f({ "arr_in", "arr_out", "k" }, "idx",
 		"    arr_out[idx] = arr_in[idx]*k;\n");
 

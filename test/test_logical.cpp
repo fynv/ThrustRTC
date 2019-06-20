@@ -12,29 +12,29 @@ int main()
 
 	bool res;
 
-	TRTC_All_Of(d_A, identity, res, 0, 2);
+	TRTC_All_Of(DVVectorAdaptor(d_A, 0, 2), identity, res);
 	printf("%d\n", res);
-	TRTC_All_Of(d_A, identity, res, 0, 3);
+	TRTC_All_Of(DVVectorAdaptor(d_A, 0, 3), identity, res);
 	printf("%d\n", res);
-	TRTC_All_Of(d_A, identity, res, 0, 0);
-	printf("%d\n", res);
-
-	TRTC_Any_Of(d_A, identity, res, 0, 2);
-	printf("%d\n", res);
-	TRTC_Any_Of(d_A, identity, res, 0, 3);
-	printf("%d\n", res);
-	TRTC_Any_Of(d_A, identity, res, 2, 3);
-	printf("%d\n", res);
-	TRTC_Any_Of(d_A, identity, res, 0, 0);
+	TRTC_All_Of(DVVectorAdaptor(d_A, 0, 0), identity, res);
 	printf("%d\n", res);
 
-	TRTC_None_Of(d_A, identity, res, 0, 2);
+	TRTC_Any_Of(DVVectorAdaptor(d_A, 0, 2), identity, res);
 	printf("%d\n", res);
-	TRTC_None_Of(d_A, identity, res, 0, 3);
+	TRTC_Any_Of(DVVectorAdaptor(d_A, 0, 3), identity, res);
 	printf("%d\n", res);
-	TRTC_None_Of(d_A, identity, res, 2, 3);
+	TRTC_Any_Of(DVVectorAdaptor(d_A, 2, 3), identity, res);
 	printf("%d\n", res);
-	TRTC_None_Of(d_A, identity, res, 0, 0);
+	TRTC_Any_Of(DVVectorAdaptor(d_A, 0, 0), identity, res);
+	printf("%d\n", res);
+
+	TRTC_None_Of(DVVectorAdaptor(d_A, 0, 2), identity, res);
+	printf("%d\n", res);
+	TRTC_None_Of(DVVectorAdaptor(d_A, 0, 3), identity, res);
+	printf("%d\n", res);
+	TRTC_None_Of(DVVectorAdaptor(d_A, 2, 3), identity, res);
+	printf("%d\n", res);
+	TRTC_None_Of(DVVectorAdaptor(d_A, 0, 0), identity, res);
 	printf("%d\n", res);
 
 	return 0;

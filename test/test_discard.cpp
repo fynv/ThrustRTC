@@ -5,8 +5,7 @@
 #include "transform.h"
 
 int main()
-{
-	
+{	
 	TRTC_Set_Verbose();
 
 	// just to verify that it compiles

@@ -9,6 +9,7 @@ viewbuf_to_python.hpp
 DeviceViewable.hpp
 DVVector.hpp
 DVTuple.hpp
+DVRange.hpp
 DVConstant.hpp
 DVCounter.hpp
 DVDiscard.hpp

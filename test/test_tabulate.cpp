@@ -6,7 +6,6 @@
 
 int main()
 {
-	
 	int hvalues[10];
 	DVVector vec("int32_t", 10);
 	TRTC_Sequence(vec);

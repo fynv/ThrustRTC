@@ -9,6 +9,14 @@ class DVVectorLike(DeviceViewable):
 	def size(self):
 		return native.n_dvvectorlike_size(self.m_cptr)
 
+	def range(self, begin = 0, end = -1):
+		return DVRange(self, begin, end)
+
+class DVRange(DVVectorLike):
+	def __init__(self, src, begin = 0, end = -1):
+		self.m_src = src
+		self.m_cptr = native.n_dvrange_create(src.m_cptr, begin, end)
+
 
 class DVVector(DVVectorLike):
 	def __init__(self, cptr):
@@ -141,3 +149,4 @@ class DVNumbaVector(DVVectorLike):
 		size = nbarr.size
 		ptr_device_data = nbarr.device_ctypes_pointer.value
 		self.m_cptr = native.n_dvvectoradaptor_create(elem_cls, size, ptr_device_data)
+

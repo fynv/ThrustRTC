@@ -5,8 +5,6 @@
 
 int main()
 {
-	
-
 	Functor is_less_than_zero = { {}, { "x" }, "        return x<0;\n" };
 	
 	// replace

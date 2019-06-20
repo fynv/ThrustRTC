@@ -4,8 +4,7 @@
 #include "transform.h"
 
 int main()
-{
-	
+{	
 	Functor is_odd = { {},{ "x" }, "        return x % 2;\n" };
 
 	{

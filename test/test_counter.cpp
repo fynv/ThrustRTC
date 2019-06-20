@@ -6,8 +6,6 @@
 
 int main()
 {
-	
-
 	int hvalues[10];
 	DVVector vec("int32_t", 10);
 	TRTC_Transform(DVCounter(DVInt32(5), 10), vec, Functor("Negate"));	

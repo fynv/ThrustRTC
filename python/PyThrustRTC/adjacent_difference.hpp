@@ -12,20 +12,17 @@ static PyObject* n_adjacent_difference(PyObject* self, PyObject* args)
 	{
 		binary_op = (Functor*)PyLong_AsVoidPtr(py_binary_op);
 	}
-	size_t begin_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
-	size_t end_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
-	size_t begin_out = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
 
 	if (binary_op == nullptr)
 	{
-		if (TRTC_Adjacent_Difference(*vec_in, *vec_out, begin_in, end_in, begin_out))
+		if (TRTC_Adjacent_Difference(*vec_in, *vec_out))
 			return PyLong_FromLong(0);
 		else
 			Py_RETURN_NONE;
 	}
 	else
 	{
-		if (TRTC_Adjacent_Difference(*vec_in, *vec_out, *binary_op, begin_in, end_in, begin_out))
+		if (TRTC_Adjacent_Difference(*vec_in, *vec_out, *binary_op))
 			return PyLong_FromLong(0);
 		else
 			Py_RETURN_NONE;

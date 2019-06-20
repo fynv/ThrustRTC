@@ -26,6 +26,7 @@ internal/radix_sort.cpp
 TRTCContext.cpp
 DVVector.cpp
 DVTuple.cpp
+fake_vectors/DVRange.cpp
 fake_vectors/DVConstant.cpp
 fake_vectors/DVCounter.cpp
 fake_vectors/DVDiscard.cpp
@@ -105,6 +106,7 @@ sort.h
 )
 
 set(LIB_HEADERS_FAKEVECTORS
+fake_vectors/DVRange.h
 fake_vectors/DVConstant.h
 fake_vectors/DVCounter.h
 fake_vectors/DVDiscard.h
@@ -190,6 +192,5 @@ install(TARGETS ThrustRTC
 else()
 install(TARGETS ThrustRTC DESTINATION lib)
 endif()
-
 add_subdirectory(test)
 add_subdirectory(python)

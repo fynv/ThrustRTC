@@ -7,8 +7,8 @@
 #include "DVVector.h"
 #include "functor.h"
 
-bool THRUST_RTC_API TRTC_All_Of(const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_Any_Of(const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_None_Of(const DVVectorLike& vec, const Functor& pred, bool& ret, size_t begin = 0, size_t end = (size_t)(-1));
+bool THRUST_RTC_API TRTC_All_Of(const DVVectorLike& vec, const Functor& pred, bool& ret);
+bool THRUST_RTC_API TRTC_Any_Of(const DVVectorLike& vec, const Functor& pred, bool& ret);
+bool THRUST_RTC_API TRTC_None_Of(const DVVectorLike& vec, const Functor& pred, bool& ret);
 
 #endif

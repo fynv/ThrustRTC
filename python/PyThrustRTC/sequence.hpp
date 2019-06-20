@@ -13,26 +13,24 @@ static PyObject* n_sequence(PyObject* self, PyObject* args)
 	DeviceViewable* value_step = nullptr;
 	if (py_value_step != Py_None)
 		value_step = (DeviceViewable*)PyLong_AsVoidPtr(py_value_step);
-	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
-	size_t end = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
 
 	if (value_init == nullptr)
 	{
-		if (TRTC_Sequence(*vec, begin, end))
+		if (TRTC_Sequence(*vec))
 			return PyLong_FromLong(0);
 		else
 			Py_RETURN_NONE;
 	}
 	else if (value_step == nullptr)
 	{
-		if (TRTC_Sequence(*vec, *value_init, begin, end))
+		if (TRTC_Sequence(*vec, *value_init))
 			return PyLong_FromLong(0);
 		else
 			Py_RETURN_NONE;
 	}
 	else
 	{
-		if (TRTC_Sequence(*vec, *value_init, *value_step, begin, end))
+		if (TRTC_Sequence(*vec, *value_init, *value_step))
 			return PyLong_FromLong(0);
 		else
 			Py_RETURN_NONE;

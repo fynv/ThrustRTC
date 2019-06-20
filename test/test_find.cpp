@@ -4,8 +4,7 @@
 #include "find.h"
 
 int main()
-{
-	
+{	
 	{
 		int h_values[4] = { 0, 5, 3, 7 };
 		DVVector d_values("int32_t", 4, h_values);

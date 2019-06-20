@@ -1,12 +1,11 @@
 #include "cuda_wrapper.h"
 #include "binary_search.h"
 
-bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, const Functor& comp, size_t& result, size_t begin, size_t end)
+bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, const Functor& comp, size_t& result)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	if (end <= begin)
+	if (vec.size()<=0)
 	{
-		result = begin;
+		result = 0;
 		return true;
 	}
 
@@ -32,16 +31,16 @@ bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 	DVVector dv_range_out("size_t", 2);
 	int numBlocks;
 	{
-		DVSizeT _dv_num_grps(end - begin);
-		DVSizeT _dv_begin(begin);
+		DVSizeT _dv_num_grps(vec.size());
+		DVSizeT _dv_begin(0);
 		DVSizeT _dv_size_grp(1);
 		DVSizeT _dv_div_id((size_t)(-1));
 		const DeviceViewable* _args[] = { &_dv_num_grps, &vec, &_dv_begin, &value, &comp, &dv_range_out, &_dv_size_grp, &_dv_div_id };
 		s_kernel.calc_number_blocks(_args, 128, numBlocks);
 	}
 
-	size_t s_begin = begin;
-	size_t s_end = end;
+	size_t s_begin = 0;
+	size_t s_end = vec.size();
 
 	do
 	{
@@ -57,7 +56,7 @@ bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 		else
 		{
 			num_grps = n;
-			numBlocks = (num_grps + 127) / 128;
+			numBlocks = (int)((num_grps + 127) / 128);
 		}
 
 		DVSizeT dv_num_grps(num_grps);
@@ -65,8 +64,8 @@ bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 		DVSizeT dv_size_grp(size_grp);
 		DVSizeT dv_div_id(div_id);
 
-		h_range_out[0] = end;
-		h_range_out[1] = begin;
+		h_range_out[0] = vec.size();
+		h_range_out[1] = 0;
 		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2);
 
 		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &value, &comp, &dv_range_out, &dv_size_grp, &dv_div_id };
@@ -81,17 +80,16 @@ bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 	return true;
 }
 
-bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, size_t& result, size_t begin, size_t end)
+bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, size_t& result)
 {
-	return TRTC_Lower_Bound(vec, value, Functor("Less"), result, begin, end);
+	return TRTC_Lower_Bound(vec, value, Functor("Less"), result);
 }
 
-bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, const Functor& comp, size_t& result, size_t begin, size_t end)
+bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, const Functor& comp, size_t& result)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	if (end <= begin)
+	if (vec.size() <= 0)
 	{
-		result = end;
+		result = 0;
 		return true;
 	}
 
@@ -117,16 +115,16 @@ bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 	DVVector dv_range_out("size_t", 2);
 	int numBlocks;
 	{
-		DVSizeT _dv_num_grps(end - begin);
-		DVSizeT _dv_begin(begin);
+		DVSizeT _dv_num_grps(vec.size());
+		DVSizeT _dv_begin(0);
 		DVSizeT _dv_size_grp(1);
 		DVSizeT _dv_div_id((size_t)(-1));
 		const DeviceViewable* _args[] = { &_dv_num_grps, &vec, &_dv_begin, &value, &comp, &dv_range_out, &_dv_size_grp, &_dv_div_id };
 		s_kernel.calc_number_blocks(_args, 128, numBlocks);
 	}
 
-	size_t s_begin = begin;
-	size_t s_end = end;
+	size_t s_begin = 0;
+	size_t s_end = vec.size();
 	
 	do
 	{
@@ -142,7 +140,7 @@ bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 		else
 		{
 			num_grps = n;
-			numBlocks = (num_grps + 127) / 128;
+			numBlocks = (int)((num_grps + 127) / 128);
 		}
 
 		DVSizeT dv_num_grps(num_grps);
@@ -150,8 +148,8 @@ bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 		DVSizeT dv_size_grp(size_grp);
 		DVSizeT dv_div_id(div_id);
 
-		h_range_out[0] = end;
-		h_range_out[1] = begin;
+		h_range_out[0] = vec.size();
+		h_range_out[1] = 0;
 		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2);
 
 		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &value, &comp, &dv_range_out, &dv_size_grp, &dv_div_id };
@@ -166,18 +164,17 @@ bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 	return true;
 }
 
-bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, size_t& result, size_t begin, size_t end)
+bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, size_t& result)
 {
-	return TRTC_Upper_Bound(vec, value, Functor("Less"), result, begin, end);
+	return TRTC_Upper_Bound(vec, value, Functor("Less"), result);
 }
 
 
-bool TRTC_Binary_Search(const DVVectorLike& vec, const DeviceViewable& value, const Functor& comp, bool& result, size_t begin, size_t end)
+bool TRTC_Binary_Search(const DVVectorLike& vec, const DeviceViewable& value, const Functor& comp, bool& result)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	if (end <= begin)
+	if (vec.size() <= 0)
 	{
-		result = false;
+		result = 0;
 		return true;
 	}
 
@@ -208,15 +205,15 @@ bool TRTC_Binary_Search(const DVVectorLike& vec, const DeviceViewable& value, co
 	DVVector dv_range_out("size_t", 3);
 	int numBlocks;
 	{
-		DVSizeT _dv_num_grps(end - begin);
-		DVSizeT _dv_begin(begin);
+		DVSizeT _dv_num_grps(vec.size());
+		DVSizeT _dv_begin(0);
 		DVSizeT _dv_size_grp(1);
 		DVSizeT _dv_div_id((size_t)(-1));
 		const DeviceViewable* _args[] = { &_dv_num_grps, &vec, &_dv_begin, &value, &comp, &dv_range_out, &_dv_size_grp, &_dv_div_id };
 		s_kernel.calc_number_blocks(_args, 128, numBlocks);
 	}
-	size_t s_begin = begin;
-	size_t s_end = end;
+	size_t s_begin = 0;
+	size_t s_end = vec.size();
 
 	do
 	{
@@ -232,7 +229,7 @@ bool TRTC_Binary_Search(const DVVectorLike& vec, const DeviceViewable& value, co
 		else
 		{
 			num_grps = n;
-			numBlocks = (num_grps + 127) / 128;
+			numBlocks = (int)((num_grps + 127) / 128);
 		}
 
 		DVSizeT dv_num_grps(num_grps);
@@ -259,80 +256,55 @@ bool TRTC_Binary_Search(const DVVectorLike& vec, const DeviceViewable& value, co
 
 }
 
-bool TRTC_Binary_Search(const DVVectorLike& vec, const DeviceViewable& value, bool& result, size_t begin, size_t end)
+bool TRTC_Binary_Search(const DVVectorLike& vec, const DeviceViewable& value, bool& result)
 {
-	return TRTC_Binary_Search(vec, value, Functor("Less"), result, begin, end);
+	return TRTC_Binary_Search(vec, value, Functor("Less"), result);
 }
 
-bool TRTC_Lower_Bound_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+bool TRTC_Lower_Bound_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	if (end_values == (size_t)(-1)) end_values = values.size();
-
-	static TRTC_For s_for({ "vec", "values", "result", "begin", "end", "begin_values", "begin_result", "comp" }, "idx",
-		"    auto value = values[idx + begin_values];\n"
-		"    result[idx + begin_result] =  (decltype(result)::value_t) d_lower_bound(vec, value, comp, begin, end);\n"
+	static TRTC_For s_for({ "vec", "values", "result", "comp" }, "idx",
+		"    auto value = values[idx];\n"
+		"    result[idx] =  (decltype(result)::value_t) d_lower_bound(vec, value, comp);\n"
 	);
 
-	DVSizeT dvbegin(begin);
-	DVSizeT dvend(end);
-	DVSizeT dvbegin_values(begin_values);
-	DVSizeT dvbegin_result(begin_result);
-
-	const DeviceViewable* args[] = { &vec, &values, &result, &dvbegin, &dvend, &dvbegin_values, &dvbegin_result, &comp };
-	return s_for.launch_n(end_values-begin_values, args);
+	const DeviceViewable* args[] = { &vec, &values, &result, &comp };
+	return s_for.launch_n(values.size(), args);
 }
 
-bool TRTC_Lower_Bound_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+bool TRTC_Lower_Bound_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result)
 {
-	return TRTC_Lower_Bound_V(vec, values, result, Functor("Less"), begin, end, begin_values, end_values, begin_result);
+	return TRTC_Lower_Bound_V(vec, values, result, Functor("Less"));
 }
 
-bool TRTC_Upper_Bound_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+bool TRTC_Upper_Bound_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	if (end_values == (size_t)(-1)) end_values = values.size();
-
-	static TRTC_For s_for({ "vec", "values", "result", "begin", "end", "begin_values", "begin_result", "comp" }, "idx",
-		"    auto value = values[idx + begin_values];\n"
-		"    result[idx + begin_result] =  (decltype(result)::value_t) d_upper_bound(vec, value, comp, begin, end);\n"
+	static TRTC_For s_for({ "vec", "values", "result", "comp" }, "idx",
+		"    auto value = values[idx];\n"
+		"    result[idx] =  (decltype(result)::value_t) d_upper_bound(vec, value, comp);\n"
 	);
 
-	DVSizeT dvbegin(begin);
-	DVSizeT dvend(end);
-	DVSizeT dvbegin_values(begin_values);
-	DVSizeT dvbegin_result(begin_result);
-
-	const DeviceViewable* args[] = { &vec, &values, &result, &dvbegin, &dvend, &dvbegin_values, &dvbegin_result, &comp };
-	return s_for.launch_n(end_values - begin_values, args);
+	const DeviceViewable* args[] = { &vec, &values, &result, &comp };
+	return s_for.launch_n(values.size(), args);
 }
 
-bool TRTC_Upper_Bound_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+bool TRTC_Upper_Bound_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result)
 {
-	return TRTC_Upper_Bound_V(vec, values, result, Functor("Less"), begin, end, begin_values, end_values, begin_result);
+	return TRTC_Upper_Bound_V(vec, values, result, Functor("Less"));
 }
 
-
-bool TRTC_Binary_Search_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+bool TRTC_Binary_Search_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, const Functor& comp)
 {
-	if (end == (size_t)(-1)) end = vec.size();
-	if (end_values == (size_t)(-1)) end_values = values.size();
-
-	static TRTC_For s_for({ "vec", "values", "result", "begin", "end", "begin_values", "begin_result", "comp" }, "idx",
-		"    auto value = values[idx + begin_values];\n"
-		"    result[idx + begin_result] =  (decltype(result)::value_t) d_binary_search(vec, value, comp, begin, end);\n"
+	static TRTC_For s_for({ "vec", "values", "result", "comp" }, "idx",
+		"    auto value = values[idx ];\n"
+		"    result[idx] =  (decltype(result)::value_t) d_binary_search(vec, value, comp);\n"
 	);
 
-	DVSizeT dvbegin(begin);
-	DVSizeT dvend(end);
-	DVSizeT dvbegin_values(begin_values);
-	DVSizeT dvbegin_result(begin_result);
-
-	const DeviceViewable* args[] = { &vec, &values, &result, &dvbegin, &dvend, &dvbegin_values, &dvbegin_result, &comp };
-	return s_for.launch_n(end_values - begin_values, args);
+	const DeviceViewable* args[] = { &vec, &values, &result, &comp };
+	return s_for.launch_n(values.size(), args);
 }
 
-bool TRTC_Binary_Search_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result, size_t begin, size_t end, size_t begin_values, size_t end_values, size_t begin_result)
+bool TRTC_Binary_Search_V(const DVVectorLike& vec, const DVVectorLike& values, DVVectorLike& result)
 {
-	return TRTC_Binary_Search_V(vec, values, result, Functor("Less"), begin, end, begin_values, end_values, begin_result);
+	return TRTC_Binary_Search_V(vec, values, result, Functor("Less"));
 }

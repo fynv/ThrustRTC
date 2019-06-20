@@ -7,12 +7,12 @@
 #include "DVVector.h"
 #include "functor.h"
 
-bool THRUST_RTC_API TRTC_Min_Element(const DVVectorLike& vec, size_t& id_min, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_Min_Element(const DVVectorLike& vec, const Functor& comp, size_t& id_min, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_Max_Element(const DVVectorLike& vec, size_t& id_max, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_Max_Element(const DVVectorLike& vec, const Functor& comp, size_t& id_max, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_MinMax_Element(const DVVectorLike& vec, size_t& id_min, size_t& id_max, size_t begin = 0, size_t end = (size_t)(-1));
-bool THRUST_RTC_API TRTC_MinMax_Element(const DVVectorLike& vec, const Functor& comp, size_t& id_min, size_t& id_max, size_t begin = 0, size_t end = (size_t)(-1));
+bool THRUST_RTC_API TRTC_Min_Element(const DVVectorLike& vec, size_t& id_min);
+bool THRUST_RTC_API TRTC_Min_Element(const DVVectorLike& vec, const Functor& comp, size_t& id_min);
+bool THRUST_RTC_API TRTC_Max_Element(const DVVectorLike& vec, size_t& id_max);
+bool THRUST_RTC_API TRTC_Max_Element(const DVVectorLike& vec, const Functor& comp, size_t& id_max);
+bool THRUST_RTC_API TRTC_MinMax_Element(const DVVectorLike& vec, size_t& id_min, size_t& id_max);
+bool THRUST_RTC_API TRTC_MinMax_Element(const DVVectorLike& vec, const Functor& comp, size_t& id_min, size_t& id_max);
 
 
 #endif

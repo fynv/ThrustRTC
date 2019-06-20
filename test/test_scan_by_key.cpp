@@ -4,8 +4,7 @@
 #include "scan.h"
 
 int main()
-{
-	
+{	
 	{
 		int h_keys[1000];
 		int h_values[1000];

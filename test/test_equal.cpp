@@ -5,8 +5,6 @@
 
 int main()
 {
-	
-
 	int harr1[7] = { 3, 1, 4, 1, 5, 9, 3 };
 	int harr2[7] = { 3, 1, 4, 2, 8, 5, 7 };
 	DVVector darr1("int32_t", 6, harr1);

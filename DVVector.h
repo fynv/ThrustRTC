@@ -45,7 +45,13 @@ private:
 class THRUST_RTC_API DVVectorAdaptor : public DVVectorLike
 {
 public:
+	void* data() const { return m_data; }
+
 	DVVectorAdaptor(const char* elem_cls, size_t size, void* ddata);
+
+	DVVectorAdaptor(const DVVector& vec, size_t begin = 0, size_t end = (size_t)(-1));
+	DVVectorAdaptor(const DVVectorAdaptor& vec, size_t begin = 0, size_t end = (size_t)(-1));
+
 	virtual bool is_writable() const { return true; }
 
 	virtual std::string name_view_cls() const;

@@ -7,6 +7,6 @@
 #include "DVVector.h"
 #include "functor.h"
 
-bool general_scan(size_t n, const Functor& src, DVVectorLike& vec_out, const Functor& binary_op, size_t begin_out);
+bool general_scan(size_t n, const Functor& src, DVVectorLike& vec_out, const Functor& binary_op);
 
 #endif

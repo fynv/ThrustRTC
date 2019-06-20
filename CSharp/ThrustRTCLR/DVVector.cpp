@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ThrustRTCLR.h"
 #include "DVVector.h"
+#include "fake_vectors/DVRange.h"
 
 namespace ThrustRTCLR
 {
@@ -33,5 +34,20 @@ namespace ThrustRTCLR
 	{
 		DVVector* dvvec = just_cast_it<DVVector>(p_dvvec);
 		dvvec->to_host((void*)p_hdata, begin, end);
+	}
+
+	IntPtr Native::dvrange_create(IntPtr p_vec_value, size_t begin, size_t end)
+	{
+		DVVectorLike* vec_value = just_cast_it<DVVectorLike>(p_vec_value);
+		
+		DVVector* p_vec = dynamic_cast<DVVector*>(vec_value);
+		if (p_vec)
+			return (IntPtr)(new DVVectorAdaptor(*p_vec, begin, end));
+		
+		DVVectorAdaptor* p_vec_adpt = dynamic_cast<DVVectorAdaptor*>(vec_value);
+		if (p_vec_adpt)
+			return (IntPtr)(new DVVectorAdaptor(*p_vec_adpt, begin, end));
+
+		return (IntPtr)(new DVRange(*vec_value, begin, end));
 	}
 }

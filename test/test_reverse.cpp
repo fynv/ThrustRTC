@@ -6,8 +6,6 @@
 
 int main()
 {
-	
-
 	int hinput[4] = { 3, 7, 2, 5 };
 	DVVector dinput("int32_t", 4, hinput);
 

@@ -8,7 +8,7 @@
 #include "functor.h"
 
 
-bool general_find(size_t begin, size_t end, const Functor src, size_t& result);
+bool general_find(size_t n, const Functor src, size_t& result);
 
 
 #endif

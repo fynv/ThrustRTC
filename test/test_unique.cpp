@@ -5,8 +5,7 @@
 
 
 int main()
-{
-	
+{	
 	{
 		int h_value[7] = { 1, 3, 3, 3, 2, 2, 1 };
 		DVVector d_value("int32_t", 7, h_value);

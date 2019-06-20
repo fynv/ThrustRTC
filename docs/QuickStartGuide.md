@@ -172,7 +172,7 @@ A For-Loop object can be created given the following:
 
 Then it can be launched given the following:
 
-* An iteration range specified by a begin/end pair, or just "n"
+* An iteration range specified by a *begin/end* pair, or just *n*
 * Device Viewable Objects as arguments
 
 Example using For-Loop objects:
@@ -389,6 +389,17 @@ passing in pointer of device memory instead of host memory to initialize the obj
 The device memory should not be freed while the DVVectorAdaptor object is still being
 used.
 
+Alternatively, user can create a DVVectorAdaptor object using an existing DVVector or 
+DVVectorAdaptor object and a range specified by a *begin/end* pair.
+
+```cpp
+// C++
+float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
+DVVector dvalues("float", 8, hvalues);
+DVVectorAdaptor dvrange(dvvalue, 2, 5);
+// dvrange maps to { 30.0f, 40.0f, 50.0f }
+```
+
 In Python, DVVectorAdaptor is used by DVNumbaVector to adapt to Numba. A Numba DeviceNDArray
 can easily be used as a ThrustRTC recognized Vector like the following code shows:
 
@@ -404,6 +415,35 @@ darr = trtc.DVNumbaVector(nbarr)
 trtc.Inclusive_Scan(darr, darr)
 print(nbarr.copy_to_host())
 ``` 
+
+### DVRange
+
+DVRange objects can be used to map to a range of an abitary Vector object.
+
+In C++ code, its usage is very similar to the 2nd case of DVVectorAdaptor:
+
+```cpp
+// C++
+float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
+DVVector dvalues("float", 8, hvalues);
+DVRange drange(dvvalue, 2, 5);
+// drange maps to { 30.0f, 40.0f, 50.0f }
+```
+
+While the input is a "DVVector" in this case, DVVectorAdaptor is preferred, because DVRange 
+has a more general and a little more complicated underlying data-structure.
+
+In Python code, DVRange is the only object for range-mapping. In addition, every Vector object
+has a *.range()* method to simplify the creation of a DVRange.
+
+```python
+# Python
+dvalues = trtc.device_vector_from_list([10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0], 'float')
+drange = dvalues.range(2,5) # the same as "drange = trtc.DVRange(dvalues, 2, 5)"
+# drange maps to { 30.0f, 40.0f, 50.0f }
+```
+
+The existence of DVRange and DVVectorAdaptor compensates the lack of iterators in ThrustRTC.
 
 ### DVConstant
 
@@ -792,9 +832,8 @@ The following built-in Functors are available:
 Each algorithm of ThrustRTC is corresponding to one in Thrust. 
 A significant difference between ThrustRTC functions and Thrust functions is that Thrust 
 functions takes in iterators as parameters, while ThrustRTC takes in Vectors directly.
-In ThrustRTC, the working ranges can be specified separately using *begin*/*end* parameters.
-These parameters have default values *begin = 0* and *end = -1* that cover the full range
-of the Vectors.
+In ThrustRTC, DVRange and DVVectorAdaptor can be used to create a working range of
+a Vector object.
 
 ### Transformations
 

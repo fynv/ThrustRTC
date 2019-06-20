@@ -173,6 +173,29 @@ struct VectorView
 #endif
 };
 
+
+template<class _TVVALUE>
+struct RangeView
+{
+	typedef typename _TVVALUE::value_t value_t;
+	typedef typename _TVVALUE::ref_t ref_t;
+	_TVVALUE _view_vec_value;
+	size_t _begin;
+	size_t _end;
+
+#ifdef DEVICE_ONLY
+	__device__ size_t size() const
+	{
+		return _end - _begin;
+	}
+
+	__device__ ref_t operator [](size_t idx)
+	{
+		return _view_vec_value[idx + _begin];
+	}
+#endif
+};
+
 template<class _T>
 struct ConstantView
 {

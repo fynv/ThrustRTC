@@ -4,8 +4,7 @@
 #include "reduce.h"
 
 int main()
-{
-	
+{	
 	{
 		int harr[6] = { 1, 0, 2, 2, 1, 3 };
 		DVVector darr("int32_t", 6, harr);

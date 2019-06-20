@@ -5,8 +5,6 @@
 
 int main()
 {
-	
-
 	{
 		float h_vec1[3] = { 1.0f, 2.0f, 5.0f };
 		float h_vec2[3] = { 4.0f, 1.0f, 5.0f };

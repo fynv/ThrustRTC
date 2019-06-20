@@ -1,6 +1,6 @@
 #include "general_find.h"
 
-bool general_find(size_t begin, size_t end, const Functor src, size_t& result)
+bool general_find(size_t n, const Functor src, size_t& result)
 {
 	static TRTC_Kernel s_kernel(
 		{ "src", "result", "begin", "end" },
@@ -19,17 +19,17 @@ bool general_find(size_t begin, size_t end, const Functor src, size_t& result)
 	DVVector dvresult("unsigned long long", 1, &result);
 	int numBlocks;
 	{
-		DVSizeT _dvbegin(begin);
-		DVSizeT _dvend(end);
+		DVSizeT _dvbegin(0);
+		DVSizeT _dvend(n);
 		const DeviceViewable* _args[] = { &src, &dvresult, &_dvbegin, &_dvend };
 		s_kernel.calc_number_blocks(_args, 128, numBlocks);
 	}
 	unsigned trunk_size = (unsigned)numBlocks * 128;
-	unsigned trunk_begin = (unsigned)begin;
-	while (trunk_begin < end)
+	size_t trunk_begin = 0;
+	while (trunk_begin < n)
 	{
-		unsigned trunk_end = trunk_begin + trunk_size;
-		if (trunk_end > end) trunk_end = (unsigned)end;
+		size_t trunk_end = trunk_begin + trunk_size;
+		if (trunk_end > n) trunk_end = n;
 		DVSizeT dvbegin(trunk_begin);
 		DVSizeT dvend(trunk_end);
 		const DeviceViewable* args[] = { &src, &dvresult, &dvbegin, &dvend };

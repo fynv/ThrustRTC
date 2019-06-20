@@ -17,6 +17,21 @@ namespace ThrustRTCSharp
         {
             return (long)Native.dvvectorlike_size(m_cptr);
         }
+
+        public DVRange range(long begin = 0, long end = -1)
+        {
+            return new DVRange(this, begin, end);
+        }
+    }
+
+    public class DVRange : DVVectorLike
+    {
+        public DVRange(DVVectorLike src, long begin = 0, long end = -1) : 
+            base(Native.dvrange_create(src.m_cptr, (ulong)begin, (ulong)end))
+        {
+            m_vec_src = src;
+        }
+        private readonly DVVectorLike m_vec_src;
     }
 
     public class DVVector : DVVectorLike
@@ -149,7 +164,6 @@ namespace ThrustRTCSharp
             }
             return null;
         }
-
 
     }
 }

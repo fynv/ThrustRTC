@@ -15,24 +15,22 @@ static PyObject* n_reduce(PyObject* self, PyObject* args)
 	if (py_binary_op != Py_None)
 		binary_op = (Functor*)PyLong_AsVoidPtr(py_binary_op);
 
-	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
-	size_t end = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
 	ViewBuf ret;
 	if (init == nullptr)
 	{
-		if (TRTC_Reduce(*vec, ret, begin, end))
+		if (TRTC_Reduce(*vec, ret))
 			return PyValue_FromViewBuf(ret, vec->name_elem_cls().c_str());
 		Py_RETURN_NONE;
 	}
 	else if (binary_op == nullptr)
 	{
-		if (TRTC_Reduce(*vec, *init, ret, begin, end))
+		if (TRTC_Reduce(*vec, *init, ret))
 			return PyValue_FromViewBuf(ret, vec->name_elem_cls().c_str());
 		Py_RETURN_NONE;
 	}
 	else
 	{
-		if (TRTC_Reduce(*vec, *init, *binary_op, ret, begin, end))
+		if (TRTC_Reduce(*vec, *init, *binary_op, ret))
 			return PyValue_FromViewBuf(ret, vec->name_elem_cls().c_str());
 		Py_RETURN_NONE;
 	}
@@ -52,15 +50,10 @@ static PyObject* n_reduce_by_key(PyObject* self, PyObject* args)
 	Functor* binary_op = nullptr;
 	if (py_binary_op != Py_None)
 		binary_op = (Functor*)PyLong_AsVoidPtr(py_binary_op);
-	size_t begin_key_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 6));
-	size_t end_key_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 7));
-	size_t begin_value_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 8));
-	size_t begin_key_out = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 9));
-	size_t begin_value_out = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 10));
 
 	if (binary_pred == nullptr)
 	{
-		uint32_t res = TRTC_Reduce_By_Key(*key_in, *value_in, *key_out, *value_out, begin_key_in, end_key_in, begin_value_in, begin_key_out, begin_value_out);
+		uint32_t res = TRTC_Reduce_By_Key(*key_in, *value_in, *key_out, *value_out);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -68,7 +61,7 @@ static PyObject* n_reduce_by_key(PyObject* self, PyObject* args)
 	}
 	else if (binary_op == nullptr)
 	{
-		uint32_t res = TRTC_Reduce_By_Key(*key_in, *value_in, *key_out, *value_out, *binary_pred, begin_key_in, end_key_in, begin_value_in, begin_key_out, begin_value_out);
+		uint32_t res = TRTC_Reduce_By_Key(*key_in, *value_in, *key_out, *value_out, *binary_pred);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -76,7 +69,7 @@ static PyObject* n_reduce_by_key(PyObject* self, PyObject* args)
 	}
 	else
 	{
-		uint32_t res = TRTC_Reduce_By_Key(*key_in, *value_in, *key_out, *value_out, *binary_pred, *binary_op, begin_key_in, end_key_in, begin_value_in, begin_key_out, begin_value_out);
+		uint32_t res = TRTC_Reduce_By_Key(*key_in, *value_in, *key_out, *value_out, *binary_pred, *binary_op);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else

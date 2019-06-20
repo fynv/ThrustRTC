@@ -3,18 +3,15 @@
 #include "unique.h"
 
 static PyObject* n_unique(PyObject* self, PyObject* args)
-{
-	
+{	
 	DVVectorLike* vec = (DVVectorLike*)PyLong_AsVoidPtr(PyTuple_GetItem(args, 0));
 	Functor* binary_pred = nullptr;
 	PyObject* py_binary_pred = PyTuple_GetItem(args, 1);
 	if (py_binary_pred!= Py_None)
 		binary_pred=(Functor*)PyLong_AsVoidPtr(py_binary_pred);
-	size_t begin = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 2));
-	size_t end = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
 	if (binary_pred == nullptr)
 	{
-		uint32_t res = TRTC_Unique(*vec, begin, end);
+		uint32_t res = TRTC_Unique(*vec);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -22,7 +19,7 @@ static PyObject* n_unique(PyObject* self, PyObject* args)
 	}
 	else
 	{
-		uint32_t res = TRTC_Unique(*vec, *binary_pred, begin, end);
+		uint32_t res = TRTC_Unique(*vec, *binary_pred);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -39,12 +36,9 @@ static PyObject* n_unique_copy(PyObject* self, PyObject* args)
 	PyObject* py_binary_pred = PyTuple_GetItem(args, 2);
 	if (py_binary_pred != Py_None)
 		binary_pred = (Functor*)PyLong_AsVoidPtr(py_binary_pred);
-	size_t begin_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
-	size_t end_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
-	size_t begin_out = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
 	if (binary_pred == nullptr)
 	{
-		uint32_t res = TRTC_Unique_Copy(*vec_in, *vec_out, begin_in, end_in, begin_out);
+		uint32_t res = TRTC_Unique_Copy(*vec_in, *vec_out);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -52,7 +46,7 @@ static PyObject* n_unique_copy(PyObject* self, PyObject* args)
 	}
 	else
 	{
-		uint32_t res = TRTC_Unique_Copy(*vec_in, *vec_out, *binary_pred, begin_in, end_in, begin_out);
+		uint32_t res = TRTC_Unique_Copy(*vec_in, *vec_out, *binary_pred);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -68,12 +62,9 @@ static PyObject* n_unique_by_key(PyObject* self, PyObject* args)
 	PyObject* py_binary_pred = PyTuple_GetItem(args, 2);
 	if (py_binary_pred != Py_None)
 		binary_pred = (Functor*)PyLong_AsVoidPtr(py_binary_pred);
-	size_t begin_key = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 3));
-	size_t end_key = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 4));
-	size_t begin_value = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
 	if (binary_pred == nullptr)
 	{
-		uint32_t res = TRTC_Unique_By_Key(*keys, *values, begin_key, end_key, begin_value);
+		uint32_t res = TRTC_Unique_By_Key(*keys, *values);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -81,7 +72,7 @@ static PyObject* n_unique_by_key(PyObject* self, PyObject* args)
 	}
 	else
 	{
-		uint32_t res = TRTC_Unique_By_Key(*keys, *values, *binary_pred, begin_key, end_key, begin_value);
+		uint32_t res = TRTC_Unique_By_Key(*keys, *values, *binary_pred);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -99,14 +90,9 @@ static PyObject* n_unique_by_key_copy(PyObject* self, PyObject* args)
 	PyObject* py_binary_pred = PyTuple_GetItem(args, 4);
 	if (py_binary_pred != Py_None)
 		binary_pred = (Functor*)PyLong_AsVoidPtr(py_binary_pred);
-	size_t begin_key_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
-	size_t end_key_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 6));
-	size_t begin_value_in = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 7));
-	size_t begin_key_out = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 8));
-	size_t begin_value_out = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 9));
 	if (binary_pred == nullptr)
 	{
-		uint32_t res = TRTC_Unique_By_Key_Copy(*keys_in, *values_in, *keys_out, *values_out, begin_key_in, end_key_in, begin_value_in, begin_key_out, begin_value_out);
+		uint32_t res = TRTC_Unique_By_Key_Copy(*keys_in, *values_in, *keys_out, *values_out);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else
@@ -114,7 +100,7 @@ static PyObject* n_unique_by_key_copy(PyObject* self, PyObject* args)
 	}
 	else
 	{
-		uint32_t res = TRTC_Unique_By_Key_Copy(*keys_in, *values_in, *keys_out, *values_out, *binary_pred, begin_key_in, end_key_in, begin_value_in, begin_key_out, begin_value_out);
+		uint32_t res = TRTC_Unique_By_Key_Copy(*keys_in, *values_in, *keys_out, *values_out, *binary_pred);
 		if (res != uint32_t(-1))
 			return PyLong_FromUnsignedLong((unsigned long)res);
 		else

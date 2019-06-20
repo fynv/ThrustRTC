@@ -8,7 +8,6 @@
 
 int main()
 {
-	
 
 	DVVector din("int32_t", 2000);
 	TRTC_Sequence(din);

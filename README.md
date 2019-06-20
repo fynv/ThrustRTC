@@ -61,7 +61,8 @@ trtc.Replace_If(A, trtc.Functor({}, ['x'], '        return x<0;\n'), trtc.DVInt3
 ```
 
 A significant difference between ThrustRTC and Thrust C++ is that ThrustRTC does not include the iterators. 
-All operations explicitly work on vectors types. Working-ranges can be specified using begin/end parameters.
+All operations explicitly work on vectors types. There are adaptive objects that can be used to map to 
+a sub-range of a vector instead of using the whole vector.
 
 ## Quick Start Guide
 

@@ -19,20 +19,16 @@ static PyObject* n_inner_product(PyObject* self, PyObject* args)
 	if (py_binary_op2 != Py_None)
 		binary_op2 = (Functor*)PyLong_AsVoidPtr(py_binary_op2);
 
-	size_t begin1 = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 5));
-	size_t end1 = (size_t)PyLong_AsLong(PyTuple_GetItem(args, 6));
-	size_t begin2= (size_t)PyLong_AsLong(PyTuple_GetItem(args, 7));
-
 	ViewBuf ret;
 	if (binary_op1==nullptr || binary_op2 == nullptr)
 	{
-		if (TRTC_Inner_Product(*vec1, *vec2, *init, ret, begin1, end1, begin2))
+		if (TRTC_Inner_Product(*vec1, *vec2, *init, ret))
 			return PyValue_FromViewBuf(ret, init->name_view_cls().c_str());
 		Py_RETURN_NONE;
 	}
 	else
 	{
-		if (TRTC_Inner_Product(*vec1, *vec2, *init, ret, *binary_op1, *binary_op2, begin1, end1, begin2))
+		if (TRTC_Inner_Product(*vec1, *vec2, *init, ret, *binary_op1, *binary_op2))
 			return PyValue_FromViewBuf(ret, init->name_view_cls().c_str());
 		Py_RETURN_NONE;
 	}
