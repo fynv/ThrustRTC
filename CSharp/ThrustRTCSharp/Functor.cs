@@ -6,7 +6,7 @@ namespace ThrustRTCSharp
 {
     public class Functor : DeviceViewable
     {
-        static IntPtr create(string[] functor_params, string code_body)
+        private static IntPtr create(string[] functor_params, string code_body)
         {
             IntPtr[] p_functor_params = new IntPtr[functor_params.Length];
             for (int i = 0; i< functor_params.Length; i++ )
@@ -17,7 +17,7 @@ namespace ThrustRTCSharp
             return Native.functor_create(new CapturedDeviceViewable_clr[0], p_functor_params, p_code_body);
         }
 
-        static IntPtr create(DeviceViewable[] objs, string[] name_objs, string[] functor_params, string code_body)
+        private static IntPtr create(DeviceViewable[] objs, string[] name_objs, string[] functor_params, string code_body)
         {
             CapturedDeviceViewable_clr[] arg_map = new CapturedDeviceViewable_clr[objs.Length];
             for (int i = 0; i < objs.Length; i++)

@@ -383,6 +383,110 @@ JNIEXPORT void JNICALL Java_JThrustRTC_Native_dvvector_1to_1host__J_3FII
 JNIEXPORT void JNICALL Java_JThrustRTC_Native_dvvector_1to_1host__J_3DII
   (JNIEnv *, jclass, jlong, jdoubleArray, jint, jint);
 
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvtuple_create
+ * Signature: ([J[Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvtuple_1create
+  (JNIEnv *, jclass, jlongArray, jobjectArray);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvconstant_create
+ * Signature: (JI)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvconstant_1create
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvcounter_create
+ * Signature: (JI)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvcounter_1create
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvdiscard_create
+ * Signature: (Ljava/lang/String;I)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvdiscard_1create
+  (JNIEnv *, jclass, jstring, jint);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvpermutation_create
+ * Signature: (JJ)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvpermutation_1create
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvreverse_create
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvreverse_1create
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvtransform_create
+ * Signature: (JLjava/lang/String;J)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvtransform_1create
+  (JNIEnv *, jclass, jlong, jstring, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvzipped_create
+ * Signature: ([J[Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvzipped_1create
+  (JNIEnv *, jclass, jlongArray, jobjectArray);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvcustomvector_create
+ * Signature: ([J[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZ)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvcustomvector_1create
+  (JNIEnv *, jclass, jlongArray, jobjectArray, jstring, jstring, jstring, jint, jboolean);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    functor_create
+ * Signature: ([Ljava/lang/String;Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_functor_1create___3Ljava_lang_String_2Ljava_lang_String_2
+  (JNIEnv *, jclass, jobjectArray, jstring);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    functor_create
+ * Signature: ([J[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_functor_1create___3J_3Ljava_lang_String_2_3Ljava_lang_String_2Ljava_lang_String_2
+  (JNIEnv *, jclass, jlongArray, jobjectArray, jobjectArray, jstring);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    built_in_functor_create
+ * Signature: (Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_built_1in_1functor_1create
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    fill
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_fill
+  (JNIEnv *, jclass, jlong, jlong);
+
 #ifdef __cplusplus
 }
 #endif

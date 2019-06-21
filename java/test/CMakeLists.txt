@@ -5,6 +5,7 @@ include(UseJava)
 set(JAVA_TESTS
 test_trtc.java
 test_for.java
+test_fill.java
 )
 
 add_jar(JThrustRTCTests SOURCES ${JAVA_TESTS} INCLUDE_JARS JThrustRTC)

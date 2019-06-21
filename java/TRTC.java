@@ -39,4 +39,10 @@ public class TRTC
     {
         Native.add_code_block(code);
     }
+
+    // Transformations
+    public static boolean Fill(DVVectorLike vec, DeviceViewable value)
+    {
+    	return Native.fill(vec.cptr(), value.cptr());
+    }
 }

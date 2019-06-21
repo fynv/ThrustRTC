@@ -62,6 +62,27 @@ class Native
 	public static native void dvvector_to_host(long p_dvvec, long[] hdata, int begin, int end);
 	public static native void dvvector_to_host(long p_dvvec, float[] hdata, int begin, int end);
 	public static native void dvvector_to_host(long p_dvvec, double[] hdata, int begin, int end);
+
+	// Tuple
+	public static native long dvtuple_create(long[] p_objs, String[] name_objs);
+
+	// Fake-Vectors
+	public static native long dvconstant_create(long p_dvobj, int size);
+	public static native long dvcounter_create(long p_dvobj_init, int size);
+	public static native long dvdiscard_create(String elem_cls, int size);
+	public static native long dvpermutation_create(long p_vec_value, long p_vec_index);
+	public static native long dvreverse_create(long p_vec_value);
+	public static native long dvtransform_create(long p_vec_in, String elem_cls, long p_op);
+	public static native long dvzipped_create(long[] p_vecs, String[] elem_names);
+	public static native long dvcustomvector_create(long[] p_objs, String[] name_objs, String name_idx, String code_body, String elem_cls, int size, boolean read_only);
+
+	// Functor
+	public static native long functor_create(String[] functor_params, String code_body);
+	public static native long functor_create(long[] p_objs, String[] name_objs, String[] functor_params, String code_body);
+	public static native long built_in_functor_create(String name_built_in_view_cls);
+
+	// Transformations
+	public static native boolean fill(long p_vec, long p_value);
 }
 
 

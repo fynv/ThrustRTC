@@ -10,6 +10,10 @@ JThrustRTC_Native.h
 Context.cpp
 DeviceViewable.cpp
 DVVector.cpp
+DVTuple.cpp
+FakeVectors.cpp
+Functor.cpp
+Transformations.cpp
 )
 
 set (INCLUDE_DIR 
@@ -63,6 +67,16 @@ DVRange.java
 DVVector.java
 Kernel.java
 For.java
+DVTuple.java
+DVConstant.java
+DVCounter.java
+DVDiscard.java
+DVPermutation.java
+DVReverse.java
+DVTransform.java
+DVZipped.java
+DVCustomVector.java
+Functor.java
 )
 
 add_jar(JThrustRTC ${JAVA})

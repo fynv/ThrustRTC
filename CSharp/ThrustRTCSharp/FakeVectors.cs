@@ -108,7 +108,7 @@ namespace ThrustRTCSharp
 
     public class DVZipped : DVVectorLike
     {
-        static IntPtr create(DVVectorLike[] vecs, string[] elem_names)
+        private static IntPtr create(DVVectorLike[] vecs, string[] elem_names)
         {
             IntPtr[] p_vecs = new IntPtr[vecs.Length];
             for (int i = 0; i < vecs.Length; i++)
@@ -138,7 +138,7 @@ namespace ThrustRTCSharp
 
     public class DVCustomVector : DVVectorLike
     {
-        static IntPtr create(DeviceViewable[] objs, string[] name_objs, string name_idx, string code_body, string elem_cls, long size, bool read_only)
+        private static IntPtr create(DeviceViewable[] objs, string[] name_objs, string name_idx, string code_body, string elem_cls, long size, bool read_only)
         {
             CapturedDeviceViewable_clr[] arg_map = new CapturedDeviceViewable_clr[objs.Length];
             for (int i = 0; i < objs.Length; i++)

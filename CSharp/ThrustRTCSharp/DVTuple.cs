@@ -6,7 +6,7 @@ namespace ThrustRTCSharp
 {
     public class DVTuple : DeviceViewable
     {
-        static IntPtr create(DeviceViewable[] objs, string[] name_objs)
+        private static IntPtr create(DeviceViewable[] objs, string[] name_objs)
         {
             CapturedDeviceViewable_clr[] arg_map = new CapturedDeviceViewable_clr[objs.Length];
             for (int i = 0; i < objs.Length; i++)
