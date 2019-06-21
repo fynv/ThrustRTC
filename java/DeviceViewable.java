@@ -1,6 +1,7 @@
 package JThrustRTC;
+import java.lang.ref.Cleaner;
 
-public class DeviceViewable
+public class DeviceViewable implements AutoCloseable
 {
 	private static class State implements Runnable 
 	{
@@ -19,6 +20,7 @@ public class DeviceViewable
     }
 
 	private final State m_state;
+    private final Cleaner.Cleanable cleanable;
 
 	public long cptr() { return m_state.m_cptr; }
 
@@ -30,7 +32,14 @@ public class DeviceViewable
 	public DeviceViewable(long _cptr)
     {
          m_state = new State(_cptr);
-         TRTC.cleaner.register(this, m_state);
+         cleanable = TRTC.cleaner.register(this, m_state);
+    }
+
+
+    @Override
+    public void close()
+    {
+        cleanable.clean();
     }
 
 } 

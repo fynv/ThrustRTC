@@ -15,5 +15,12 @@ public class DVRange extends DVVectorLike
 	    m_vec_src = src;
 	}
 
-	private final DVVectorLike m_vec_src;
+	private DVVectorLike m_vec_src;
+
+	@Override
+    public void close()
+    {
+    	m_vec_src = null;
+        super.close();
+    }
 }
