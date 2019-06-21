@@ -31,7 +31,15 @@ namespace ThrustRTCSharp
         {
             m_vec_src = src;
         }
-        private readonly DVVectorLike m_vec_src;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_vec_src = null;
+            base.Dispose(disposing);
+        }
+
+        private DVVectorLike m_vec_src;
     }
 
     public class DVVector : DVVectorLike

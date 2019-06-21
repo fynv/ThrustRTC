@@ -23,6 +23,13 @@ namespace ThrustRTCSharp
             m_objs = objs;
         }
 
-        private readonly DeviceViewable[] m_objs;
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_objs = null;
+            base.Dispose(disposing);
+        }
+
+        private DeviceViewable[] m_objs;
     }
 }

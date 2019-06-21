@@ -3,9 +3,23 @@ using ThrustRTCLR;
 
 namespace ThrustRTCSharp
 {
-    public class DeviceViewable
+    public class DeviceViewable : IDisposable
     {
+        protected bool disposed = false;
         public readonly IntPtr m_cptr;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            Native.dv_destroy(m_cptr);
+            disposed = true;
+        }
 
         public string name_view_cls()
         {
@@ -19,7 +33,7 @@ namespace ThrustRTCSharp
 
         ~DeviceViewable()
         {
-            Native.dv_destroy(m_cptr);
+            Dispose(false);
         }
 
     }

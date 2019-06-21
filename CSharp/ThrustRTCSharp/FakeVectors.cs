@@ -11,7 +11,15 @@ namespace ThrustRTCSharp
         {
             m_dvobj = dvobj;
         }
-        private readonly DeviceViewable m_dvobj;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_dvobj = null;
+            base.Dispose(disposing);
+        }
+
+        private DeviceViewable m_dvobj;
     }
 
     public class DVCounter : DVVectorLike
@@ -21,7 +29,15 @@ namespace ThrustRTCSharp
         {
             m_dvobj_init = dvobj_init;
         }
-        private readonly DeviceViewable m_dvobj_init;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_dvobj_init = null;
+            base.Dispose(disposing);
+        }
+
+        private DeviceViewable m_dvobj_init;
     }
 
     public class DVDiscard : DVVectorLike
@@ -38,8 +54,17 @@ namespace ThrustRTCSharp
             m_vec_value = vec_value;
             m_vec_index = vec_index;
         }
-        private readonly DVVectorLike m_vec_value;
-        private readonly DVVectorLike m_vec_index;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_vec_value = null;
+            m_vec_index = null;
+            base.Dispose(disposing);
+        }
+
+        private DVVectorLike m_vec_value;
+        private DVVectorLike m_vec_index;
     }
 
     public class DVReverse : DVVectorLike
@@ -49,7 +74,15 @@ namespace ThrustRTCSharp
         {
             m_vec_value = vec_value;
         }
-        private readonly DVVectorLike m_vec_value;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_vec_value = null;
+            base.Dispose(disposing);
+        }
+
+        private DVVectorLike m_vec_value;
     }
 
     public class DVTransform : DVVectorLike
@@ -60,8 +93,17 @@ namespace ThrustRTCSharp
             m_vec_in = vec_in;
             m_op = op;
         }
-        private readonly DVVectorLike m_vec_in;
-        private readonly Functor m_op;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_vec_in = null;
+            m_op = null;
+            base.Dispose(disposing);
+        }
+
+        private DVVectorLike m_vec_in;
+        private Functor m_op;
     }
 
     public class DVZipped : DVVectorLike
@@ -84,7 +126,14 @@ namespace ThrustRTCSharp
             m_vecs = vecs;
         }
 
-        private readonly DVVectorLike[] m_vecs;
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_vecs = null;
+            base.Dispose(disposing);
+        }
+
+        private DVVectorLike[] m_vecs;
     }
 
     public class DVCustomVector : DVVectorLike
@@ -110,7 +159,14 @@ namespace ThrustRTCSharp
             m_objs = objs;
         }
 
-        private readonly DeviceViewable[] m_objs;
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            m_objs = null;
+            base.Dispose(disposing);
+        }
+
+        private DeviceViewable[] m_objs;
 
     }
 }
