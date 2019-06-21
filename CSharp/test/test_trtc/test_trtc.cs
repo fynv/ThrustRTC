@@ -7,7 +7,7 @@ namespace test_trtc
     {
         static void Main(string[] args)
         {
-            Kernel ker = new Kernel(new String[]{ "arr_in", "arr_out", "k" }, 
+            Kernel ker = new Kernel(new string[]{ "arr_in", "arr_out", "k" }, 
 @"
     size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx >= arr_in.size()) return;

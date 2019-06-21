@@ -47,7 +47,7 @@ namespace ThrustRTCSharp
             m_objs = objs;
         }
 
-        public Functor(String name_built_in_view_cls)
+        public Functor(string name_built_in_view_cls)
             : base(Native.built_in_functor_create(Marshal.StringToHGlobalAnsi(name_built_in_view_cls)))
         {
             m_objs = null;
