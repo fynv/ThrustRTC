@@ -1,5 +1,5 @@
 #include "JThrustRTC_Native.h"
-#include "Functor.h"
+#include "functor.h"
 
 JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_functor_1create___3Ljava_lang_String_2Ljava_lang_String_2(JNIEnv * env, jclass, jobjectArray j_functor_params, jstring j_code_body)
 {
