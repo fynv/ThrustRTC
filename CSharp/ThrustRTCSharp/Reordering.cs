@@ -41,7 +41,7 @@ namespace ThrustRTCSharp
 
         public static long Remove_Copy_If_Stencil(DVVectorLike vec_in, DVVectorLike stencil, DVVectorLike vec_out, Functor pred)
         {
-            return (long)Native.remove_copy_if_stencil(vec_in.m_cptr, stencil.m_cptr,vec_out.m_cptr, pred.m_cptr);
+            return (long)Native.remove_copy_if_stencil(vec_in.m_cptr, stencil.m_cptr, vec_out.m_cptr, pred.m_cptr);
         }
 
         public static long Unique(DVVectorLike vec)

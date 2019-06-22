@@ -136,6 +136,67 @@ class Native
 	public static native Boolean is_partitioned(long p_vec, long p_pred);
 	public static native Boolean is_sorted(long p_vec);
 	public static native Boolean is_sorted(long p_vec, long p_comp);
+
+	// PrefixSums
+	public static native boolean inclusive_scan(long p_vec_in, long p_vec_out);
+	public static native boolean inclusive_scan(long p_vec_in, long p_vec_out, long p_binary_op);
+	public static native boolean exclusive_scan(long p_vec_in, long p_vec_out);
+	public static native boolean exclusive_scan(long p_vec_in, long p_vec_out, long p_init);
+	public static native boolean exclusive_scan(long p_vec_in, long p_vec_out, long p_init, long p_binary_op);
+	public static native boolean inclusive_scan_by_key(long p_vec_key, long p_vec_value, long p_vec_out);
+	public static native boolean inclusive_scan_by_key(long p_vec_key, long p_vec_value, long p_vec_out, long p_binary_pred);
+	public static native boolean inclusive_scan_by_key(long p_vec_key, long p_vec_value, long p_vec_out, long p_binary_pred, long p_binary_op);
+	public static native boolean exclusive_scan_by_key(long p_vec_key, long p_vec_value, long p_vec_out);
+	public static native boolean exclusive_scan_by_key(long p_vec_key, long p_vec_value, long p_vec_out, long p_init);
+	public static native boolean exclusive_scan_by_key(long p_vec_key, long p_vec_value, long p_vec_out, long p_init, long p_binary_pred);
+	public static native boolean exclusive_scan_by_key(long p_vec_key, long p_vec_value, long p_vec_out, long p_init, long p_binary_pred, long p_binary_op);
+	public static native boolean transform_inclusive_scan(long p_vec_in, long p_vec_out, long p_unary_op, long p_binary_op);
+	public static native boolean transform_exclusive_scan(long p_vec_in, long p_vec_out, long p_unary_op, long p_init, long p_binary_op);
+
+	// Reordering
+	public static native int copy_if(long p_vec_in, long p_vec_out, long p_pred);
+	public static native int copy_if_stencil(long p_vec_in, long p_vec_stencil, long p_vec_out, long p_pred);
+	public static native int remove(long p_vec, long p_value);
+	public static native int remove_copy(long p_vec_in, long p_vec_out, long p_value);
+	public static native int remove_if(long p_vec, long p_pred);
+	public static native int remove_copy_if(long p_vec_in, long p_vec_out, long p_pred);
+	public static native int remove_if_stencil(long p_vec, long p_stencil, long p_pred);
+	public static native int remove_copy_if_stencil(long p_vec_in, long p_stencil, long p_vec_out, long p_pred);
+	public static native int unique(long p_vec);
+	public static native int unique(long p_vec, long p_binary_pred);
+	public static native int unique_copy(long p_vec_in, long p_vec_out);
+	public static native int unique_copy(long p_vec_in, long p_vec_out, long p_binary_pred);
+	public static native int unique_by_key(long p_keys, long p_values);
+	public static native int unique_by_key(long p_keys, long p_values, long p_binary_pred);
+	public static native int unique_by_key_copy(long p_keys_in, long p_values_in, long p_keys_out, long p_values_out);
+	public static native int unique_by_key_copy(long p_keys_in, long p_values_in, long p_keys_out, long p_values_out, long p_binary_pred);
+	public static native int partition(long p_vec, long p_pred);
+	public static native int partition_stencil(long p_vec, long p_stencil, long p_pred);
+	public static native int partition_copy(long p_vec_in, long p_vec_true, long p_vec_false, long p_pred);
+	public static native int partition_copy_stencil(long p_vec_in, long p_stencil, long p_vec_true, long p_vec_false, long p_pred);
+
+	// Searching
+	public static native Integer find(long p_vec, long p_value);
+	public static native Integer find_if(long p_vec, long p_pred);
+	public static native Integer find_if_not(long p_vec, long p_pred);
+	public static native Integer mismatch(long p_vec1, long p_vec2);
+	public static native Integer mismatch(long p_vec1, long p_vec2, long p_pred);
+	public static native Integer lower_bound(long p_vec, long p_value);
+	public static native Integer lower_bound(long p_vec, long p_value, long p_comp);
+	public static native Integer upper_bound(long p_vec, long p_value);
+	public static native Integer upper_bound(long p_vec, long p_value, long p_comp);
+	public static native Boolean binary_search(long p_vec, long p_value);
+	public static native Boolean binary_search(long p_vec, long p_value, long p_comp);
+	public static native boolean lower_bound_v(long p_vec, long p_values, long p_result);
+	public static native boolean lower_bound_v(long p_vec, long p_values, long p_result, long p_comp);
+	public static native boolean upper_bound_v(long p_vec, long p_values, long p_result);
+	public static native boolean upper_bound_v(long p_vec, long p_values, long p_result, long p_comp);
+	public static native boolean binary_search_v(long p_vec, long p_values, long p_result);
+	public static native boolean binary_search_v(long p_vec, long p_values, long p_result, long p_comp);
+	public static native Integer partition_point(long p_vec, long p_pred);
+	public static native Integer is_sorted_until(long p_vec);
+	public static native Integer is_sorted_until(long p_vec, long p_comp);
+
 }
 
 

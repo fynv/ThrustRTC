@@ -60,32 +60,32 @@ namespace ThrustRTCSharp
             return Native.binary_search(vec.m_cptr, value.m_cptr, comp.m_cptr);
         }
 
-        public static object Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
+        public static bool Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
         {
             return Native.lower_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr);
         }
 
-        public static object Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
+        public static bool Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
         {
             return Native.lower_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr);
         }
 
-        public static object Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
+        public static bool Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
         {
             return Native.upper_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr);
         }
 
-        public static object Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
+        public static bool Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
         {
             return Native.upper_bound_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr);
         }
 
-        public static object Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
+        public static bool Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
         {
             return Native.binary_search_v(vec.m_cptr, values.m_cptr, result.m_cptr);
         }
 
-        public static object Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
+        public static bool Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
         {
             return Native.binary_search_v(vec.m_cptr, values.m_cptr, result.m_cptr, comp.m_cptr);
         }

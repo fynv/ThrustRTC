@@ -22,6 +22,16 @@ test_extrema.java
 test_inner_product.java
 test_transform_reduce.java
 test_logical.java
+test_scan.java
+test_scan_by_key.java
+test_transform_scan.java
+test_copy.java
+test_remove.java
+test_unique.java
+test_partition.java
+test_find.java
+test_mismatch.java
+test_binary_search.java
 )
 
 add_jar(JThrustRTCTests SOURCES ${JAVA_TESTS} INCLUDE_JARS JThrustRTC)

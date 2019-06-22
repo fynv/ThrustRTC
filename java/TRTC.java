@@ -179,117 +179,390 @@ public class TRTC
 	}
 
 	public static Object Reduce(DVVectorLike vec)
-    {
-        return Native.reduce(vec.cptr());
-    }
+	{
+		return Native.reduce(vec.cptr());
+	}
 
-    public static Object Reduce(DVVectorLike vec, DeviceViewable init)
-    {
-        return Native.reduce(vec.cptr(), init.cptr());
-    }
+	public static Object Reduce(DVVectorLike vec, DeviceViewable init)
+	{
+		return Native.reduce(vec.cptr(), init.cptr());
+	}
 
-    public static Object Reduce(DVVectorLike vec, DeviceViewable init, Functor binary_op)
-    {
-        return Native.reduce(vec.cptr(), init.cptr(), binary_op.cptr());
-    }
+	public static Object Reduce(DVVectorLike vec, DeviceViewable init, Functor binary_op)
+	{
+		return Native.reduce(vec.cptr(), init.cptr(), binary_op.cptr());
+	}
 
-    public static int Reduce_By_Key(DVVectorLike key_in, DVVectorLike value_in, DVVectorLike key_out, DVVectorLike value_out)
-    {
-        return Native.reduce_by_key(key_in.cptr(), value_in.cptr(), key_out.cptr(), value_out.cptr());
-    }
+	public static int Reduce_By_Key(DVVectorLike key_in, DVVectorLike value_in, DVVectorLike key_out, DVVectorLike value_out)
+	{
+		return Native.reduce_by_key(key_in.cptr(), value_in.cptr(), key_out.cptr(), value_out.cptr());
+	}
 
-    public static int Reduce_By_Key(DVVectorLike key_in, DVVectorLike value_in, DVVectorLike key_out, DVVectorLike value_out, Functor binary_pred)
-    {
-        return Native.reduce_by_key(key_in.cptr(), value_in.cptr(), key_out.cptr(), value_out.cptr(), binary_pred.cptr());
-    }
+	public static int Reduce_By_Key(DVVectorLike key_in, DVVectorLike value_in, DVVectorLike key_out, DVVectorLike value_out, Functor binary_pred)
+	{
+		return Native.reduce_by_key(key_in.cptr(), value_in.cptr(), key_out.cptr(), value_out.cptr(), binary_pred.cptr());
+	}
 
-    public static int Reduce_By_Key(DVVectorLike key_in, DVVectorLike value_in, DVVectorLike key_out, DVVectorLike value_out, Functor binary_pred, Functor binary_op)
-    {
-        return Native.reduce_by_key(key_in.cptr(), value_in.cptr(), key_out.cptr(), value_out.cptr(), binary_pred.cptr(), binary_op.cptr());
-    }
+	public static int Reduce_By_Key(DVVectorLike key_in, DVVectorLike value_in, DVVectorLike key_out, DVVectorLike value_out, Functor binary_pred, Functor binary_op)
+	{
+		return Native.reduce_by_key(key_in.cptr(), value_in.cptr(), key_out.cptr(), value_out.cptr(), binary_pred.cptr(), binary_op.cptr());
+	}
 
-    public static Boolean Equal(DVVectorLike vec1, DVVectorLike vec2)
-    {
-        return Native.equal(vec1.cptr(), vec2.cptr());
-    }
+	public static Boolean Equal(DVVectorLike vec1, DVVectorLike vec2)
+	{
+		return Native.equal(vec1.cptr(), vec2.cptr());
+	}
 
-    public static Boolean Equal(DVVectorLike vec1, DVVectorLike vec2, Functor binary_pred)
-    {
-        return Native.equal(vec1.cptr(), vec2.cptr(), binary_pred.cptr());
-    }
+	public static Boolean Equal(DVVectorLike vec1, DVVectorLike vec2, Functor binary_pred)
+	{
+		return Native.equal(vec1.cptr(), vec2.cptr(), binary_pred.cptr());
+	}
 
-    public static int Min_Element(DVVectorLike vec)
-    {
-        return Native.min_element(vec.cptr());
-    }
+	public static int Min_Element(DVVectorLike vec)
+	{
+		return Native.min_element(vec.cptr());
+	}
 
-    public static int Min_Element(DVVectorLike vec, Functor comp)
-    {
-        return Native.min_element(vec.cptr(), comp.cptr());
-    }
+	public static int Min_Element(DVVectorLike vec, Functor comp)
+	{
+		return Native.min_element(vec.cptr(), comp.cptr());
+	}
 
-    public static int Max_Element(DVVectorLike vec)
-    {
-        return Native.max_element(vec.cptr());
-    }
+	public static int Max_Element(DVVectorLike vec)
+	{
+		return Native.max_element(vec.cptr());
+	}
 
-    public static int Max_Element(DVVectorLike vec, Functor comp)
-    {
-        return Native.max_element(vec.cptr(), comp.cptr());
-    }
+	public static int Max_Element(DVVectorLike vec, Functor comp)
+	{
+		return Native.max_element(vec.cptr(), comp.cptr());
+	}
 
-    public static int[] MinMax_Element(DVVectorLike vec)
-    {
-        return Native.minmax_element(vec.cptr());
-    }
+	public static int[] MinMax_Element(DVVectorLike vec)
+	{
+		return Native.minmax_element(vec.cptr());
+	}
 
-    public static int[] MinMax_Element(DVVectorLike vec, Functor comp)
-    {
-        return Native.minmax_element(vec.cptr(), comp.cptr());
-    }
+	public static int[] MinMax_Element(DVVectorLike vec, Functor comp)
+	{
+		return Native.minmax_element(vec.cptr(), comp.cptr());
+	}
 
 	public static Object Inner_Product(DVVectorLike vec1, DVVectorLike vec2, DeviceViewable init)
 	{
-	    return Native.inner_product(vec1.cptr(), vec2.cptr(), init.cptr());
+		return Native.inner_product(vec1.cptr(), vec2.cptr(), init.cptr());
 	}
 
 	public static Object Inner_Product(DVVectorLike vec1, DVVectorLike vec2, DeviceViewable init, Functor binary_op1, Functor binary_op2)
 	{
-	    return Native.inner_product(vec1.cptr(), vec2.cptr(), init.cptr(), binary_op1.cptr(), binary_op2.cptr());
+		return Native.inner_product(vec1.cptr(), vec2.cptr(), init.cptr(), binary_op1.cptr(), binary_op2.cptr());
 	}
 
-    public static Object Transform_Reduce(DVVectorLike vec, Functor unary_op, DeviceViewable init, Functor binary_op)
+	public static Object Transform_Reduce(DVVectorLike vec, Functor unary_op, DeviceViewable init, Functor binary_op)
+	{
+		return Native.transform_reduce(vec.cptr(), unary_op.cptr(), init.cptr(), binary_op.cptr());
+	}
+
+	public static Boolean All_Of(DVVectorLike vec, Functor pred)
+	{
+		return Native.all_of(vec.cptr(), pred.cptr());
+	}
+
+	public static Boolean Any_Of(DVVectorLike vec, Functor pred)
+	{
+		return Native.any_of(vec.cptr(), pred.cptr());
+	}
+
+	public static Boolean None_Of(DVVectorLike vec, Functor pred)
+	{
+		return Native.none_of(vec.cptr(), pred.cptr());
+	}
+
+	public static Boolean Is_Partitioned(DVVectorLike vec, Functor pred)
+	{
+		return Native.is_partitioned(vec.cptr(), pred.cptr());
+	}
+
+	public static Boolean Is_Sorted(DVVectorLike vec)
+	{
+		return Native.is_sorted(vec.cptr());
+	}
+
+	public static Boolean Is_Sorted(DVVectorLike vec, Functor comp)
+	{
+		return Native.is_sorted(vec.cptr(), comp.cptr());
+	}
+
+	// PrefixSums
+	public static boolean Inclusive_Scan(DVVectorLike vec_in, DVVectorLike vec_out)
+	{
+		return Native.inclusive_scan(vec_in.cptr(), vec_out.cptr());
+	}
+
+	public static boolean Inclusive_Scan(DVVectorLike vec_in, DVVectorLike vec_out, Functor binary_op)
+	{
+		return Native.inclusive_scan(vec_in.cptr(), vec_out.cptr(), binary_op.cptr());
+	}
+
+	public static boolean Exclusive_Scan(DVVectorLike vec_in, DVVectorLike vec_out)
+	{
+		return Native.exclusive_scan(vec_in.cptr(), vec_out.cptr());
+	}
+
+	public static boolean Exclusive_Scan(DVVectorLike vec_in, DVVectorLike vec_out, DeviceViewable init)
+	{
+		return Native.exclusive_scan(vec_in.cptr(), vec_out.cptr(), init.cptr());
+	}
+
+	public static boolean Exclusive_Scan(DVVectorLike vec_in, DVVectorLike vec_out, DeviceViewable init, Functor binary_op)
+	{
+		return Native.exclusive_scan(vec_in.cptr(), vec_out.cptr(), init.cptr(), binary_op.cptr());
+	}
+
+	public static boolean Inclusive_Scan_By_Key(DVVectorLike vec_key, DVVectorLike vec_value, DVVectorLike vec_out)
+	{
+		return Native.inclusive_scan_by_key(vec_key.cptr(), vec_value.cptr(), vec_out.cptr());
+	}
+
+	public static boolean Inclusive_Scan_By_Key(DVVectorLike vec_key, DVVectorLike vec_value, DVVectorLike vec_out, Functor binary_pred)
+	{
+		return Native.inclusive_scan_by_key(vec_key.cptr(), vec_value.cptr(), vec_out.cptr(), binary_pred.cptr());
+	}
+
+	public static boolean Inclusive_Scan_By_Key(DVVectorLike vec_key, DVVectorLike vec_value, DVVectorLike vec_out, Functor binary_pred, Functor binary_op)
+	{
+		return Native.inclusive_scan_by_key(vec_key.cptr(), vec_value.cptr(), vec_out.cptr(), binary_pred.cptr(), binary_op.cptr());
+	}
+
+	public static boolean Exclusive_Scan_By_Key(DVVectorLike vec_key, DVVectorLike vec_value, DVVectorLike vec_out)
+	{
+		return Native.exclusive_scan_by_key(vec_key.cptr(), vec_value.cptr(), vec_out.cptr());
+	}
+
+	public static boolean Exclusive_Scan_By_Key(DVVectorLike vec_key, DVVectorLike vec_value, DVVectorLike vec_out, DeviceViewable init)
+	{
+		return Native.exclusive_scan_by_key(vec_key.cptr(), vec_value.cptr(), vec_out.cptr(), init.cptr());
+	}
+
+	public static boolean Exclusive_Scan_By_Key(DVVectorLike vec_key, DVVectorLike vec_value, DVVectorLike vec_out, DeviceViewable init, Functor binary_pred)
+	{
+		return Native.exclusive_scan_by_key(vec_key.cptr(), vec_value.cptr(), vec_out.cptr(), init.cptr(), binary_pred.cptr());
+	}
+
+	public static boolean Exclusive_Scan_By_Key(DVVectorLike vec_key, DVVectorLike vec_value, DVVectorLike vec_out, DeviceViewable init, Functor binary_pred, Functor binary_op)
+	{
+		return Native.exclusive_scan_by_key(vec_key.cptr(), vec_value.cptr(), vec_out.cptr(), init.cptr(), binary_pred.cptr(), binary_op.cptr());
+	}
+
+	public static boolean Transform_Inclusive_Scan(DVVectorLike vec_in, DVVectorLike vec_out, Functor unary_op, Functor binary_op)
+	{
+		return Native.transform_inclusive_scan(vec_in.cptr(), vec_out.cptr(), unary_op.cptr(), binary_op.cptr());
+	}
+
+	public static boolean Transform_Exclusive_Scan(DVVectorLike vec_in, DVVectorLike vec_out, Functor unary_op, DeviceViewable init, Functor binary_op)
+	{
+		return Native.transform_exclusive_scan(vec_in.cptr(), vec_out.cptr(), unary_op.cptr(), init.cptr(), binary_op.cptr());
+	}
+
+	// Reordering
+	public static int Copy_If(DVVectorLike vec_in, DVVectorLike vec_out, Functor pred)
+	{
+		return Native.copy_if(vec_in.cptr(), vec_out.cptr(), pred.cptr());
+	}
+
+	public static int Copy_If_Stencil(DVVectorLike vec_in, DVVectorLike vec_stencil, DVVectorLike vec_out, Functor pred)
+	{
+		return Native.copy_if_stencil(vec_in.cptr(), vec_stencil.cptr(), vec_out.cptr(), pred.cptr());
+	}
+
+	public static int Remove(DVVectorLike vec, DeviceViewable value)
+	{
+		return Native.remove(vec.cptr(), value.cptr());
+	}
+
+	public static int Remove_Copy(DVVectorLike vec_in, DVVectorLike vec_out, DeviceViewable value)
+	{
+		return Native.remove_copy(vec_in.cptr(), vec_out.cptr(), value.cptr());
+	}
+
+	public static int Remove_If(DVVectorLike vec, Functor pred)
+	{
+		return Native.remove_if(vec.cptr(), pred.cptr());
+	}
+
+	public static int Remove_Copy_If(DVVectorLike vec_in, DVVectorLike vec_out, Functor pred)
+	{
+		return Native.remove_copy_if(vec_in.cptr(), vec_out.cptr(), pred.cptr());
+	}
+
+	public static int Remove_If_Stencil(DVVectorLike vec, DVVectorLike stencil, Functor pred)
+	{
+		return Native.remove_if_stencil(vec.cptr(), stencil.cptr(), pred.cptr());
+	}
+
+	public static int Remove_Copy_If_Stencil(DVVectorLike vec_in, DVVectorLike stencil, DVVectorLike vec_out, Functor pred)
+	{
+		return Native.remove_copy_if_stencil(vec_in.cptr(), stencil.cptr(), vec_out.cptr(), pred.cptr());
+	}
+
+	public static int Unique(DVVectorLike vec)
+	{
+		return Native.unique(vec.cptr());
+	}
+
+	public static int Unique(DVVectorLike vec, Functor binary_pred)
+	{
+		return Native.unique(vec.cptr(), binary_pred.cptr());
+	}
+
+	public static int Unique_Copy(DVVectorLike vec_in, DVVectorLike vec_out)
+	{
+		return Native.unique_copy(vec_in.cptr(), vec_out.cptr());
+	}
+
+	public static int Unique_Copy(DVVectorLike vec_in, DVVectorLike vec_out, Functor binary_pred)
+	{
+		return Native.unique_copy(vec_in.cptr(), vec_out.cptr(), binary_pred.cptr());
+	}
+
+	public static int Unique_By_Key(DVVectorLike keys, DVVectorLike values)
+	{
+		return Native.unique_by_key(keys.cptr(), values.cptr());
+	}
+
+	public static int Unique_By_Key(DVVectorLike keys, DVVectorLike values, Functor binary_pred)
+	{
+		return Native.unique_by_key(keys.cptr(), values.cptr(), binary_pred.cptr());
+	}
+
+	public static int Unique_By_Key_Copy(DVVectorLike keys_in, DVVectorLike values_in, DVVectorLike keys_out, DVVectorLike values_out)
+	{
+		return Native.unique_by_key_copy(keys_in.cptr(), values_in.cptr(), keys_out.cptr(), values_out.cptr());
+	}
+
+	public static int Unique_By_Key_Copy(DVVectorLike keys_in, DVVectorLike values_in, DVVectorLike keys_out, DVVectorLike values_out, Functor binary_pred)
+	{
+		return Native.unique_by_key_copy(keys_in.cptr(), values_in.cptr(), keys_out.cptr(), values_out.cptr(), binary_pred.cptr());
+	}
+
+	public static int Partition(DVVectorLike vec, Functor pred)
+	{
+		return Native.partition(vec.cptr(), pred.cptr());
+	}
+
+	public static int Partition_Stencil(DVVectorLike vec, DVVectorLike stencil, Functor pred)
+	{
+		return Native.partition_stencil(vec.cptr(), stencil.cptr(), pred.cptr());
+	}
+
+	public static int Partition_Copy(DVVectorLike vec_in, DVVectorLike vec_true, DVVectorLike vec_false, Functor pred)
+	{
+		return Native.partition_copy(vec_in.cptr(), vec_true.cptr(), vec_false.cptr(), pred.cptr());
+	}
+
+	public static int Partition_Copy_Stencil(DVVectorLike vec_in, DVVectorLike stencil, DVVectorLike vec_true, DVVectorLike vec_false, Functor pred)
+	{
+		return Native.partition_copy_stencil(vec_in.cptr(), stencil.cptr(), vec_true.cptr(), vec_false.cptr(), pred.cptr());
+	}
+
+	// Searching
+	public static Integer Find(DVVectorLike vec, DeviceViewable value)
+	{
+		return Native.find(vec.cptr(), value.cptr());
+	}
+
+	public static Integer Find_If(DVVectorLike vec, Functor pred)
+	{
+		return Native.find_if(vec.cptr(), pred.cptr());
+	}
+
+	public static Integer Find_If_Not(DVVectorLike vec, Functor pred)
+	{
+		return Native.find_if_not(vec.cptr(), pred.cptr());
+	}
+
+    public static Integer Mismatch(DVVectorLike vec1, DVVectorLike vec2)
     {
-        return Native.transform_reduce(vec.cptr(), unary_op.cptr(), init.cptr(), binary_op.cptr());
+        return Native.mismatch(vec1.cptr(), vec2.cptr());
     }
 
-    public static Boolean All_Of(DVVectorLike vec, Functor pred)
+    public static Integer Mismatch(DVVectorLike vec1, DVVectorLike vec2, Functor pred)
     {
-        return Native.all_of(vec.cptr(), pred.cptr());
+        return Native.mismatch(vec1.cptr(), vec2.cptr(), pred.cptr());
     }
 
-    public static Boolean Any_Of(DVVectorLike vec, Functor pred)
+    public static Integer Lower_Bound(DVVectorLike vec, DeviceViewable value)
     {
-        return Native.any_of(vec.cptr(), pred.cptr());
+        return Native.lower_bound(vec.cptr(), value.cptr());
     }
 
-    public static Boolean None_Of(DVVectorLike vec, Functor pred)
+    public static Integer Lower_Bound(DVVectorLike vec, DeviceViewable value, Functor comp)
     {
-        return Native.none_of(vec.cptr(), pred.cptr());
+        return Native.lower_bound(vec.cptr(), value.cptr(), comp.cptr());
     }
 
-    public static Boolean Is_Partitioned(DVVectorLike vec, Functor pred)
+    public static Integer Upper_Bound(DVVectorLike vec, DeviceViewable value)
     {
-        return Native.is_partitioned(vec.cptr(), pred.cptr());
+        return Native.upper_bound(vec.cptr(), value.cptr());
     }
 
-    public static Boolean Is_Sorted(DVVectorLike vec)
+    public static Integer Upper_Bound(DVVectorLike vec, DeviceViewable value, Functor comp)
     {
-        return Native.is_sorted(vec.cptr());
+        return Native.upper_bound(vec.cptr(), value.cptr(), comp.cptr());
     }
 
-    public static Boolean Is_Sorted(DVVectorLike vec, Functor comp)
+    public static Boolean Binary_Search(DVVectorLike vec, DeviceViewable value)
     {
-        return Native.is_sorted(vec.cptr(), comp.cptr());
+        return Native.binary_search(vec.cptr(), value.cptr());
+    }
+
+    public static Boolean Binary_Search(DVVectorLike vec, DeviceViewable value, Functor comp)
+    {
+        return Native.binary_search(vec.cptr(), value.cptr(), comp.cptr());
+    }
+
+    public static boolean Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
+    {
+        return Native.lower_bound_v(vec.cptr(), values.cptr(), result.cptr());
+    }
+
+    public static boolean Lower_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
+    {
+        return Native.lower_bound_v(vec.cptr(), values.cptr(), result.cptr(), comp.cptr());
+    }
+
+    public static boolean Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
+    {
+        return Native.upper_bound_v(vec.cptr(), values.cptr(), result.cptr());
+    }
+
+    public static boolean Upper_Bound_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
+    {
+        return Native.upper_bound_v(vec.cptr(), values.cptr(), result.cptr(), comp.cptr());
+    }
+
+    public static boolean Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result)
+    {
+        return Native.binary_search_v(vec.cptr(), values.cptr(), result.cptr());
+    }
+
+    public static boolean Binary_Search_V(DVVectorLike vec, DVVectorLike values, DVVectorLike result, Functor comp)
+    {
+        return Native.binary_search_v(vec.cptr(), values.cptr(), result.cptr(), comp.cptr());
+    }
+
+    public static Integer Partition_Point(DVVectorLike vec, Functor pred)
+    {
+        return Native.partition_point(vec.cptr(), pred.cptr());
+    }
+
+    public static Integer Is_Sorted_Until(DVVectorLike vec)
+    {
+        return Native.is_sorted_until(vec.cptr());
+    }
+
+    public static Integer Is_Sorted_Until(DVVectorLike vec, Functor comp)
+    {
+        return Native.is_sorted_until(vec.cptr(), comp.cptr());
     }
 }

@@ -16,6 +16,9 @@ Functor.cpp
 Transformations.cpp
 Copying.cpp
 Reductions.cpp
+PrefixSums.cpp
+Reordering.cpp
+Searching.cpp
 )
 
 set (INCLUDE_DIR 
