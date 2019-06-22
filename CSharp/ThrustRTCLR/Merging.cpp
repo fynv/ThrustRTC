@@ -27,9 +27,9 @@ namespace ThrustRTCLR
 		return TRTC_Merge(*vec1, *vec2, *vec_out, *comp);
 	}
 
-	bool Native::merge_by_key(IntPtr p_key1, IntPtr p_keys2, IntPtr p_value1, IntPtr p_value2, IntPtr p_keys_out, IntPtr p_value_out)
+	bool Native::merge_by_key(IntPtr p_keys1, IntPtr p_keys2, IntPtr p_value1, IntPtr p_value2, IntPtr p_keys_out, IntPtr p_value_out)
 	{
-		DVVectorLike* keys1 = just_cast_it<DVVectorLike>(p_key1);
+		DVVectorLike* keys1 = just_cast_it<DVVectorLike>(p_keys1);
 		DVVectorLike* keys2 = just_cast_it<DVVectorLike>(p_keys2);
 		DVVectorLike* value1 = just_cast_it<DVVectorLike>(p_value1);
 		DVVectorLike* value2 = just_cast_it<DVVectorLike>(p_value2);
@@ -48,6 +48,5 @@ namespace ThrustRTCLR
 		DVVectorLike* value_out = just_cast_it<DVVectorLike>(p_value_out);
 		Functor* comp = just_cast_it<Functor>(p_comp);
 		return TRTC_Merge_By_Key(*keys1, *keys2, *value1, *value2, *keys_out, *value_out, *comp);
-
 	}
 }

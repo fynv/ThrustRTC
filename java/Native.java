@@ -197,6 +197,17 @@ class Native
 	public static native Integer is_sorted_until(long p_vec);
 	public static native Integer is_sorted_until(long p_vec, long p_comp);
 
+	// Merging
+	public static native boolean merge(long p_vec1, long p_vec2, long p_vec_out);
+	public static native boolean merge(long p_vec1, long p_vec2, long p_vec_out, long p_comp);
+	public static native boolean merge_by_key(long p_key1, long p_keys2, long p_value1, long p_value2, long p_keys_out, long p_value_out);
+	public static native boolean merge_by_key(long p_key1, long p_keys2, long p_value1, long p_value2, long p_keys_out, long p_value_out, long p_comp);
+
+	// Sorting
+	public static native boolean sort(long p_vec);
+	public static native boolean sort(long p_vec, long p_comp);
+	public static native boolean sort_by_key(long p_keys, long p_values);
+	public static native boolean sort_by_key(long p_keys, long p_values, long p_comp);
 }
 
 

@@ -27,3 +27,5 @@ java -Djava.library.path=. -cp JThrustRTCTests.jar:JThrustRTC.jar test_partition
 java -Djava.library.path=. -cp JThrustRTCTests.jar:JThrustRTC.jar test_find
 java -Djava.library.path=. -cp JThrustRTCTests.jar:JThrustRTC.jar test_mismatch
 java -Djava.library.path=. -cp JThrustRTCTests.jar:JThrustRTC.jar test_binary_search
+java -Djava.library.path=. -cp JThrustRTCTests.jar:JThrustRTC.jar test_merge
+java -Djava.library.path=. -cp JThrustRTCTests.jar:JThrustRTC.jar test_sort

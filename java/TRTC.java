@@ -565,4 +565,46 @@ public class TRTC
     {
         return Native.is_sorted_until(vec.cptr(), comp.cptr());
     }
+
+    // Merging
+    public static boolean Merge(DVVectorLike vec1, DVVectorLike vec2, DVVectorLike vec_out)
+    {
+        return Native.merge(vec1.cptr(), vec2.cptr(), vec_out.cptr());
+    }
+
+    public static boolean Merge(DVVectorLike vec1, DVVectorLike vec2, DVVectorLike vec_out, Functor comp)
+    {
+        return Native.merge(vec1.cptr(), vec2.cptr(), vec_out.cptr(), comp.cptr());
+    }
+
+    public static boolean Merge_By_Key(DVVectorLike keys1, DVVectorLike keys2, DVVectorLike value1, DVVectorLike value2, DVVectorLike keys_out, DVVectorLike value_out)
+    {
+        return Native.merge_by_key(keys1.cptr(), keys2.cptr(), value1.cptr(), value2.cptr(), keys_out.cptr(), value_out.cptr());
+    }
+
+    public static boolean Merge_By_Key(DVVectorLike keys1, DVVectorLike keys2, DVVectorLike value1, DVVectorLike value2, DVVectorLike keys_out, DVVectorLike value_out, Functor comp)
+    {
+        return Native.merge_by_key(keys1.cptr(), keys2.cptr(), value1.cptr(), value2.cptr(), keys_out.cptr(), value_out.cptr(), comp.cptr());
+    }
+
+	// Sorting
+	public static boolean Sort(DVVectorLike vec)
+    {
+        return Native.sort(vec.cptr());
+    }
+
+    public static boolean Sort(DVVectorLike vec, Functor comp)
+    {
+        return Native.sort(vec.cptr(), comp.cptr());
+    }
+
+    public static boolean Sort_By_Key(DVVectorLike keys, DVVectorLike values)
+    {
+        return Native.sort_by_key(keys.cptr(), values.cptr());
+    }
+
+    public static boolean Sort_By_Key(DVVectorLike keys, DVVectorLike values, Functor comp)
+    {
+        return Native.sort_by_key(keys.cptr(), values.cptr(), comp.cptr());
+    }
 }

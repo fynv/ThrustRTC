@@ -1311,6 +1311,70 @@ JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_is_1sorted_1until__J
 JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_is_1sorted_1until__JJ
   (JNIEnv *, jclass, jlong, jlong);
 
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    merge
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_merge__JJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    merge
+ * Signature: (JJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_merge__JJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    merge_by_key
+ * Signature: (JJJJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_merge_1by_1key__JJJJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    merge_by_key
+ * Signature: (JJJJJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_merge_1by_1key__JJJJJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    sort
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_sort__J
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    sort
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_sort__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    sort_by_key
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_sort_1by_1key__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    sort_by_key
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_sort_1by_1key__JJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
 #ifdef __cplusplus
 }
 #endif

@@ -32,6 +32,8 @@ test_partition.java
 test_find.java
 test_mismatch.java
 test_binary_search.java
+test_merge.java
+test_sort.java
 )
 
 add_jar(JThrustRTCTests SOURCES ${JAVA_TESTS} INCLUDE_JARS JThrustRTC)

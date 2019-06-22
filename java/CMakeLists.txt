@@ -19,6 +19,8 @@ Reductions.cpp
 PrefixSums.cpp
 Reordering.cpp
 Searching.cpp
+Merging.cpp
+Sorting.cpp
 )
 
 set (INCLUDE_DIR 
