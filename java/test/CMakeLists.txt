@@ -34,6 +34,15 @@ test_mismatch.java
 test_binary_search.java
 test_merge.java
 test_sort.java
+
+test_constant.java
+test_counter.java
+test_discard.java
+test_permutation.java
+test_reverse.java
+test_transform_iter.java
+test_zipped.java
+test_custom_vector.java
 )
 
 add_jar(JThrustRTCTests SOURCES ${JAVA_TESTS} INCLUDE_JARS JThrustRTC)
