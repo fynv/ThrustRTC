@@ -83,6 +83,59 @@ class Native
 
 	// Transformations
 	public static native boolean fill(long p_vec, long p_value);
+	public static native boolean replace(long p_vec, long p_old_value, long p_new_value);
+	public static native boolean replace_if(long p_vec, long p_pred, long p_new_value);
+	public static native boolean replace_copy(long p_vec_in, long p_vec_out, long p_old_value, long p_new_value);
+	public static native boolean replace_copy_if(long p_vec_in, long p_vec_out, long p_pred, long p_new_value);
+	public static native boolean for_each(long p_vec, long p_f);
+	public static native boolean adjacent_difference(long p_vec_in, long p_vec_out);
+	public static native boolean adjacent_difference(long p_vec_in, long p_vec_out, long p_binary_op);
+	public static native boolean sequence(long p_vec);
+	public static native boolean sequence(long p_vec, long p_value_init);
+	public static native boolean sequence(long p_vec, long p_value_init, long p_value_step);
+	public static native boolean tabulate(long p_vec, long p_op);	
+	public static native boolean transform(long p_vec_in, long p_vec_out, long p_op);
+	public static native boolean transform_binary(long p_vec_in1, long p_vec_in2, long p_vec_out, long p_op);
+	public static native boolean transform_if(long p_vec_in, long p_vec_out, long p_op, long p_pred);
+	public static native boolean transform_if_stencil(long p_vec_in, long p_vec_stencil, long p_vec_out, long p_op, long p_pred);
+	public static native boolean transform_binary_if_stencil(long p_vec_in1, long p_vec_in2, long p_vec_stencil, long p_vec_out, long p_op, long p_pred);
+
+	// Copying
+	public static native boolean gather(long p_vec_map, long p_vec_in, long p_vec_out);
+	public static native boolean gather_if(long p_vec_map, long p_vec_stencil, long p_vec_in, long p_vec_out);
+	public static native boolean gather_if(long p_vec_map, long p_vec_stencil, long p_vec_in, long p_vec_out, long p_pred);
+	public static native boolean scatter(long p_vec_in, long p_vec_map, long p_vec_out);
+	public static native boolean scatter_if(long p_vec_in, long p_vec_map, long p_vec_stencil, long p_vec_out);
+	public static native boolean scatter_if(long p_vec_in, long p_vec_map, long p_vec_stencil, long p_vec_out, long p_pred);
+	public static native boolean copy(long p_vec_in, long p_vec_out);
+	public static native boolean swap(long p_vec1, long p_vec2);
+
+	// Redutions
+	public static native int count(long p_vec, long p_value);
+	public static native int count_if(long p_vec, long p_pred);
+	public static native Object reduce(long p_vec);
+	public static native Object reduce(long p_vec, long p_init);
+	public static native Object reduce(long p_vec, long p_init, long p_binary_op);
+	public static native int reduce_by_key(long p_key_in, long p_value_in, long p_key_out, long p_value_out);
+	public static native int reduce_by_key(long p_key_in, long p_value_in, long p_key_out, long p_value_out, long p_binary_pred);
+	public static native int reduce_by_key(long p_key_in, long p_value_in, long p_key_out, long p_value_out, long p_binary_pred, long p_binary_op);
+	public static native Boolean equal(long p_vec1, long p_vec2);
+	public static native Boolean equal(long p_vec1, long p_vec2, long p_binary_pred);
+	public static native int min_element(long p_vec);
+	public static native int min_element(long p_vec, long p_comp);
+	public static native int max_element(long p_vec);
+	public static native int max_element(long p_vec, long p_comp);
+	public static native int[] minmax_element(long p_vec);
+	public static native int[] minmax_element(long p_vec, long p_comp);
+	public static native Object inner_product(long p_vec1, long p_vec2, long p_init);
+	public static native Object inner_product(long p_vec1, long p_vec2, long p_init, long p_binary_op1, long p_binary_op2);
+	public static native Object transform_reduce(long p_vec, long p_unary_op, long p_init, long p_binary_op);
+	public static native Boolean all_of(long p_vec, long p_pred);
+	public static native Boolean any_of(long p_vec, long p_pred);
+	public static native Boolean none_of(long p_vec, long p_pred);
+	public static native Boolean is_partitioned(long p_vec, long p_pred);
+	public static native Boolean is_sorted(long p_vec);
+	public static native Boolean is_sorted(long p_vec, long p_comp);
 }
 
 

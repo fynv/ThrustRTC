@@ -487,6 +487,398 @@ JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_built_1in_1functor_1create
 JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_fill
   (JNIEnv *, jclass, jlong, jlong);
 
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    replace
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_replace
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    replace_if
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_replace_1if
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    replace_copy
+ * Signature: (JJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_replace_1copy
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    replace_copy_if
+ * Signature: (JJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_replace_1copy_1if
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    for_each
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_for_1each
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    adjacent_difference
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_adjacent_1difference__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    adjacent_difference
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_adjacent_1difference__JJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    sequence
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_sequence__J
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    sequence
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_sequence__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    sequence
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_sequence__JJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    tabulate
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_tabulate
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    transform
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_transform
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    transform_binary
+ * Signature: (JJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_transform_1binary
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    transform_if
+ * Signature: (JJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_transform_1if
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    transform_if_stencil
+ * Signature: (JJJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_transform_1if_1stencil
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    transform_binary_if_stencil
+ * Signature: (JJJJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_transform_1binary_1if_1stencil
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    gather
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_gather
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    gather_if
+ * Signature: (JJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_gather_1if__JJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    gather_if
+ * Signature: (JJJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_gather_1if__JJJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    scatter
+ * Signature: (JJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_scatter
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    scatter_if
+ * Signature: (JJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_scatter_1if__JJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    scatter_if
+ * Signature: (JJJJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_scatter_1if__JJJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    copy
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_copy
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    swap
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_JThrustRTC_Native_swap
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    count
+ * Signature: (JJ)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_count
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    count_if
+ * Signature: (JJ)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_count_1if
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    reduce
+ * Signature: (J)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_reduce__J
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    reduce
+ * Signature: (JJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_reduce__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    reduce
+ * Signature: (JJJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_reduce__JJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    reduce_by_key
+ * Signature: (JJJJ)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_reduce_1by_1key__JJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    reduce_by_key
+ * Signature: (JJJJJ)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_reduce_1by_1key__JJJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    reduce_by_key
+ * Signature: (JJJJJJ)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_reduce_1by_1key__JJJJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    equal
+ * Signature: (JJ)Ljava/lang/Boolean;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_equal__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    equal
+ * Signature: (JJJ)Ljava/lang/Boolean;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_equal__JJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    min_element
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_min_1element__J
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    min_element
+ * Signature: (JJ)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_min_1element__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    max_element
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_max_1element__J
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    max_element
+ * Signature: (JJ)I
+ */
+JNIEXPORT jint JNICALL Java_JThrustRTC_Native_max_1element__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    minmax_element
+ * Signature: (J)[I
+ */
+JNIEXPORT jintArray JNICALL Java_JThrustRTC_Native_minmax_1element__J
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    minmax_element
+ * Signature: (JJ)[I
+ */
+JNIEXPORT jintArray JNICALL Java_JThrustRTC_Native_minmax_1element__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    inner_product
+ * Signature: (JJJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_inner_1product__JJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    inner_product
+ * Signature: (JJJJJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_inner_1product__JJJJJ
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    transform_reduce
+ * Signature: (JJJJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_transform_1reduce
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    all_of
+ * Signature: (JJ)Ljava/lang/Boolean;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_all_1of
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    any_of
+ * Signature: (JJ)Ljava/lang/Boolean;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_any_1of
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    none_of
+ * Signature: (JJ)Ljava/lang/Boolean;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_none_1of
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    is_partitioned
+ * Signature: (JJ)Ljava/lang/Boolean;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_is_1partitioned
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    is_sorted
+ * Signature: (J)Ljava/lang/Boolean;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_is_1sorted__J
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    is_sorted
+ * Signature: (JJ)Ljava/lang/Boolean;
+ */
+JNIEXPORT jobject JNICALL Java_JThrustRTC_Native_is_1sorted__JJ
+  (JNIEnv *, jclass, jlong, jlong);
+
 #ifdef __cplusplus
 }
 #endif

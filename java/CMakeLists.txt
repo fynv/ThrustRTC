@@ -14,6 +14,8 @@ DVTuple.cpp
 FakeVectors.cpp
 Functor.cpp
 Transformations.cpp
+Copying.cpp
+Reductions.cpp
 )
 
 set (INCLUDE_DIR 
