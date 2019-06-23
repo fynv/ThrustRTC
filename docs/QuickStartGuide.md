@@ -40,13 +40,18 @@ $ make install
 
 You will get the library headers, binaries and examples in the "install" directory.
 
-#### Install ThrustRTC for Python from Pypi
+#### Install ThrustRTC for Python from Pypi/Conda
 
 Builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
 If your environment matches, you can try:
 
 ```
 $ pip3 install ThrustRTC
+```
+Also available on [Anaconda Cloud](https://anaconda.org/fyplus/thrustrtc)
+
+```
+$ conda install -c fyplus thrustrtc 
 ```
 
 You will not get the C++ library, headers as well as all the test programs using this installation method.
