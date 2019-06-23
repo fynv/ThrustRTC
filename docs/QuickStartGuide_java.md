@@ -38,23 +38,32 @@ $ make
 $ make install
 ```
 
-#### Install ThrustRTC for Python from Pypi
+You will get the library headers, binaries and examples in the "install" directory.
 
-Experimental builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
-If your environment matches, you can try:
-
+If you don't have Python installed and you don't need the Python part, you can simply remove the line:
 ```
-$ pip3 install ThrustRTC
+add_subdirectory(python)
 ```
+from CMakeLists.txt in the root folder.
 
-You will not get the C++ library, headers as well as all the test programs using this installation method.
+The JAVA part of the code is not build by default. To build it, you need to:
+
+* Install JDK. The code is tested only with Oracle JDK, but Open JDK should also work.
+* Uncomment the line
+```
+# add_subdirectory(java)
+```
+in CMakeLists.txt in the root folder.
+
+After "make install", you will get JThrustRTC_Native.dll (or libJThrustRTC_Native.so), and JThrustRTC.jar in
+install/test_java. All test programmes are packaged as a single jar file JThrustRTCTests.jar. Starting commands
+can be found in run_tests.bat(for Windows) and run_tests.sh(for linux).
 
 #### GitHub Release
 
 Zip packages are available at:
 
 [https://github.com/fynv/ThrustRTC/releases](https://github.com/fynv/ThrustRTC/releases)
-
 
 ### Runtime Dependencies
 
@@ -71,11 +80,6 @@ Zip packages are available at:
   * TRTC.set_libnvrtc_path() from C# or JAVA
 
   at run-time to specify the path of the library.
-
-For Python
-* Python 3
-* numpy
-* numba (optional)
 
 ## Context and General Kernel Launching
 
@@ -112,42 +116,49 @@ Example using Kernel objects:
 
 int main()
 {
-	TRTC_Kernel ker(
-	{ "arr_in", "arr_out", "k" },
-	"    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
-	"    if (idx >= arr_in.size()) return;\n"
-	"    arr_out[idx] = arr_in[idx]*k;\n");
+    TRTC_Kernel ker(
+    { "arr_in", "arr_out", "k" },
+    "    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
+    "    if (idx >= arr_in.size()) return;\n"
+    "    arr_out[idx] = arr_in[idx]*k;\n");
 
-	float test[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
-	DVVector dvec_in("float", 5, test);
-	DVVector dvec_out("float", 5);
-	DVFloat k1(10.0);
-	const DeviceViewable* args_f[] = { &dvec_in, &dvec_out, &k1 };
-	ker.launch( { 1, 1, 1 }, { 128, 1, 1 }, args_f);
-	dvec_out.to_host(test);
-	printf("%f %f %f %f %f\n", test[0], test[1], test[2], test[3], test[4]);
+    float test[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
+    DVVector dvec_in("float", 5, test);
+    DVVector dvec_out("float", 5);
+    DVFloat k1(10.0);
+    const DeviceViewable* args_f[] = { &dvec_in, &dvec_out, &k1 };
+    ker.launch( { 1, 1, 1 }, { 128, 1, 1 }, args_f);
+    dvec_out.to_host(test);
+    printf("%f %f %f %f %f\n", test[0], test[1], test[2], test[3], test[4]);
 
-	return 0;
+    return 0;
 }
 ```
 
-```python
-# Python
-import ThrustRTC as trtc
+```java
+// JAVA
+import java.util.*;
+import JThrustRTC.*;
 
-kernel = trtc.Kernel(['arr_in', 'arr_out', 'k'],
-	'''
-	size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx >= arr_in.size()) return;
-	arr_out[idx] = arr_in[idx]*k;
-	''')
+public class test_trtc 
+{
+    public static void main(String[] args) 
+    {
+        Kernel ker = new Kernel(new String[]{ "arr_in", "arr_out", "k" }, 
+        String.join("",
+        "    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;\n",
+        "    if (idx >= arr_in.size()) return;\n",
+        "    arr_out[idx] = arr_in[idx]*k;\n"));
 
-dvec_in = trtc.device_vector_from_list([ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
-dvec_out = trtc.device_vector('float', 5)
-dv_k = trtc.DVFloat(10.0)
+        DVVector dvec_in = new DVVector(new float[] { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f });
+        DVVector dvec_out = new DVVector("float", 5);
+        DVFloat k1 = new DVFloat(10.0f);
+        DeviceViewable[] args_f = new DeviceViewable[] { dvec_in, dvec_out, k1 };
+        ker.launch(1, 128, args_f, 0);
+        System.out.println(Arrays.toString((float[])dvec_out.to_host()));
+    }
+}
 
-kernel.launch( 1,128, [dvec_in, dvec_out, dv_k])
-print (dvec_out.to_host())
 ```
 
 ### For-Loop Objects
@@ -175,39 +186,43 @@ Example using For-Loop objects:
 
 int main()
 {
-	TRTC_For f({ "arr_in", "arr_out", "k" }, "idx",
-		"    arr_out[idx] = arr_in[idx]*k;\n");
+    TRTC_For f({ "arr_in", "arr_out", "k" }, "idx",
+        "    arr_out[idx] = arr_in[idx]*k;\n");
 
-	float test[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
-	DVVector dvec_in("float", 5, test);
-	DVVector dvec_out("float", 5);
-	DVDouble k1(10.0);
-	const DeviceViewable* args_f[] = { &dvec_in, &dvec_out, &k1 };
-	f.launch_n(5, args_f);
-	dvec_out.to_host(test);
-	printf("%f %f %f %f %f\n", test[0], test[1], test[2], test[3], test[4]);
+    float test[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
+    DVVector dvec_in("float", 5, test);
+    DVVector dvec_out("float", 5);
+    DVDouble k1(10.0);
+    const DeviceViewable* args_f[] = { &dvec_in, &dvec_out, &k1 };
+    f.launch_n(5, args_f);
+    dvec_out.to_host(test);
+    printf("%f %f %f %f %f\n", test[0], test[1], test[2], test[3], test[4]);
 
-	return 0;
+    return 0;
 }
 ```
 
-```python
-# Python
-import ThrustRTC as trtc
-import numpy as np
+```java
+// JAVA
+import java.util.*;
+import JThrustRTC.*;
 
-forLoop = trtc.For(['arr_in','arr_out','k'], "idx",
-	'''
-	arr_out[idx] = arr_in[idx]*k;
-	''')
+public class test_for 
+{
+    public static void main(String[] args) 
+    {
+        For ker = new For(new String[] { "arr_in", "arr_out", "k" }, "idx",
+            "    arr_out[idx] = arr_in[idx]*k;\n");
 
-dvec_in = trtc.device_vector_from_list( [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
-dvec_out = trtc.device_vector( 'float', 5)
-dv_k = trtc.DVFloat(10.0)
+        DVVector dvec_in = new DVVector(new float[] { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f });
+        DVVector dvec_out = new DVVector("float", 5);
+        DVFloat k1 = new DVFloat(10.0f);
+        DeviceViewable[] args_f = new DeviceViewable[] { dvec_in, dvec_out, k1 };
+        ker.launch_n(5, args_f);
+        System.out.println(Arrays.toString((float[])dvec_out.to_host()));
+    }
+}
 
-forLoop.launch_n( 5, [dvec_in, dvec_out, dv_k])
-
-print (dvec_out.to_host())
 ```
 
 ## Device Viewable Objects
@@ -218,19 +233,15 @@ Device Viewable Objects are objects that can be used as kernel arguments. All De
 
 The following types of Device Viewable Objects can be initalized using values of basic types.
 
-| Name of Class | C++ Type            | Creation (C++)     | Creation (Python)       |
-| ------------- | ------------------- | ------------------ | ----------------------- |
-| DVInt8        | int8_t              | DVInt8 x(42);      | x = trtc.DVInt8(42)     |
-| DVUInt8       | uint8_t             | DVUInt8 x(42);     | x = trtc.DVUInt8(42)    |
-| DVInt16       | int16_t             | DVInt16 x(42);     | x = trtc.DVInt16(42)    |
-| DVUInt16      | uint16_t            | DVUInt16 x(42);    | x = trtc.DVUInt16(42)   | 
-| DVInt32       | int32_t             | DVInt32 x(42);     | x = trtc.DVInt32(42)    |
-| DVUInt32      | uint32_t            | DVUInt32 x(42);    | x = trtc.DVUInt32(42)   |
-| DVInt64       | int64_t             | DVInt64 x(42);     | x = trtc.DVInt64(42)    | 
-| DVUInt64      | uint64_t            | DVUInt64 x(42);    | x = trtc.DVUInt64(42)   | 
-| DVFloat       | float               | DVFloat x(42.0f);  | x = trtc.DVFloat(42.0)  |
-| DVDouble      | double              | DVDouble x(42.0);  | x = trtc.DVDouble(42.0) |
-| DVBool        | bool                | DVBool x(true);    | x = trtc.DVBool(True)   |
+| Name of Class | C++ Type            | Creation (C++)     | Creation (JAVA)                 |
+| ------------- | ------------------- | ------------------ | ------------------------------- |
+| DVInt8        | int8_t              | DVInt8 x(42);      | DVInt8 x = new DVInt8(42);      |
+| DVInt16       | int16_t             | DVInt16 x(42);     | DVInt16 x = new DVInt16(42);    |
+| DVInt32       | int32_t             | DVInt32 x(42);     | DVInt32 x = new DVInt32(42);    |
+| DVInt64       | int64_t             | DVInt64 x(42);     | DVInt64 x = new DVInt64(42);    | 
+| DVFloat       | float               | DVFloat x(42.0f);  | DVInt64 x = new DVFloat(42.0f); |
+| DVDouble      | double              | DVDouble x(42.0);  | DVInt64 x = new DVDouble(42.0); |
+
 
 ### Tuples
 
@@ -245,11 +256,11 @@ DVFloat d_float(456.0f);
 DVTuple d_tuple( { {"a", &d_int}, {"b",&d_float} });
 ```
 
-```python
-# Python
-d_int = trtc.DVInt32(123);
-d_float = trtc.DVFloat(456.0);
-d_tuple = trtc.DVTuple( {'a': d_int, 'b': d_float}
+```java
+// JAVA
+DVInt32 d_int = new DVInt32(123);
+DVFloat d_float = new DVFloat(456.0f);
+DVTuple d_tuple = new DVTuple(new DeviceViewable[]{d_int, d_float}, new String[]{ "a", "b"});
 ```
 
 ### Advanced Types
@@ -290,56 +301,40 @@ DVVector dIn("int32_t", 8, hIn);
 DVVector dOut("int32_t", 8);
 ```
 
-In Python, there are several ways to create a DVVector object.
+In JAVA, there are 2 ways to create a DVVector object.
 
-* Create from Numpy
+* Create from array of basic types
 
-```python
-# Python
-harr = np.array([1.0, 2.0, 3.0, 4.0, 5.0], dtype='float32')
-darr = trtc.device_vector_from_numpy(harr)
+```java
+// JAVA
+int[] harr = new int[] { 10, 20, 30, 40, 50, 60, 70, 80 };
+DVVector darr = new DVVector(harr);
 ```
 
-The supported Numpy dtypes are:
+The supported JAVA type of array elements are:
 
-| Numpy dtype | C++ Type |
+| JAVA type   | C++ Type |
 | ----------- | -------- |
-| np.int8     | int8_t   |
-| np.uint8    | uint8_t  |
-| np.int16    | int16_t  |
-| np.uint16   | uint16_t |
-| np.int32    | int32_t  |
-| np.uint32   | uint32_t |
-| np.int64    | int64_t  |
-| np.uint64   | uint64_t |
-| np.float32  | float    |
-| np.float64  | double   |
-| np.bool     | bool     |
-
-* Create from Python List
-
-```python
-# Python
-dvec_in = trtc.device_vector_from_list([ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
-```
-
-The C++ type specified here should be one of the basic types corresponding to a supported Numpy dtype, as listed above.
+| byte        | int8_t   |
+| short       | int16_t  |
+| int         | int32_t  |
+| long        | int64_t  |
+| float       | float    |
+| double      | double   |
 
 * Create with Specified Type and Size
 
-```python
-# Python
-dvec_out = trtc.device_vector('float', 5)
+```java
+// JAVA
+DVVector dvec_out = new DVVector("float", 5);
 ```
 In this case, the C++ type specified can be any type that CUDA recognizes.
-
-Optionally, a raw C++ pointer to an host array can be passed as the source to copy from.
 
 #### to_host()
 
 * The method *to_host()* can be used to copy the content of DVVector to host.
 
-The C++ version needs a host buffer of enough size.
+In C++, user needs a host buffer of enough size.
 
 ```cpp
 // C++
@@ -348,57 +343,22 @@ DVVector dIn("int32_t", 8, hIn);
 dIn.to_host(hIn);
 ```
 
-The Python version returns a Numpy NDArray. The type of elements must be a supported one.
+In JAVA, *to_host()* creates a JAVA array accoring to the data-type of the array and returns 
+it as an *object*:
 
-```python
-# Python
-dvec_in = trtc.device_vector_from_list( [ 1.0, 2.0, 3.0, 4.0, 5.0 ], 'float')
-print(dvec_in.to_host())
+```java
+// JAVA
+DVVector dvec = new DVVector(new float[]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f });
+float[] hvec = (float[]) dvec.to_host();
 ```
 
 There are optional parameters *begin* and *end* which can be used to specify a range to copy.
-
-### DVVectorAdaptor
-
-DVVectorAdaptor objects are device Vectors with externally managed storage.
-
-In C++ code, user can create a DVVectorAdaptor object just like creating a DVVector, 
-passing in pointer of device memory instead of host memory to initialize the object.
-The device memory should not be freed while the DVVectorAdaptor object is still being
-used.
-
-Alternatively, user can create a DVVectorAdaptor object using an existing DVVector or 
-DVVectorAdaptor object and a range specified by a *begin/end* pair.
-
-```cpp
-// C++
-float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
-DVVector dvalues("float", 8, hvalues);
-DVVectorAdaptor drange(dvvalue, 2, 5);
-// drange maps to { 30.0f, 40.0f, 50.0f }
-```
-
-In Python, DVVectorAdaptor is used by DVNumbaVector to adapt to Numba. A Numba DeviceNDArray
-can easily be used as a ThrustRTC recognized Vector like the following code shows:
-
-```python
-# Python
-import ThrustRTC as trtc
-import numpy as np
-from numba import cuda
-
-nparr = np.array([1, 0, 2, 2, 1, 3], dtype=np.int32)
-nbarr = cuda.to_device(nparr)
-darr = trtc.DVNumbaVector(nbarr)
-trtc.Inclusive_Scan(darr, darr)
-print(nbarr.copy_to_host())
-``` 
 
 ### DVRange
 
 DVRange objects can be used to map to a range of an abitary Vector object.
 
-In C++ code, its usage is very similar to the 2nd case of DVVectorAdaptor:
+In C++, user can create a DVRange object using an existing Vector object and a range specified by a *begin/end* pair.
 
 ```cpp
 // C++
@@ -408,20 +368,16 @@ DVRange drange(dvvalue, 2, 5);
 // drange maps to { 30.0f, 40.0f, 50.0f }
 ```
 
-While the input is a "DVVector" in this case, DVVectorAdaptor is preferred, because DVRange 
-has a more general and a little more complicated underlying data-structure.
+In JAVA, a *.range()* method is available for every Vector object to simplify the creation of a DVRange:
 
-In Python code, DVRange is the only object for range-mapping. In addition, every Vector object
-has a *.range()* method to simplify the creation of a DVRange.
-
-```python
-# Python
-dvalues = trtc.device_vector_from_list([10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0], 'float')
-drange = dvalues.range(2,5) # the same as "drange = trtc.DVRange(dvalues, 2, 5)"
-# drange maps to { 30.0f, 40.0f, 50.0f }
+```java
+// JAVA
+DVVector dvalues = new DVVector(new float[] { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f });
+DVRange drange = dvalues.range(2, 5); // the same as "DVRange drange = new DVRange(dvalues, 2, 5);"
+// drange maps to { 30.0f, 40.0f, 50.0f }
 ```
 
-The existence of DVRange and DVVectorAdaptor compensates the lack of iterators in ThrustRTC.
+The existence of DVRange compensates the lack of iterators in ThrustRTC.
 
 ### DVConstant
 
@@ -446,13 +402,11 @@ int main()
 
 ```
 
-```python
-# Python
-import ThrustRTC as trtc
-
-src = trtc.DVConstant(trtc.DVInt32(123), 10)
-dst = trtc.device_vector('int32_t', 10)
-trtc.Copy(src, dst)
+```java
+// JAVA
+DVConstant src = new DVConstant(new DVInt32(123), 10);
+DVVector dst = new DVVector("int32_t", 10);
+TRTC.Copy(src, dst);
 
 ```
 
@@ -480,13 +434,11 @@ int main()
 
 ```
 
-```python
-# Python
-import ThrustRTC as trtc
-
-src = trtc.DVCounter(trtc.DVInt32(1), 10)
-dst = trtc.device_vector('int32_t', 10)
-trtc.Copy(src, dst)
+```java
+// JAVA
+DVCounter src = new DVCounter(new DVInt32(1), 10);
+DVVector dst = new DVVector("int32_t", 10);
+TRTC.Copy(src, dst);
 
 ```
 
@@ -528,17 +480,13 @@ int main()
 
 ```
 
-```python
-# Python
-import ThrustRTC as trtc
-
-dvalues = trtc.device_vector_from_list([10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0], 'float')
-dindices =  trtc.device_vector_from_list([2,6,1,3], 'int32_t')
-src = trtc.DVPermutation(dvalues, dindices)
-dst = trtc.device_vector('float', 4)
-
-trtc.Copy(src, dst)
-
+```java
+// JAVA
+DVVector dvalues = new DVVector(new float[] { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f });
+DVVector dindices = new DVVector(new int[] { 2, 6, 1, 3 });
+DVPermutation src = new DVPermutation(dvalues, dindices);
+DVVector dst = new DVVector("float", 4);
+TRTC.Copy(src, dst);
 ```
 
 ### DVReverse
@@ -568,16 +516,12 @@ int main()
 
 ```
 
-```python
-# Python
-import ThrustRTC as trtc
-
-dvalues = trtc.device_vector_from_list([3, 7, 2, 5], 'int32_t')
-src = trtc.DVReverse(dvalues)
-dst = trtc.device_vector('int32_t', 4)
-
-trtc.Copy(src, dst)
-
+```java
+// JAVA
+DVVector dvalues = new DVVector(new int[]{3, 7, 2, 5});
+DVReverse src = new DVReverse(dvalues);
+DVVector dst = new DVVector("int32_t", 4);
+TRTC.Copy(src, dst);
 ```
 
 ### DVTransform
@@ -612,21 +556,13 @@ int main()
 ```
 
 
-```python
-# Python
-import ThrustRTC as trtc
-
-dvalues = trtc.device_vector_from_list([1.0, 4.0, 9.0, 16.0], 'float')
-
-square_root = trtc.Functor({}, ['x'], 
-'''
-         return sqrtf(x);
-''')
-
-src = trtc.DVTransform(dvalues, 'float', square_root)
-dst = trtc.device_vector('float', 4)
-
-trtc.Copy(src, dst)
+```java
+// JAVA
+DVVector dvalues = new DVVector(new float[]{1.0, 4.0, 9.0, 16.0});
+Functor square_root = new Functor(new String[]{"x"}, "         return sqrtf(x);\n");
+DVTransform src = new DVTransform(dvalues, 'float', square_root);
+DVVector dst = new DVVector("float", 4);
+TRTC.Copy(src, dst);
 
 ```
 
@@ -664,21 +600,18 @@ int main()
 ```
 
 
-```python
-# Python
-import ThrustRTC as trtc
+```java
+// JAVA
+DVVector d_int_in = new DVVector(new int[] { 0, 1, 2, 3, 4 });
+DVVector d_float_in = new DVVector(new float[] { 0.0f, 10.0f, 20.0f, 30.0f, 40.0f });
 
-d_int_in = trtc.device_vector_from_list([0, 1, 2, 3, 4], 'int32_t')
-d_float_in = trtc.device_vector_from_list([ 0.0, 10.0, 20.0, 30.0, 40.0], 'float')
+DVVector d_int_out = new DVVector("int32_t", 5);
+DVVector d_float_out = new DVVector("float", 5);
 
-d_int_out = trtc.device_vector('int32_t', 5)
-d_float_out = trtc.device_vector('float', 5)
+DVZipped src = new DVZipped(new DVVectorLike[] { d_int_in, d_float_in }, new String[] { "a", "b" });
+DVZipped dst = new DVZipped(new DVVectorLike[] { d_int_out, d_float_out }, new String[] { "a", "b" });
 
-src = trtc.DVZipped([d_int_in, d_float_in], ['a','b'])
-dst = trtc.DVZipped([d_int_out, d_float_out], ['a','b'])
-
-trtc.Copy(src, dst)
-
+TRTC.Copy(src, dst);
 ```
 
 ### DVCustomVector
@@ -716,20 +649,13 @@ int main()
 }
 ```
 
-```python
-# Python
-import ThrustRTC as trtc
-
-d_in = trtc.device_vector_from_list([0, 1, 2, 3, 4], 'int32_t')
-
-src = trtc.DVCustomVector({'src':d_in }, 'idx',
-'''
-       return src[idx % src.size()]; 
-''',  "int32_t", d_in.size() * 5) 
-
-dst = trtc.device_vector('int32_t', 25)
-
-trtc.Copy(src, dst)
+```java
+// JAVA
+DVVector d_in = new DVVector(new int[] { 0, 1, 2, 3, 4 });
+DVCustomVector src = new DVCustomVector(new DeviceViewable[] { d_in }, new String[] { "src" }, "idx",
+    "        return src[idx % src.size()];\n", "int32_t", d_in.size() * 5);
+DVVector dst= new DVVector("int32_t", 25);
+TRTC.Copy(src, dst);
 ```
 
 ## Functors
@@ -752,12 +678,11 @@ An user defined functor can be created given:
 Functor is_even = { {},{ "x" }, "        return x % 2 == 0;\n" };
 ```
 
-```python
-# Python
-is_even = trtc.Functor( {}, ['x'], 
-'''
-         return x % 2 == 0;
-''')
+There is a simplified version of the constructor in JAVA that omits the capturing list:
+
+```java
+// JAVA
+Functor is_even = new Functor( new String[]{"x"}, "         return x % 2 == 0;\n");
 ```
 
 A temporary structure will be created internally, which looks like:
@@ -780,29 +705,28 @@ when there is a compilation error.
 
 ### Built-In Functors
 
-In C++ code and Python code, the ways to create a built-in Functor are a little different.
-In C++, the class Functor has a constructor that takes in a single string parameter.
-In Python, Built-In Functors are defined as separate classes.
+In both C++ code and JAVA code, the class Functor has a constructor that takes in
+ a single string parameter, which can be used to create built-in Functors.
 
 The following built-in Functors are available:
 
-| Name of Functor | Creation (C++)             | Creation (Python)        |
-| --------------- | -------------------------- | ------------------------ |
-| Identity        | Functor f("Identity");     | f = trtc.Identity()      |
-| Maximum         | Functor f("Maximum");      | f = trtc.Maximum()       |
-| Minimum         | Functor f("Minimum");      | f = trtc.Minimum()       |
-| EqualTo         | Functor f("EqualTo");      | f = trtc.EqualTo()       |
-| NotEqualTo      | Functor f("NotEqualTo");   | f = trtc.NotEqualTo()    |
-| Greater         | Functor f("Greater");      | f = trtc.Greater()       |
-| Less            | Functor f("Less");         | f = trtc.Less()          |
-| GreaterEqual    | Functor f("GreaterEqual"); | f = trtc.GreaterEqual()  | 
-| LessEqual       | Functor f("LessEqual");    | f = trtc.LessEqual()     | 
-| Plus            | Functor f("Plus");         | f = trtc.Plus()          | 
-| Minus           | Functor f("Minus");        | f = trtc.Minus()         | 
-| Multiplies      | Functor f("Multiplies");   | f = trtc.Multiplies()    | 
-| Divides         | Functor f("Divides");      | f = trtc.Divides()       | 
-| Modulus         | Functor f("Modulus");      | f = trtc.Modulus()       | 
-| Negate          | Functor f("Negate");       | f = trtc.Negate()        | 
+| Name of Functor | Creation (C++)             | Creation (JAVA)                          |
+| --------------- | -------------------------- | ---------------------------------------- |
+| Identity        | Functor f("Identity");     | Functor f = new Functor("Identity");     |
+| Maximum         | Functor f("Maximum");      | Functor f = new Functor("Maximum");      |
+| Minimum         | Functor f("Minimum");      | Functor f = new Functor("Minimum");      |
+| EqualTo         | Functor f("EqualTo");      | Functor f = new Functor("EqualTo");      |
+| NotEqualTo      | Functor f("NotEqualTo");   | Functor f = new Functor("NotEqualTo");   |
+| Greater         | Functor f("Greater");      | Functor f = new Functor("Greater");      |
+| Less            | Functor f("Less");         | Functor f = new Functor("Less");         |
+| GreaterEqual    | Functor f("GreaterEqual"); | Functor f = new Functor("GreaterEqual"); |
+| LessEqual       | Functor f("LessEqual");    | Functor f = new Functor("LessEqual");    |
+| Plus            | Functor f("Plus");         | Functor f = new Functor("Plus");         |
+| Minus           | Functor f("Minus");        | Functor f = new Functor("Minus");        |
+| Multiplies      | Functor f("Multiplies");   | Functor f = new Functor("Multiplies");   |
+| Divides         | Functor f("Divides");      | Functor f = new Functor("Divides");      |
+| Modulus         | Functor f("Modulus");      | Functor f = new Functor("Modulus");      |
+| Negate          | Functor f("Negate");       | Functor f = new Functor("Negate");       |
 
 
 ## Algorithms
@@ -810,8 +734,7 @@ The following built-in Functors are available:
 Each algorithm of ThrustRTC is corresponding to one in Thrust. 
 A significant difference between ThrustRTC functions and Thrust functions is that Thrust 
 functions takes in iterators as parameters, while ThrustRTC takes in Vectors directly.
-In ThrustRTC, DVRange and DVVectorAdaptor can be used to create a working range of
-a Vector object.
+In ThrustRTC, DVRange can be used to create a working range of a Vector object.
 
 ### Transformations
 
@@ -826,10 +749,10 @@ DVVector darr("int32_t", 5);
 TRTC_Fill(darr, DVInt32(123));
 ```
 
-```python
-# Python
-darr = trtc.device_vector('int32_t', 5)
-trtc.Fill(darr, trtc.DVInt32(123))
+```java
+// JAVA
+DVVector darr = new DVVector("int32_t", 5);
+TRTC.Fill(darr, new DVInt32(123));
 ```
 
 The above code sets all elements of the Vector to 123. Other transformations include Sequence,
@@ -880,31 +803,29 @@ int main()
 }
 ```
 
-```python
-# Python
-import ThrustRTC as trtc
+```java
+// JAVA
+DVVector X = new DVVector("int32_t", 10);
+DVVector Y = new DVVector("int32_t", 10);
+DVVector Z = new DVVector("int32_t", 10);
 
-X = trtc.device_vector('int32_t', 10)
-Y = trtc.device_vector('int32_t', 10)
-Z = trtc.device_vector('int32_t', 10)
+// initialize X to 0,1,2,3, ....
+TRTC.Sequence(X);
 
-# initialize X to 0,1,2,3, ....
-trtc.Sequence(X)
+// compute Y = -X
+TRTC.Transform(X, Y, new Functor("Negate"));
 
-# compute Y = -X
-trtc.Transform(X, Y, trtc.Negate())
+// fill Z with twos
+TRTC.Fill(Z, new DVInt32(2));
 
-# fill Z with twos
-trtc.Fill(Z, trtc.DVInt32(2))
+// compute Y = X mod 2
+TRTC.Transform_Binary(X, Z, Y, new Functor("Modulus"));
 
-# compute Y = X mod 2
-trtc.Transform_Binary(X, Z, Y, trtc.Modulus())
+// replace all the ones in Y with tens
+TRTC.Replace(Y, new DVInt32(1), new DVInt32(10));
 
-# replace all the ones in Y with tens
-trtc.Replace(Y, trtc.DVInt32(1), trtc.DVInt32(10))
+// print Y.to_host()...
 
-# print Y
-print(Y.to_host())
 ```
 
 ### Reductions
@@ -921,9 +842,9 @@ TRTC_Reduce(D, DVInt32(0), Functor("Plus"), ret);
 int sum = *((int*)ret.data());
 ```
 
-```python
-# Python
-sum = trtc.Reduce(D, trtc.DVInt32(0), trtc.Plus())
+```java
+// JAVA
+int sum = (int)TRTC.Reduce(D, new DVInt32(0), new Functor("Plus"));
 ```
 
 The first argument is the input Vector. The second and third arguments provide the initial 
@@ -931,21 +852,21 @@ value and reduction operator respectively. Actually, this kind of reduction is s
 that it is the default choice when no initial value or operator is provided. The following 
 three lines are therefore equivalent:
 
-```python
-# Python
-sum = trtc.Reduce(D, trtc.DVInt32(0), trtc.Plus())
-sum = trtc.Reduce(D, trtc.DVInt32(0))
-sum = trtc.Reduce(D)
+```java
+// JAVA
+int sum = (int)TRTC.Reduce(D, new DVInt32(0), new Functor("Plus"));
+int sum = (int)TRTC.Reduce(D, new DVInt32(0));
+int sum = (int)TRTC.Reduce(D);
 ```
 
 Although Reduce() is sufficient to implement a wide variety of reductions, ThrustRTC provides
 a few additional functions for convenience. For example, Count() returns the number of 
 instances of a specific value in a given Vector.
 
-```python
-# Python
-vec = trtc.device_vector_from_list([ 0, 1, 0, 1, 1], 'int32_t')
-result = trtc.Count(vec, trtc.DVInt32(1))
+```java
+// JAVA
+DVVector vec = new DVVector(new int[]{ 0, 1, 0, 1, 1});
+long result = TRTC.Count(vec, new DVInt32(1));
 ```
 
 Other reduction operations include Count_If(), Min_Element(), Max_Element(), Is_Sorted(),
@@ -966,21 +887,21 @@ d_data.to_host(data);
 // data is now {1, 1, 3, 5, 6, 9}
 ```
 
-```python
-# Python
-d_data = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
-trtc.Inclusive_Scan(d_data, d_data) # in-place scan
-#  d_data is now {1, 1, 3, 5, 6, 9}
+```java
+// JAVA
+DVVector d_data = new DVVector(new int[]{1, 0, 2, 2, 1, 3});
+TRTC.Inclusive_Scan(d_data, d_data);// in-place scan
+//  d_data is now {1, 1, 3, 5, 6, 9}
 ```
 In an inclusive scan each element of the output is the corresponding partial sum of the
 input Vector. For example, data[2] = data[0] + data[1] + data[2]. An exclusive
 scan is similar, but shifted by one place to the right:
 
-```python
-# Python
-d_data = trtc.device_vector_from_list([1, 0, 2, 2, 1, 3], 'int32_t')
-trtc.Exclusive_Scan(d_data, d_data) # in-place scan
-# d_data is now {0, 1, 1, 3, 5, 6}
+```java
+// JAVA
+DVVector d_data = new DVVector(new int[]{1, 0, 2, 2, 1, 3});
+TRTC.Exclusive_Scan(d_data, d_data); // in-place scan
+// d_data is now {0, 1, 1, 3, 5, 6}
 ```
 
 So now data[2] = data[0] + data[1]. As these examples show, Inclusive_Scan()
@@ -1013,11 +934,11 @@ dvalues.to_host(hvalues);
 // hvalues is now {1, 2, 4, 5, 7, 8}
 ```
 
-```python
-# Python
-dvalues = trtc.device_vector_from_list([ 1, 4, 2, 8, 5, 7 ], 'int32_t')
-trtc.Sort(dvalues)
-# dvalues is now {1, 2, 4, 5, 7, 8}
+```java
+// JAVA
+DVVector dvalues = new DVVector(new int[]{ 1, 4, 2, 8, 5, 7 });
+TRTC.Sort(dvalues)
+// dvalues is now {1, 2, 4, 5, 7, 8}
 ```
 
 In addition, ThrustRTC provides Sort_By_Key(), which sort key-value pairs stored in separate places.
@@ -1035,13 +956,13 @@ dvalues.to_host(hvalues);
 // hvalues is now {'a', 'c', 'b', 'e', 'f', 'd'}
 ```
 
-```python
-# Python
-dkeys = trtc.device_vector_from_list([ 1, 4, 2, 8, 5, 7 ], 'int32_t')
-dvalues = trtc.device_vector_from_list([ 1, 2, 3, 4, 5, 6], 'int32_t')
-trtc.Sort_By_Key(dkeys, dvalues)
-# dkeys is now { 1, 2, 4, 5, 7, 8}
-# dvalues is now {'1', '3', '2', '5', '6', '4'}
+```java
+// JAVA
+DVVector dkeys = new DVVector(new int[]{ 1, 4, 2, 8, 5, 7 });
+DVVector dvalues = new DVVector(new int[]{ 1, 2, 3, 4, 5, 6});
+TRTC.Sort_By_Key(dkeys, dvalues)
+// dkeys is now { 1, 2, 4, 5, 7, 8}
+// dvalues is now {'1', '3', '2', '5', '6', '4'}
 ```
 
 Just like in Thrust, sorting functions in ThrustRTC also accept functors as alternative 
@@ -1056,9 +977,9 @@ dvalues.to_host(hvalues);
 // hvalues is now {8, 7, 5, 4, 2, 1}
 ```
 
-```python
-# Python
-dvalues = trtc.device_vector_from_list([ 1, 4, 2, 8, 5, 7 ], 'int32_t')
-trtc.Sort(dvalues, trtc.Greater())
-# dvalues is now {8, 7, 5, 4, 2, 1}
+```java
+// JAVA
+DVVector dvalues = new DVVector(new int[]{ 1, 4, 2, 8, 5, 7 });
+TRTC.Sort(dvalues, new Functor("Greater"));
+// dvalues is now {8, 7, 5, 4, 2, 1}
 ```

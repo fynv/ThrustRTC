@@ -2,7 +2,7 @@
 
 There could be a long time before ThrustRTC can be "properly" documented, with every API covered. That is not the aim of this document.
 
-ThrustRTC is "multilingual". There is a C++ library at its core, a wrapper layer for Python users, a wrapper layer for C# users, and there will be a wrapper layers for Java users as well in the future. Therefore, documenting every detail will be a huge effort. However, thanks to [Thrust](https://thrust.github.io/doc/index.html), most of the core logics of the algorithms are already explained. Algorithm interfaces of ThrustRTC are following very similar logics as Thrust's, so we can focus more on the differences here, which is mostly about the infrastructures.
+ThrustRTC is "multilingual". There is a C++ library at its core, a wrapper layer for Python users, a wrapper layer for C# users, and a wrapper layers for Java users as well now. Therefore, documenting every detail will be a huge effort. However, thanks to [Thrust](https://thrust.github.io/doc/index.html), most of the core logics of the algorithms are already explained. Algorithm interfaces of ThrustRTC are following very similar logics as Thrust's, so we can focus more on the differences here, which is mostly about the infrastructures.
 
 ## Introduction
 
@@ -66,7 +66,7 @@ Zip packages are available at:
 
   * set_libnvrtc_path() from C++ or 
   * ThrustRTC.set_libnvrtc_path() from Python
-  * TRTC.set_libnvrtc_path() from C#
+  * TRTC.set_libnvrtc_path() from C# or JAVA
 
   at run-time to specify the path of the library.
 
@@ -111,14 +111,14 @@ int main()
 	"    if (idx >= arr_in.size()) return;\n"
 	"    arr_out[idx] = arr_in[idx]*k;\n");
 
-	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
-	DVVector dvec_in_f("float", 5, test_f);
-	DVVector dvec_out_f("float", 5);
+	float test[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
+	DVVector dvec_in("float", 5, test);
+	DVVector dvec_out("float", 5);
 	DVFloat k1(10.0);
-	const DeviceViewable* args_f[] = { &dvec_in_f, &dvec_out_f, &k1 };
+	const DeviceViewable* args_f[] = { &dvec_in, &dvec_out, &k1 };
 	ker.launch( { 1, 1, 1 }, { 128, 1, 1 }, args_f);
-	dvec_out_f.to_host(test_f);
-	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);
+	dvec_out.to_host(test);
+	printf("%f %f %f %f %f\n", test[0], test[1], test[2], test[3], test[4]);
 
 	return 0;
 }
@@ -191,14 +191,14 @@ int main()
 	TRTC_For f({ "arr_in", "arr_out", "k" }, "idx",
 		"    arr_out[idx] = arr_in[idx]*k;\n");
 
-	float test_f[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
-	DVVector dvec_in_f("float", 5, test_f);
-	DVVector dvec_out_f("float", 5);
+	float test[5] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0 };
+	DVVector dvec_in("float", 5, test);
+	DVVector dvec_out("float", 5);
 	DVDouble k1(10.0);
-	const DeviceViewable* args_f[] = { &dvec_in_f, &dvec_out_f, &k1 };
+	const DeviceViewable* args_f[] = { &dvec_in, &dvec_out, &k1 };
 	f.launch_n(5, args_f);
-	dvec_out_f.to_host(test_f);
-	printf("%f %f %f %f %f\n", test_f[0], test_f[1], test_f[2], test_f[3], test_f[4]);
+	dvec_out.to_host(test);
+	printf("%f %f %f %f %f\n", test[0], test[1], test[2], test[3], test[4]);
 
 	return 0;
 }
@@ -249,31 +249,19 @@ Device Viewable Objects are objects that can be used as kernel arguments. All De
 
 The following types of Device Viewable Objects can be initalized using values of basic types.
 
-| Name of Class | C++ Type            | Creation (C++)     | Creation (C#)                  |
-| ------------- | ------------------- | ------------------ | ------------------------------ |
-| DVInt8        | int8_t              | DVInt8 x(42);      | DVInt8 x = new DVInt8(42)      |
-| DVUInt8       | uint8_t             | DVUInt8 x(42);     | DVUInt8 x = new DVUInt8(42)    |
-| DVInt16       | int16_t             | DVInt16 x(42);     | DVInt16 x = new DVInt16(42)    |
-| DVUInt16      | uint16_t            | DVUInt16 x(42);    | DVUInt16 x = new DVUInt16(42)  | 
-| DVInt32       | int32_t             | DVInt32 x(42);     | DVInt32 x = new DVInt32(42)    |
-| DVUInt32      | uint32_t            | DVUInt32 x(42);    | DVUInt32 x = new DVUInt32(42)  |
-| DVInt64       | int64_t             | DVInt64 x(42);     | DVInt64 x = new DVInt64(42)    | 
-| DVUInt64      | uint64_t            | DVUInt64 x(42);    | DVInt64 x = new DVUInt64(42)   | 
-| DVFloat       | float               | DVFloat x(42.0f);  | DVInt64 x = new DVFloat(42.0)  |
-| DVDouble      | double              | DVDouble x(42.0);  | DVInt64 x = new DVDouble(42.0) |
-| DVBool        | bool                | DVBool x(true);    | DVInt64 x = new DVBool(True)   |
-| DVSizeT       | size_t              | DVSizeT x(42);     | N/A                            |
-| DVChar        | char                | DVChar x(42);      | N/A                            |
-| DVSChar       | signed char         | DVSChar x(42);     | N/A                            |
-| DVUChar       | unsigned char       | DVUChar x(42);     | N/A                            |
-| DVShort       | short               | DVShort x(42);     | N/A                            |
-| DVUShort      | unsigned short      | DVUShort x(42);    | N/A                            |
-| DVInt         | int                 | DVInt x(42);       | N/A                            |
-| DVUInt        | unsigned int        | DVUInt x(42);      | N/A                            |
-| DVLong        | long                | DVLong x(42);      | N/A                            |
-| DVULong       | unsigned long       | DVULong x(42);     | N/A                            |
-| DVLongLong    | long long           | DVLongLong x(42);  | N/A                            |
-| DVULongLong   | unsigned long long  | DVULongLong x(42); | N/A                            |
+| Name of Class | C++ Type            | Creation (C++)     | Creation (C#)                   |
+| ------------- | ------------------- | ------------------ | ------------------------------- |
+| DVInt8        | int8_t              | DVInt8 x(42);      | DVInt8 x = new DVInt8(42);      |
+| DVUInt8       | uint8_t             | DVUInt8 x(42);     | DVUInt8 x = new DVUInt8(42);    |
+| DVInt16       | int16_t             | DVInt16 x(42);     | DVInt16 x = new DVInt16(42);    |
+| DVUInt16      | uint16_t            | DVUInt16 x(42);    | DVUInt16 x = new DVUInt16(42);  | 
+| DVInt32       | int32_t             | DVInt32 x(42);     | DVInt32 x = new DVInt32(42);    |
+| DVUInt32      | uint32_t            | DVUInt32 x(42);    | DVUInt32 x = new DVUInt32(42);  |
+| DVInt64       | int64_t             | DVInt64 x(42);     | DVInt64 x = new DVInt64(42);    | 
+| DVUInt64      | uint64_t            | DVUInt64 x(42);    | DVInt64 x = new DVUInt64(42);   | 
+| DVFloat       | float               | DVFloat x(42.0f);  | DVInt64 x = new DVFloat(42.0);  |
+| DVDouble      | double              | DVDouble x(42.0);  | DVInt64 x = new DVDouble(42.0); |
+| DVBool        | bool                | DVBool x(true);    | DVInt64 x = new DVBool(True);   |
 
 ### Tuples
 
@@ -753,21 +741,21 @@ The following built-in Functors are available:
 
 | Name of Functor | Creation (C++)             | Creation (C#)                            |
 | --------------- | -------------------------- | ---------------------------------------- |
-| Identity        | Functor f("Identity")      | Functor f = new Functor("Identity");     |
-| Maximum         | Functor f("Maximum")       | Functor f = new Functor("Maximum");      |
-| Minimum         | Functor f("Minimum")       | Functor f = new Functor("Minimum");      |
-| EqualTo         | Functor f("EqualTo")       | Functor f = new Functor("EqualTo");      |
-| NotEqualTo      | Functor f("NotEqualTo")    | Functor f = new Functor("NotEqualTo");   |
-| Greater         | Functor f("Greater")       | Functor f = new Functor("Greater");      |
-| Less            | Functor f("Less")          | Functor f = new Functor("Less");         |
-| GreaterEqual    | Functor f("GreaterEqual")  | Functor f = new Functor("GreaterEqual"); |
-| LessEqual       | Functor f("LessEqual")     | Functor f = new Functor("LessEqual");    |
-| Plus            | Functor f("Plus")          | Functor f = new Functor("Plus");         |
-| Minus           | Functor f("Minus")         | Functor f = new Functor("Minus");        |
-| Multiplies      | Functor f("Multiplies")    | Functor f = new Functor("Multiplies");   |
-| Divides         | Functor f("Divides")       | Functor f = new Functor("Divides");      |
-| Modulus         | Functor f("Modulus")       | Functor f = new Functor("Modulus");      |
-| Negate          | Functor f("Negate")        | Functor f = new Functor("Negate");       |
+| Identity        | Functor f("Identity");     | Functor f = new Functor("Identity");     |
+| Maximum         | Functor f("Maximum");      | Functor f = new Functor("Maximum");      |
+| Minimum         | Functor f("Minimum");      | Functor f = new Functor("Minimum");      |
+| EqualTo         | Functor f("EqualTo");      | Functor f = new Functor("EqualTo");      |
+| NotEqualTo      | Functor f("NotEqualTo");   | Functor f = new Functor("NotEqualTo");   |
+| Greater         | Functor f("Greater");      | Functor f = new Functor("Greater");      |
+| Less            | Functor f("Less");         | Functor f = new Functor("Less");         |
+| GreaterEqual    | Functor f("GreaterEqual"); | Functor f = new Functor("GreaterEqual"); |
+| LessEqual       | Functor f("LessEqual");    | Functor f = new Functor("LessEqual");    |
+| Plus            | Functor f("Plus");         | Functor f = new Functor("Plus");         |
+| Minus           | Functor f("Minus");        | Functor f = new Functor("Minus");        |
+| Multiplies      | Functor f("Multiplies");   | Functor f = new Functor("Multiplies");   |
+| Divides         | Functor f("Divides");      | Functor f = new Functor("Divides");      |
+| Modulus         | Functor f("Modulus");      | Functor f = new Functor("Modulus");      |
+| Negate          | Functor f("Negate");       | Functor f = new Functor("Negate");       |
 
 
 ## Algorithms

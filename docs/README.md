@@ -6,6 +6,8 @@
 
 [Quick Start Guide - for C# users](https://fynv.github.io/ThrustRTC/QuickStartGuide_cs.html)
 
+[Quick Start Guide - for JAVA users](https://fynv.github.io/ThrustRTC/QuickStartGuide_java.html)
+
 ## Demos
 
 Using ThrustRTC for histogram calculation and k-means clustering.

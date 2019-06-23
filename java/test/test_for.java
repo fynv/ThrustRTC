@@ -7,7 +7,7 @@ public class test_for
 	{
 		For ker = new For(new String[] { "arr_in", "arr_out", "k" }, "idx",
 			"    arr_out[idx] = arr_in[idx]*k;\n");
-	  
+
 		DVVector dvec_in_f = new DVVector(new float[] { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f });
 		DVVector dvec_out_f = new DVVector("float", 5);
 		DVFloat k1 = new DVFloat(10.0f);
