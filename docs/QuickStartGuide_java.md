@@ -26,37 +26,21 @@ At build time, you will only need:
 
 * UnQLite source code, as submodule: thirdparty/unqlite
 * CMake 3.x
-* C libraries of Python 3 is required to build the Python binding part of the code.
+* JDK for building the JAVA library
 
 After cloning the repo from github and resolving the submodules, you can build it with CMake:
 
 ```
 $ mkdir build
 $ cd build
-$ cmake .. -DCMAKE_INSTALL_PREFIX=../install
+$ cmake .. -DCMAKE_INSTALL_PREFIX=../install -DBUILD_JAVA=true
 $ make
 $ make install
 ```
 
 You will get the library headers, binaries and examples in the "install" directory.
 
-If you don't have Python installed and you don't need the Python part, you can simply remove the line:
-```
-add_subdirectory(python)
-```
-from CMakeLists.txt in the root folder.
-
-The JAVA part of the code is not build by default. To build it, you need to:
-
-* Install JDK. The code is tested only with Oracle JDK, but Open JDK should also work.
-* Uncomment the line
-```
-# add_subdirectory(java)
-```
-in CMakeLists.txt in the root folder.
-
-After "make install", you will get JThrustRTC_Native.dll (or libJThrustRTC_Native.so), and JThrustRTC.jar in
-install/test_java. All test programmes are packaged as a single jar file JThrustRTCTests.jar. Starting commands
+All JAVA test programmes are packaged as a single jar file JThrustRTCTests.jar. Starting commands
 can be found in run_tests.bat(for Windows) and run_tests.sh(for linux).
 
 #### GitHub Release

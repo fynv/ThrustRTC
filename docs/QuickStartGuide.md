@@ -33,14 +33,16 @@ After cloning the repo from github and resolving the submodules, you can build i
 ```
 $ mkdir build
 $ cd build
-$ cmake .. -DCMAKE_INSTALL_PREFIX=../install
+$ cmake .. -DCMAKE_INSTALL_PREFIX=../install -DBUILD_PYTHON=true
 $ make
 $ make install
 ```
 
+You will get the library headers, binaries and examples in the "install" directory.
+
 #### Install ThrustRTC for Python from Pypi
 
-Experimental builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
+Builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
 If your environment matches, you can try:
 
 ```

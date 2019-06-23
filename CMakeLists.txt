@@ -192,6 +192,20 @@ install(TARGETS ThrustRTC
 else()
 install(TARGETS ThrustRTC DESTINATION lib)
 endif()
+
+set(BUILD_TESTS false CACHE BOOL "Build C++ tests")
+set(BUILD_PYTHON false CACHE BOOL "Build Python library")
+set(BUILD_JAVA false CACHE BOOL "Build Java library")
+
+if (BUILD_TESTS)
 add_subdirectory(test)
+endif()
+
+if (BUILD_PYTHON)
 add_subdirectory(python)
-# add_subdirectory(java)
+endif()
+
+if (BUILD_JAVA)
+add_subdirectory(java)
+endif()
+

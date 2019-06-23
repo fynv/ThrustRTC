@@ -26,7 +26,7 @@ At build time, you will only need:
 
 * UnQLite source code, as submodule: thirdparty/unqlite
 * CMake 3.x
-* C libraries of Python 3 is required to build the Python binding part of the code.
+* .Net development environment for building the C# library.
 
 After cloning the repo from github and resolving the submodules, you can build it with CMake:
 
@@ -39,12 +39,6 @@ $ make install
 ```
 
 You will get the library headers, binaries and examples in the "install" directory.
-
-If you don't have Python installed and you don't need the Python part, you can simply remove the line:
-```
-add_subdirectory(python)
-```
-from CMakeLists.txt in the root folder.
 
 You can build the C# wrapping layer in the folder "CSharp" after the C++ library is built.
 
