@@ -8,7 +8,10 @@ ThrustRTC is "multilingual". There is a C++ library at its core, a wrapper layer
 
 The project ThrustRTC is trying to provide a basic GPU algorithm library that can be used everywhere. 
 
-Most C/C++ libraries are already able to be used "everywhere", as long as the targeting language has a C/C++ interfacing machinism. However, templated libraries are exceptions, they are C++ only. For GPU programming, it is well known that static-polymorphism is preferred over dynamic-polymorphism. Thrust is a CUDA algorithm library that implemented static-polymorphism based on C++ templates. As a downside, it restricted itself to C++. This project tries to overcome this downside of Thrust using NVRTC, through which "static-polymorphism" of GPU programmes can happen at the runtime of the host program.
+In GPU programming, templates are used to build very poweful libraries, like Thrust. 
+However, these libraries can only be used in the language they are programmed in.
+
+This project rewrites Thrust using a new paradigm: [NVRTC + dynamic-instantiation](https://fynv.github.io/ProgrammingGPUAcrossTheLaunguageBoundaries.html), and tries to overcome this downside of Thrust.
 
 ThrustRTC provides almost the same algorithms as Thrust, such as scan, sort and reduce, while making these algorithms available to non-C++ launguages.
 
