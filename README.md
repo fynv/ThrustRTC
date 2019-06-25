@@ -1,39 +1,15 @@
 # ThrustRTC
 
-## The Idea
-
 The aim of the project is to provide a library of general GPU algorithms, functionally similar to [Thrust](https://github.com/thrust/thrust/), that can be used in non-C++ programming launguages that has an interface with C/C++ (Python, C#, JAVA etc).
 
-There are several options to integrate CUDA with a language like Python.
+This projects uses a new CUDA programming paradigm: NVRTC + dynamic-instantiation, as an alternative to the well
+establish "CUDA runtime + static compilation + templates" paradigm.
 
-### Writing both host code and device code in the target launguage
+Click [here](https://fynv.github.io/ProgrammingGPUAcrossTheLaunguageBoundaries.html) to learn more about the new paradigm.
 
-A special compiler will be required to translate from the target launguage to GPU executable code. 
+## Using ThrustRTC in different languages
 
-Even though the target launguage can be an interpreted launguage, the GPU part of code still has to be compiled
-for efficiency. For Python, we will need [Numba](http://numba.pydata.org/numba-doc/0.13/CUDAJit.html) to do the
-trick. Numba is great, but when considering building a library, there is a limitation that the resulted library 
-will be for Python only. For another lauguage, we will need to find another tool and build the library again.
-
-### Providing precompiled GPU code, accessible through host APIs
-
-This is what we do for most GPU libraries. There are some general limitations:
-
-* Code bloat. Each kernel needs to be compiled for multiple GPU generations. For templated kernels, the number will be multiplied
-  with the number of different data types.
-
-* Unextendable. Once a CUDA module is compiled, it will be extremely difficult to insert custom code from outside of the module. 
-
-Thrust uses templates and callback/functors intensively, so the above limitations will be unavoidable.
-
-### Integrate GPU RTC (runtime compilation) with the target launguage
-
-This is the choice of this project. We still write the device code in C++. However, we delay the compilation of device code to runtime.
-
-Per-usecase runtime data-type information and custom code (functors) will be integrated with fixed routines dynamically, 
-through a string concatenation procedure, and concrete source code will be generated and compiled as kernels. 
-
-From user's perspective, the usage of this library is quite simlar to using Thrust, although 2 different launguages needed to be used simultaneously. Using _replace_if()_ as an example:
+The usage of this library is quite simlar to using Thrust, except that you can use it Python, C# and JAVA, and CUDA SDK is not required.
 
 Thrust, C++:
 
@@ -42,25 +18,58 @@ Thrust, C++:
 #include <thrust/replace.h>
 #include <thrust/device_vector.h>
 
-std::vector<int> hdata({ 1, -3, 2, -1 });
+std::vector<int> hdata({ 1, 2, 3, 1, 2  });
 thrust::device_vector<int> A(hdata);
-thrust::replace_if(A.begin(), A.end(), [] __device__(int x){ return x < 0; }, 0);
+thrust::replace_if(A.begin(), A.end(), 1, 99);
 
-// A contains [1, 0, 2, 0]
+// A contains { 99, 2, 3, 99, 2}
 ```
 
-ThrustRTC, Python (host) + C++ (device):
+ThrustRTC, in C++:
+```cpp
+#include "TRTCContext.h"
+#include "DVVector.h"
+#include "replace.h"
+
+int hdata[5] = { 1,2,3,1,2 };
+DVVector A("int32_t", 5, hdata);
+TRTC_Replace(A, DVInt32(1), DVInt32(99));
+
+// A contains { 99, 2, 3, 99, 2}
+```
+
+ThrustRTC, in Python:
 
 ```python
 import ThrustRTC as trtc
 
-A = trtc.device_vector_from_list([1, -3, 2, -1], 'int32_t')
-trtc.Replace_If(A, trtc.Functor({}, ['x'], '        return x<0;\n'), trtc.DVInt32(0))
+A = trtc.device_vector_from_list([1, 2, 3, 1, 2], 'int32_t')
+trtc.Replace_If(A, trtc.DVInt32(1), trtc.DVInt32(99))
 
-# A contains [1, 0, 2, 0]
+# A contains [99, 2, 3, 99, 2]
 ```
 
-A significant difference between ThrustRTC and Thrust C++ is that ThrustRTC does not include the iterators. 
+ThrustRTC, in C#:
+```cs
+using ThrustRTCSharp;
+
+DVVector A = new DVVector(new int[] { 1, 2, 3, 1, 2 });
+TRTC.Replace(A, new DVInt32(1), new DVInt32(99));
+
+// A contains { 99, 2, 3, 99, 2}
+```
+
+ThrustRTC, in JAVA:
+```java
+import JThrustRTC.*;
+
+DVVector vec = new DVVector(new int[] { 1, 2, 3, 1, 2 });
+TRTC.Replace(vec, new DVInt32(1), new DVInt32(99));
+
+// A contains { 99, 2, 3, 99, 2}
+```
+
+A significant difference between ThrustRTC and Thrust is that ThrustRTC does not include the iterators. 
 All operations explicitly work on vectors types. There are adaptive objects that can be used to map to 
 a sub-range of a vector instead of using the whole vector.
 
