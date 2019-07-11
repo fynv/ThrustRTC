@@ -31,19 +31,31 @@ At build time, you will only need:
 * CMake 3.x
 * C libraries of Python 3 is required to build the Python binding part of the code.
 
-After cloning the repo from github and resolving the submodules, you can build it with CMake:
+After cloning the repo from github and resolving the submodules, you can build it with CMake.
+Libraries for different lauguages are now built separately. The C++ library is used as a 
+reference, not a dependency for other laungauges.
 
+For C++:
 ```
-$ mkdir build
-$ cd build
-$ cmake .. -DCMAKE_INSTALL_PREFIX=../install -DBUILD_PYTHON=true
+$ mkdir build_cpp
+$ cd build_cpp
+$ cmake ../cpp -DBUILD_TESTS=true
+$ make
+$ make install
+```
+
+For Python:
+```
+$ mkdir build_python
+$ cd build_python
+$ cmake ../python -DINCLUDE_TESTS=true
 $ make
 $ make install
 ```
 
 You will get the library headers, binaries and examples in the "install" directory.
 
-#### Install ThrustRTC for Python from Pypi/Conda
+#### Install ThrustRTC for Python from Pypi
 
 Builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
 If your environment matches, you can try:
@@ -51,12 +63,6 @@ If your environment matches, you can try:
 ```
 $ pip3 install ThrustRTC
 ```
-Also available on [Anaconda Cloud](https://anaconda.org/fyplus/thrustrtc)
-
-```
-$ conda install -c fyplus thrustrtc 
-```
-
 You will not get the C++ library, headers as well as all the test programs using this installation method.
 
 #### GitHub Release

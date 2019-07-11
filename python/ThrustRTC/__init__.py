@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 import os
 
 def set_libnvrtc_path(path):

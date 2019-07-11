@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "ThrustRTCLR.h"
 
 #include "fill.h"

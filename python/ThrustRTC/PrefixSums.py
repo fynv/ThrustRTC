@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 def Inclusive_Scan(vec_in, vec_out, binary_op = None):
 	cptr_binary_op = None

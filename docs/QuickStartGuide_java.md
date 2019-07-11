@@ -31,12 +31,24 @@ At build time, you will only need:
 * CMake 3.x
 * JDK for building the JAVA library
 
-After cloning the repo from github and resolving the submodules, you can build it with CMake:
+After cloning the repo from github and resolving the submodules, you can build it with CMake.
+Libraries for different lauguages are now built separately. The C++ library is used as a 
+reference, not a dependency for other laungauges.
 
+For C++:
 ```
-$ mkdir build
-$ cd build
-$ cmake .. -DCMAKE_INSTALL_PREFIX=../install -DBUILD_JAVA=true
+$ mkdir build_cpp
+$ cd build_cpp
+$ cmake ../cpp -DBUILD_TESTS=true
+$ make
+$ make install
+```
+
+For JAVA:
+```
+$ mkdir build_java
+$ cd build_java
+$ cmake ../java -DBUILD_TESTS=true
 $ make
 $ make install
 ```

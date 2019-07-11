@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "ThrustRTCLR.h"
 #include "fake_vectors/DVConstant.h"
 #include "fake_vectors/DVCounter.h"

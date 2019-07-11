@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 def Merge(vec1, vec2, vec_out, comp = None):
 	cptr_comp = None

@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 def Set_Verbose(verbose=True):
     native.n_set_verbose(verbose)

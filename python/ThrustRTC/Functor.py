@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 from .DeviceViewable import DeviceViewable
 
 class Functor(DeviceViewable):

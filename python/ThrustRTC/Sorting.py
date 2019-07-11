@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 def Sort(vec, comp = None,):
 	cptr_comp = None

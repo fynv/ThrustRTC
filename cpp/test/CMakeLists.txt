@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.0)
 
+SET(CMAKE_INSTALL_RPATH ../lib)
+
 add_executable(test_trtc test_trtc.cpp)
 add_executable(test_for test_for.cpp)
 add_executable(test_fill test_fill.cpp)

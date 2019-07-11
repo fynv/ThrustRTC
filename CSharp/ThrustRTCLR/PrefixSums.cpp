@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "ThrustRTCLR.h"
 #include "scan.h"
 #include "transform_scan.h"

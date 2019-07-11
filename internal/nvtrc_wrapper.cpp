@@ -42,7 +42,7 @@ bool init_nvrtc(const char* path_lib)
 	{
 		char cuda_path[1024];
 		char cuda_bin_path[1024];
-		if (!GetEnvironmentVariable("CUDA_PATH", cuda_path, 1024))
+		if (!GetEnvironmentVariableA("CUDA_PATH", cuda_path, 1024))
 			sprintf(cuda_bin_path, ".");
 		else
 			sprintf(cuda_bin_path, "%s\\bin", cuda_path);			

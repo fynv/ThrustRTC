@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 def Count(vec, value):
 	return native.n_count(vec.m_cptr, value.m_cptr)

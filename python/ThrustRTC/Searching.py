@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 def Find(vec, value):
 	return native.n_find(vec.m_cptr, value.m_cptr)

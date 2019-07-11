@@ -75,6 +75,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\install\lib\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -87,14 +88,16 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../install/include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;THRUST_RTC_DLL_EXPORT;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../..;../../internal;../../thirdparty/crc64;../../thirdparty/unqlite</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>unqlite.lib;ThrustRTC_static.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../install/lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -130,30 +133,140 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\adjacent_difference.h" />
+    <ClInclude Include="..\..\binary_search.h" />
+    <ClInclude Include="..\..\built_in.h" />
+    <ClInclude Include="..\..\copy.h" />
+    <ClInclude Include="..\..\count.h" />
+    <ClInclude Include="..\..\DeviceViewable.h" />
+    <ClInclude Include="..\..\DVTuple.h" />
+    <ClInclude Include="..\..\DVVector.h" />
+    <ClInclude Include="..\..\equal.h" />
+    <ClInclude Include="..\..\extrema.h" />
+    <ClInclude Include="..\..\fake_vectors\DVConstant.h" />
+    <ClInclude Include="..\..\fake_vectors\DVCounter.h" />
+    <ClInclude Include="..\..\fake_vectors\DVCustomVector.h" />
+    <ClInclude Include="..\..\fake_vectors\DVDiscard.h" />
+    <ClInclude Include="..\..\fake_vectors\DVPermutation.h" />
+    <ClInclude Include="..\..\fake_vectors\DVRange.h" />
+    <ClInclude Include="..\..\fake_vectors\DVReverse.h" />
+    <ClInclude Include="..\..\fake_vectors\DVTransform.h" />
+    <ClInclude Include="..\..\fake_vectors\DVZipped.h" />
+    <ClInclude Include="..\..\fill.h" />
+    <ClInclude Include="..\..\find.h" />
+    <ClInclude Include="..\..\for_each.h" />
+    <ClInclude Include="..\..\functor.h" />
+    <ClInclude Include="..\..\gather.h" />
+    <ClInclude Include="..\..\inner_product.h" />
+    <ClInclude Include="..\..\internal\cuda_inline_headers.hpp" />
+    <ClInclude Include="..\..\internal\cuda_inline_headers_global.hpp" />
+    <ClInclude Include="..\..\internal\cuda_occupancy.h" />
+    <ClInclude Include="..\..\internal\cuda_wrapper.h" />
+    <ClInclude Include="..\..\internal\general_copy_if.h" />
+    <ClInclude Include="..\..\internal\general_find.h" />
+    <ClInclude Include="..\..\internal\general_reduce.h" />
+    <ClInclude Include="..\..\internal\general_scan.h" />
+    <ClInclude Include="..\..\internal\general_scan_by_key.h" />
+    <ClInclude Include="..\..\internal\launch_calc.h" />
+    <ClInclude Include="..\..\internal\merge_sort.h" />
+    <ClInclude Include="..\..\internal\nvtrc_wrapper.h" />
+    <ClInclude Include="..\..\internal\radix_sort.h" />
+    <ClInclude Include="..\..\internal\Timing.h" />
+    <ClInclude Include="..\..\logical.h" />
+    <ClInclude Include="..\..\merge.h" />
+    <ClInclude Include="..\..\mismatch.h" />
+    <ClInclude Include="..\..\partition.h" />
+    <ClInclude Include="..\..\reduce.h" />
+    <ClInclude Include="..\..\remove.h" />
+    <ClInclude Include="..\..\replace.h" />
+    <ClInclude Include="..\..\scan.h" />
+    <ClInclude Include="..\..\scatter.h" />
+    <ClInclude Include="..\..\sequence.h" />
+    <ClInclude Include="..\..\sort.h" />
+    <ClInclude Include="..\..\swap.h" />
+    <ClInclude Include="..\..\tabulate.h" />
+    <ClInclude Include="..\..\thirdparty\crc64\crc64.h" />
+    <ClInclude Include="..\..\thirdparty\unqlite\unqlite.h" />
+    <ClInclude Include="..\..\transform.h" />
+    <ClInclude Include="..\..\transform_reduce.h" />
+    <ClInclude Include="..\..\transform_scan.h" />
+    <ClInclude Include="..\..\TRTCContext.h" />
+    <ClInclude Include="..\..\TRTC_api.h" />
+    <ClInclude Include="..\..\unique.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="ThrustRTCLR.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\adjacent_difference.cpp" />
+    <ClCompile Include="..\..\binary_search.cpp" />
+    <ClCompile Include="..\..\copy.cpp" />
+    <ClCompile Include="..\..\count.cpp" />
+    <ClCompile Include="..\..\DVTuple.cpp" />
+    <ClCompile Include="..\..\DVVector.cpp" />
+    <ClCompile Include="..\..\equal.cpp" />
+    <ClCompile Include="..\..\extrema.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVConstant.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVCounter.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVCustomVector.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVDiscard.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVPermutation.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVRange.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVReverse.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVTransform.cpp" />
+    <ClCompile Include="..\..\fake_vectors\DVZipped.cpp" />
+    <ClCompile Include="..\..\fill.cpp" />
+    <ClCompile Include="..\..\find.cpp" />
+    <ClCompile Include="..\..\for_each.cpp" />
+    <ClCompile Include="..\..\functor.cpp" />
+    <ClCompile Include="..\..\gather.cpp" />
+    <ClCompile Include="..\..\inner_product.cpp" />
+    <ClCompile Include="..\..\internal\cuda_wrapper.cpp" />
+    <ClCompile Include="..\..\internal\general_copy_if.cpp" />
+    <ClCompile Include="..\..\internal\general_find.cpp" />
+    <ClCompile Include="..\..\internal\general_reduce.cpp" />
+    <ClCompile Include="..\..\internal\general_scan.cpp" />
+    <ClCompile Include="..\..\internal\general_scan_by_key.cpp" />
+    <ClCompile Include="..\..\internal\launch_calc.cpp" />
+    <ClCompile Include="..\..\internal\merge_sort.cpp" />
+    <ClCompile Include="..\..\internal\nvtrc_wrapper.cpp" />
+    <ClCompile Include="..\..\internal\pack_headers.cpp" />
+    <ClCompile Include="..\..\internal\radix_sort.cpp" />
+    <ClCompile Include="..\..\logical.cpp" />
+    <ClCompile Include="..\..\merge.cpp" />
+    <ClCompile Include="..\..\mismatch.cpp" />
+    <ClCompile Include="..\..\partition.cpp" />
+    <ClCompile Include="..\..\reduce.cpp" />
+    <ClCompile Include="..\..\remove.cpp" />
+    <ClCompile Include="..\..\replace.cpp" />
+    <ClCompile Include="..\..\scan.cpp" />
+    <ClCompile Include="..\..\scan_by_key.cpp" />
+    <ClCompile Include="..\..\scatter.cpp" />
+    <ClCompile Include="..\..\sequence.cpp" />
+    <ClCompile Include="..\..\sort.cpp" />
+    <ClCompile Include="..\..\swap.cpp" />
+    <ClCompile Include="..\..\tabulate.cpp" />
+    <ClCompile Include="..\..\thirdparty\crc64\crc64.cpp" />
+    <ClCompile Include="..\..\thirdparty\unqlite\unqlite.c">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="..\..\transform.cpp" />
+    <ClCompile Include="..\..\transform_reduce.cpp" />
+    <ClCompile Include="..\..\transform_scan.cpp" />
+    <ClCompile Include="..\..\TRTCContext.cpp" />
+    <ClCompile Include="..\..\unique.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="Copying.cpp" />
     <ClCompile Include="DeviceViewable.cpp" />
-    <ClCompile Include="DVTuple.cpp" />
-    <ClCompile Include="DVVector.cpp" />
+    <ClCompile Include="DVTupleCLR.cpp" />
+    <ClCompile Include="DVVectorCLR.cpp" />
     <ClCompile Include="FakeVectors.cpp" />
-    <ClCompile Include="Functor.cpp" />
+    <ClCompile Include="FunctorCLR.cpp" />
     <ClCompile Include="Merging.cpp" />
     <ClCompile Include="PrefixSums.cpp" />
     <ClCompile Include="Reductions.cpp" />
     <ClCompile Include="Reordering.cpp" />
     <ClCompile Include="Searching.cpp" />
     <ClCompile Include="Sorting.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="Transformations.cpp" />
   </ItemGroup>
@@ -167,6 +280,9 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\internal\impl_context.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,11 +1,6 @@
 cmake_minimum_required (VERSION 3.0)
 
-project(JThrustRTC)
-
-find_package(JNI REQUIRED)
-find_package(Java REQUIRED)
-include(UseJava)
-
+project(ThrustRTC)
 
 add_executable(PackHeaders ../internal/pack_headers.cpp)
 add_custom_target(Run_PackHeaders
@@ -14,7 +9,6 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
 COMMENT "Running PackHeaders in ${CMAKE_CURRENT_SOURCE_DIR}/.."
 SOURCES ../internal/pack_headers.cpp
 )
-
 
 set(LIB_SOURCES
 ../thirdparty/crc64/crc64.cpp
@@ -139,33 +133,12 @@ set(INTERNAL_HEADERS
 ../internal/radix_sort.h
 )
 
-set (SRC
-JThrustRTC_Native.h
-Context.cpp
-DeviceViewable.cpp
-DVVector.cpp
-DVTuple.cpp
-FakeVectors.cpp
-Functor.cpp
-Transformations.cpp
-Copying.cpp
-Reductions.cpp
-PrefixSums.cpp
-Reordering.cpp
-Searching.cpp
-Merging.cpp
-Sorting.cpp
-)
-
 set (INCLUDE_DIR 
-${JNI_INCLUDE_DIRS}
-.
 ../thirdparty/crc64
 ../thirdparty/unqlite
 ..
 ../internal
 )
-
 
 if (WIN32) 
 set (DEFINES  ${DEFINES}
@@ -181,21 +154,22 @@ endif()
 include_directories(${INCLUDE_DIR})
 add_definitions(${DEFINES})
 
-add_library (unqlite STATIC ../thirdparty/unqlite/unqlite.h ../thirdparty/unqlite/unqlite.c)
-add_library (JThrustRTC_Native SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS} ${SRC})
+add_library(unqlite STATIC ../thirdparty/unqlite/unqlite.h ../thirdparty/unqlite/unqlite.c)
+add_library(ThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS})
 
-target_link_libraries(JThrustRTC_Native unqlite)
+target_link_libraries(ThrustRTC unqlite)
+
 
 if (WIN32) 
 else()
-target_link_libraries(JThrustRTC_Native dl)
+target_link_libraries(ThrustRTC dl)
 endif()
 
 add_dependencies(Run_PackHeaders PackHeaders)
-add_dependencies(JThrustRTC_Native Run_PackHeaders)
+add_dependencies(ThrustRTC Run_PackHeaders)
 
 if (WIN32) 
-target_compile_definitions(JThrustRTC_Native PRIVATE THRUST_RTC_DLL_EXPORT)
+target_compile_definitions(ThrustRTC PRIVATE THRUST_RTC_DLL_EXPORT)
 endif()
 
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -205,54 +179,18 @@ ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 install(FILES ${LIB_HEADERS} DESTINATION include)
 install(FILES ${LIB_HEADERS_FAKEVECTORS} DESTINATION include/fake_vectors)
 
-
 if (WIN32) 
-install(TARGETS JThrustRTC_Native 
-		RUNTIME DESTINATION test_java
+install(TARGETS ThrustRTC 
+		RUNTIME DESTINATION test_cpp
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib 
 		)
 else()
-install(TARGETS JThrustRTC_Native DESTINATION test_java)
+install(TARGETS ThrustRTC DESTINATION lib)
 endif()
-
-##################################################
-
-set(JAVA
-Native.java
-TRTC.java
-DeviceViewable.java
-DVInt8.java
-DVInt16.java
-DVInt32.java
-DVInt64.java
-DVFloat.java
-DVDouble.java
-DVVectorLike.java
-DVRange.java
-DVVector.java
-Kernel.java
-For.java
-DVTuple.java
-DVConstant.java
-DVCounter.java
-DVDiscard.java
-DVPermutation.java
-DVReverse.java
-DVTransform.java
-DVZipped.java
-DVCustomVector.java
-Functor.java
-)
-
-add_jar(JThrustRTC ${JAVA})
-install_jar(JThrustRTC test_java)
-
-##################################################
 
 set(BUILD_TESTS false CACHE BOOL "Build tests")
 
 if (BUILD_TESTS)
 add_subdirectory(test)
 endif()
-

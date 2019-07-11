@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 def Copy_If(vec_in, vec_out, pred):
 	return native.n_copy_if(vec_in.m_cptr, vec_out.m_cptr, pred.m_cptr)

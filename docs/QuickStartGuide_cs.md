@@ -31,19 +31,18 @@ At build time, you will only need:
 * CMake 3.x
 * .Net development environment for building the C# library.
 
-After cloning the repo from github and resolving the submodules, you can build it with CMake:
+After cloning the repo from github and resolving the submodules, you can build it with CMake.
+Libraries for different lauguages are now built separately. The C++ library is used as a 
+reference, not a dependency for other laungauges. In the case of C#, some pre-processing
+step is missing from the C# project, so building the C++ Library is neccessary. 
 
-```
-$ mkdir build
-$ cd build
-$ cmake .. -DCMAKE_INSTALL_PREFIX=../install
-$ make
-$ make install
-```
+To building C++ in windows using visual studio, you first create a folder "build_cpp". Then
+you run cmake GUI to create a x64 solution using the CMakeLists.txt in the "cpp" folder.
+Build the solution in "release" mode then build the "INSTALL" project separately, you will get 
+the library headers, binaries and examples in the "install" directory.
 
-You will get the library headers, binaries and examples in the "install" directory.
-
-You can build the C# wrapping layer in the folder "CSharp" after the C++ library is built.
+Now you can build the C# library using the project in the folder "CSharp". Please
+select the "release - x64" configuration.
 
 #### GitHub Release
 

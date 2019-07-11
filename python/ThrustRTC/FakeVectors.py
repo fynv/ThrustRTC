@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 from .DVVector import DVVectorLike
 
 class DVConstant(DVVectorLike):

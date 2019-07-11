@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 class DeviceViewable:
 	def name_view_cls(self):

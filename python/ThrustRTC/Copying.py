@@ -1,4 +1,4 @@
-from . import PyThrustRTC as native
+import PyThrustRTC as native
 
 def Gather(vec_map, vec_in, vec_out):
 	native.n_gather(vec_map.m_cptr, vec_in.m_cptr, vec_out.m_cptr)
