@@ -599,6 +599,7 @@ bool TRTCContext::launch_for_n(size_t n, const std::vector<CapturedDeviceViewabl
 		"    if(tid>=n) return;\n"
 		"    func(tid);\n"
 	);
+	if (kid == (KernelId_t)(-1)) return false;
 	unsigned sizeBlock = (unsigned)_launch_calc(kid, 0);
 	unsigned numBlocks = (unsigned)((n + sizeBlock - 1) / sizeBlock);
 	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
