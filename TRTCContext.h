@@ -31,6 +31,8 @@ void THRUST_RTC_API TRTC_Add_Inlcude_Filename(const char* fn);
 void THRUST_RTC_API TRTC_Add_Constant_Object(const char* name, const DeviceViewable& obj);
 std::string THRUST_RTC_API TRTC_Add_Struct(const char* struct_body);
 
+void THRUST_RTC_API TRTC_Wait();
+
 class THRUST_RTC_API TRTC_Kernel
 {
 public:

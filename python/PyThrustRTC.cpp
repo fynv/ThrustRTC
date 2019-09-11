@@ -59,6 +59,7 @@ static PyMethodDef s_Methods[] = {
 	{ "n_add_inlcude_filename", n_add_inlcude_filename, METH_VARARGS, "" },
 	{ "n_add_code_block", n_add_code_block, METH_VARARGS, "" },
 	{ "n_add_constant_object", n_add_constant_object, METH_VARARGS, "" },
+	{ "n_wait", n_wait, METH_VARARGS, "" },
 	{ "n_kernel_create", n_kernel_create, METH_VARARGS, "" },
 	{ "n_kernel_destroy", n_kernel_destroy, METH_VARARGS, "" },
 	{ "n_kernel_num_params", n_kernel_num_params, METH_VARARGS, "" },

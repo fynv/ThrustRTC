@@ -18,6 +18,9 @@ def Add_Code_Block(code):
 def Add_Constant_Object(name, dv):
     native.n_add_constant_object(name, dv.m_cptr)
 
+def Wait():
+    native.n_wait()
+
 class Kernel:
     def __init__(self, param_names, body):
         self.m_cptr = native.n_kernel_create(param_names, body)

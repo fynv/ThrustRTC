@@ -21,6 +21,7 @@ CUresult(*cuCtxCreate)(CUcontext *pctx, unsigned int flags, CUdevice dev);
 CUresult(*cuCtxGetCurrent)(CUcontext *pctx);
 CUresult(*cuCtxGetDevice)(CUdevice *device);
 CUresult(*cuCtxGetCacheConfig)(CUfunc_cache *pconfig);
+CUresult(*cuCtxSynchronize)(void);
 CUresult(*cuModuleLoadDataEx)(CUmodule *module, const void *image, unsigned int numOptions, CUjit_option *options, void **optionValues);
 CUresult(*cuModuleUnload)(CUmodule hmod);
 CUresult(*cuModuleGetGlobal)(CUdeviceptr *dptr, size_t *bytes, CUmodule hmod, const char *name);
@@ -62,6 +63,7 @@ bool init_cuda()
 	cuCtxGetCurrent = (decltype(cuCtxGetCurrent))GetProcAddress(hinstLib, "cuCtxGetCurrent");
 	cuCtxGetDevice = (decltype(cuCtxGetDevice))GetProcAddress(hinstLib, "cuCtxGetDevice");
 	cuCtxGetCacheConfig = (decltype(cuCtxGetCacheConfig))GetProcAddress(hinstLib, "cuCtxGetCacheConfig");
+	cuCtxSynchronize = (decltype(cuCtxSynchronize))GetProcAddress(hinstLib, "cuCtxSynchronize");
 	cuModuleLoadDataEx = (decltype(cuModuleLoadDataEx))GetProcAddress(hinstLib, "cuModuleLoadDataEx");
 	cuModuleUnload = (decltype(cuModuleUnload))GetProcAddress(hinstLib, "cuModuleUnload");
 	cuModuleGetGlobal = (decltype(cuModuleGetGlobal))GetProcAddress(hinstLib, "cuModuleGetGlobal_v2");
@@ -88,6 +90,7 @@ bool init_cuda()
 	cuCtxGetCurrent = (decltype(cuCtxGetCurrent))dlsym(handle, "cuCtxGetCurrent");
 	cuCtxGetDevice = (decltype(cuCtxGetDevice))dlsym(handle, "cuCtxGetDevice");
 	cuCtxGetCacheConfig = (decltype(cuCtxGetCacheConfig))dlsym(handle, "cuCtxGetCacheConfig");
+	cuCtxSynchronize = (decltype(cuCtxSynchronize))dlsym(handle, "cuCtxSynchronize");
 	cuModuleLoadDataEx = (decltype(cuModuleLoadDataEx))dlsym(handle, "cuModuleLoadDataEx");
 	cuModuleUnload = (decltype(cuModuleUnload))dlsym(handle, "cuModuleUnload");
 	cuModuleGetGlobal = (decltype(cuModuleGetGlobal))dlsym(handle, "cuModuleGetGlobal_v2");

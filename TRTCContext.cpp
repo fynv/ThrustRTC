@@ -129,6 +129,12 @@ std::string TRTC_Add_Struct(const char* struct_body)
 	return ctx.add_struct(struct_body);
 }
 
+void TRTC_Wait()
+{
+	TRTCContext::get_context(); // make sure initialization
+	cuCtxSynchronize();
+}
+
 TRTC_Kernel::TRTC_Kernel(const std::vector<const char*>& param_names, const char* code_body) :
 m_param_names(param_names.size()), m_code_body(code_body)
 {

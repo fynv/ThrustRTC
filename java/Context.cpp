@@ -46,6 +46,11 @@ JNIEXPORT void JNICALL Java_JThrustRTC_Native_add_1code_1block(JNIEnv *env, jcla
 	env->ReleaseStringUTFChars(j_code, code);
 }
 
+JNIEXPORT void JNICALL Java_JThrustRTC_Native_sync(JNIEnv *, jclass)
+{
+	TRTC_Wait();
+}
+
 JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_kernel_1create(JNIEnv *env, jclass, jobjectArray param_names, jstring j_body)
 {
 	jsize num_params = env->GetArrayLength(param_names);

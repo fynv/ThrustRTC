@@ -40,6 +40,11 @@ public class TRTC
 		Native.add_code_block(code);
 	}
 
+	public static void Wait()
+	{
+		Native.sync();
+	}
+
 	// Transformations
 	public static boolean Fill(DVVectorLike vec, DeviceViewable value)
 	{

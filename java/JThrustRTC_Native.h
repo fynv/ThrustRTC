@@ -57,6 +57,14 @@ JNIEXPORT void JNICALL Java_JThrustRTC_Native_add_1code_1block
 
 /*
  * Class:     JThrustRTC_Native
+ * Method:    sync
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_JThrustRTC_Native_sync
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     JThrustRTC_Native
  * Method:    kernel_create
  * Signature: ([Ljava/lang/String;Ljava/lang/String;)J
  */

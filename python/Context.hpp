@@ -45,6 +45,12 @@ static PyObject* n_add_constant_object(PyObject* self, PyObject* args)
 	return PyLong_FromLong(0);
 }
 
+static PyObject* n_wait(PyObject* self, PyObject* args)
+{
+	TRTC_Wait();
+	return PyLong_FromLong(0);
+}
+
 static PyObject* n_kernel_create(PyObject* self, PyObject* args)
 {
 	PyObject* pyParamList = PyTuple_GetItem(args, 0);

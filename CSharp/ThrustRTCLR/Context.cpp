@@ -46,6 +46,11 @@ namespace ThrustRTCLR
 		TRTC_Add_Code_Block(c_code);
 	}
 
+	void Native::wait()
+	{
+		TRTC_Wait();
+	}
+
 	IntPtr Native::kernel_create(array<IntPtr>^ p_param_names, IntPtr p_code_body)
 	{
 		int num_params = p_param_names->Length;

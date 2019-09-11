@@ -53,6 +53,11 @@ namespace ThrustRTCSharp
             IntPtr p_code = Marshal.StringToHGlobalAnsi(code);
             Native.add_code_block(p_code);
         }
+
+        public static void Wait()
+        {
+            Native.wait();
+        }
     }
 
     partial class Internal

@@ -28,6 +28,7 @@ namespace ThrustRTCLR
 		static void add_built_in_header(IntPtr p_filename, IntPtr p_filecontent);
 		static void add_include_filename(IntPtr p_filename);
 		static void add_code_block(IntPtr p_code);
+		static void wait();
 
 		// Kernel
 		static IntPtr kernel_create(array<IntPtr>^ p_param_names, IntPtr p_code_body);

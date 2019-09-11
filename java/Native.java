@@ -14,6 +14,7 @@ class Native
 	public static native void add_built_in_header(String filename, String filecontent);
 	public static native void add_include_filename(String filename);
 	public static native void add_code_block(String code);
+	public static native void sync();
 
 	public static native long kernel_create(String[] param_names, String body);
 	public static native void kernel_destroy(long p_kernel);

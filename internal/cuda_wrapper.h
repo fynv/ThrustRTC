@@ -251,6 +251,7 @@ extern CUresult (*cuCtxCreate)(CUcontext *pctx, unsigned int flags, CUdevice dev
 extern CUresult (*cuCtxGetCurrent)(CUcontext *pctx);
 extern CUresult (*cuCtxGetDevice)(CUdevice *device);
 extern CUresult (*cuCtxGetCacheConfig)(CUfunc_cache *pconfig);
+extern CUresult (*cuCtxSynchronize)(void);
 extern CUresult (*cuModuleLoadDataEx)(CUmodule *module, const void *image, unsigned int numOptions, CUjit_option *options, void **optionValues);
 extern CUresult (*cuModuleUnload)(CUmodule hmod);
 extern CUresult (*cuModuleGetGlobal)(CUdeviceptr *dptr, size_t *bytes, CUmodule hmod, const char *name);
