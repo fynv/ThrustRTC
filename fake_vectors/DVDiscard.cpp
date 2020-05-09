@@ -1,11 +1,9 @@
 #include "DVDiscard.h"
 
 DVDiscard::DVDiscard(const char* elem_cls, size_t size)
-	:DVVectorLike(elem_cls, (std::string("_Sink<")+ elem_cls +">&").c_str(), size){}
-
-std::string DVDiscard::name_view_cls() const
+	:DVVectorLike(elem_cls, (std::string("_Sink<")+ elem_cls +">&").c_str(), size)
 {
-	return std::string("DiscardView<") + m_elem_cls + ">";
+	m_name_view_cls = std::string("DiscardView<") + m_elem_cls + ">";
 }
 
 ViewBuf DVDiscard::view() const

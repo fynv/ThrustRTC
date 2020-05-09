@@ -10,7 +10,6 @@ public:
 	ViewBuf view_value() const { return m_view_value; }
 
 	DVRange(const DVVectorLike& vec_value, size_t begin = 0, size_t end = (size_t)(-1));
-	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 	virtual bool is_readable() const { return m_readable; }
 	virtual bool is_writable() const { return m_writable; }

@@ -8,14 +8,9 @@ DVReverse::DVReverse(const DVVectorLike& vec_value)
 	m_writable = vec_value.is_writable();
 	m_cls_value = vec_value.name_view_cls();
 	m_view_value = vec_value.view();
+
+	m_name_view_cls = std::string("ReverseView<") + m_cls_value + ">";
 }
-
-
-std::string DVReverse::name_view_cls() const
-{
-	return std::string("ReverseView<") + m_cls_value + ">";
-}
-
 
 ViewBuf DVReverse::view() const
 {

@@ -29,7 +29,6 @@ At build time, you will only need:
 
 * UnQLite source code, as submodule: thirdparty/unqlite
 * CMake 3.x
-* C libraries of Python 3 is required to build the Python binding part of the code.
 
 After cloning the repo from github and resolving the submodules, you can build it with CMake.
 Libraries for different lauguages are now built separately. The C++ library is used as a 
@@ -57,7 +56,7 @@ You will get the library headers, binaries and examples in the "install" directo
 
 #### Install ThrustRTC for Python from Pypi
 
-Builds for Win64/Linux64 + Python 3.7 are available from [Pypi](https://pypi.org/project/ThrustRTC/)
+Builds for Win64/Linux64 + Python 3.x are available from [Pypi](https://pypi.org/project/ThrustRTC/)
 If your environment matches, you can try:
 
 ```
@@ -90,6 +89,7 @@ Zip packages are available at:
 
 For Python
 * Python 3
+* cffi
 * numpy
 * numba (optional)
 

@@ -1,7 +1,6 @@
 cmake_minimum_required (VERSION 3.0)
 
 project(PyThrustRTC)
-find_package(PythonLibs 3 REQUIRED)
 
 add_executable(PackHeaders ../internal/pack_headers.cpp)
 add_custom_target(Run_PackHeaders
@@ -11,6 +10,10 @@ COMMENT "Running PackHeaders in ${CMAKE_CURRENT_SOURCE_DIR}/.."
 SOURCES ../internal/pack_headers.cpp
 )
 
+add_custom_target(Run_CFFIBuild
+COMMAND python ThrustRTC/cffi_build.py
+WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+COMMENT "Running cffi_build")
 
 set(LIB_SOURCES
 ../thirdparty/crc64/crc64.cpp
@@ -136,55 +139,26 @@ set(INTERNAL_HEADERS
 )
 
 set (SRC
-PyThrustRTC.cpp
-Context.hpp
-viewbuf_to_python.hpp
-DeviceViewable.hpp
-DVVector.hpp
-DVTuple.hpp
-DVRange.hpp
-DVConstant.hpp
-DVCounter.hpp
-DVDiscard.hpp
-DVPermutation.hpp
-DVReverse.hpp
-DVTransform.hpp
-DVZipped.hpp
-DVCustomVector.hpp
-fill.hpp
-functor.hpp
-replace.hpp
-for_each.hpp
-adjacent_difference.hpp
-sequence.hpp
-tabulate.hpp
-transform.hpp
-gather.hpp
-scatter.hpp
-copy.hpp
-swap.hpp
-count.hpp
-reduce.hpp
-equal.hpp
-extrema.hpp
-inner_product.hpp
-transform_reduce.hpp
-logical.hpp
-scan.hpp
-transform_scan.hpp
-remove.hpp
-unique.hpp
-partition.hpp
-find.hpp
-mismatch.hpp
-binary_search.hpp
-merge.hpp
-sort.hpp
+api.h
+api_utils.cpp
+api_Context.cpp
+api_DeviceViewable.cpp
+api_DVVector.cpp
+api_DVTuple.cpp
+api_FakeVectors.cpp
+api_Functor.cpp
+api_Transformations.cpp
+api_Copying.cpp
+api_Reductions.cpp
+api_PrefixSums.cpp
+api_Reordering.cpp
+api_Searching.cpp
+api_Merging.cpp
+api_Sorting.cpp
 )
 
 
 set (INCLUDE_DIR 
-${PYTHON_INCLUDE_DIRS}
 .
 ../thirdparty/crc64
 ../thirdparty/unqlite
@@ -210,25 +184,13 @@ add_definitions(${DEFINES})
 add_library(unqlite STATIC ../thirdparty/unqlite/unqlite.h ../thirdparty/unqlite/unqlite.c)
 add_library(PyThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS} ${SRC})
 
-target_link_libraries(PyThrustRTC ${PYTHON_LIBRARIES} unqlite)
-
-if (WIN32) 
-else()
-target_link_libraries(PyThrustRTC dl)
-endif()
+target_link_libraries(PyThrustRTC unqlite)
 
 add_dependencies(Run_PackHeaders PackHeaders)
 add_dependencies(PyThrustRTC Run_PackHeaders)
 
 if (WIN32) 
 target_compile_definitions(PyThrustRTC PRIVATE THRUST_RTC_DLL_EXPORT)
-endif()
-
-if (WIN32) 
-set_target_properties(PyThrustRTC PROPERTIES SUFFIX ".pyd")
-else()
-set_target_properties(PyThrustRTC PROPERTIES SUFFIX ".so")
-set_target_properties(PyThrustRTC PROPERTIES PREFIX "")
 endif()
 
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -255,6 +217,9 @@ endif()
 
 set(PYTHON
 	ThrustRTC/__init__.py
+	ThrustRTC/cffi.py
+	ThrustRTC/Native.py
+	ThrustRTC/utils.py
 	ThrustRTC/Context.py
 	ThrustRTC/DeviceViewable.py
 	ThrustRTC/DVVector.py
@@ -272,7 +237,7 @@ set(PYTHON
 )
 
 install(FILES ${PYTHON} DESTINATION test_python/ThrustRTC)
-
+install(FILES setup.py README.md DESTINATION test_python)
 
 set(INCLUDE_TESTS false CACHE BOOL "Include tests")
 

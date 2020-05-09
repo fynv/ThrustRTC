@@ -10,7 +10,6 @@ public:
 	ViewBuf view_value() const { return m_view_value; }
 
 	DVReverse(const DVVectorLike& vec_value);
-	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 	virtual bool is_readable() const { return m_readable; }
 	virtual bool is_writable() const { return m_writable; }

@@ -20,6 +20,8 @@ DVVector::DVVector(const char* elem_cls, size_t size, void* hdata)
 		cuMemcpyHtoD(dptr, hdata, m_elem_size*m_size);
 	else
 		cuMemsetD8(dptr, 0, m_elem_size*m_size);
+
+	m_name_view_cls = std::string("VectorView<") + m_elem_cls + ">";
 }
 
 DVVector::~DVVector()
@@ -34,11 +36,6 @@ void DVVector::to_host(void* hdata, size_t begin, size_t end) const
 	cuMemcpyDtoH(hdata, (CUdeviceptr)((char*)m_data + begin* m_elem_size), m_elem_size*n);
 }
 
-std::string DVVector::name_view_cls() const
-{
-	return std::string("VectorView<") + m_elem_cls + ">";
-}
-
 ViewBuf DVVector::view() const
 {
 	ViewBuf buf(sizeof(VectorView<char>));
@@ -49,25 +46,25 @@ ViewBuf DVVector::view() const
 }
 
 DVVectorAdaptor::DVVectorAdaptor(const char* elem_cls, size_t size, void* ddata)
-	: DVVectorLike(elem_cls, (std::string(elem_cls) + "&").c_str(), size), m_data(ddata){}
+	: DVVectorLike(elem_cls, (std::string(elem_cls) + "&").c_str(), size), m_data(ddata)
+{
+	m_name_view_cls = std::string("VectorView<") + m_elem_cls + ">";
+}
 
 DVVectorAdaptor::DVVectorAdaptor(const DVVector& vec, size_t begin, size_t end)
 	: DVVectorLike(vec.name_elem_cls().c_str(), vec.name_ref_type().c_str(), (end == (size_t)(-1)? vec.size() : end) - begin)
 {
 	m_data = (char*)vec.data() + begin * vec.elem_size();
+	m_name_view_cls = std::string("VectorView<") + m_elem_cls + ">";
 }
 
 DVVectorAdaptor::DVVectorAdaptor(const DVVectorAdaptor& vec, size_t begin, size_t end)
 	: DVVectorLike(vec.name_elem_cls().c_str(), vec.name_ref_type().c_str(), (end == (size_t)(-1) ? vec.size() : end) - begin)
 {
 	m_data = (char*)vec.data() + begin * vec.elem_size();
+	m_name_view_cls = std::string("VectorView<") + m_elem_cls + ">";
 }
 
-
-std::string DVVectorAdaptor::name_view_cls() const
-{
-	return std::string("VectorView<") + m_elem_cls + ">";
-}
 
 ViewBuf DVVectorAdaptor::view() const
 {

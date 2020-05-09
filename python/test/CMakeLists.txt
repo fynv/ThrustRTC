@@ -1,4 +1,3 @@
-
 set(PYTHON_TEST
 	test_trtc.py
 	test_for.py
@@ -29,7 +28,7 @@ set(PYTHON_TEST
 	test_find.py
 	test_mismatch.py
 	test_binary_search.py
-	test_merge.py
+	test_merge.py	
 	test_sort.py
 	test_numba.py
 
@@ -47,5 +46,3 @@ set(PYTHON_TEST
 )
 
 install(FILES ${PYTHON_TEST} DESTINATION test_python )
-
-

@@ -18,11 +18,6 @@ DVTuple::DVTuple(const std::vector<CapturedDeviceViewable>& elem_map)
 	TRTC_Query_Struct(m_name_view_cls.c_str(), name_elems, m_offsets.data());
 }
 
-std::string DVTuple::name_view_cls() const
-{
-	return m_name_view_cls;
-}
-
 ViewBuf DVTuple::view() const
 {
 	ViewBuf ret(m_offsets[m_offsets.size() - 1]);

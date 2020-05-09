@@ -9,12 +9,9 @@ class THRUST_RTC_API DVTuple : public DeviceViewable
 {
 public:
 	DVTuple(const std::vector<CapturedDeviceViewable>& elem_map);
-
-	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 
 private:
-	std::string m_name_view_cls;
 	std::vector<ViewBuf> m_view_elems;
 	std::vector<size_t> m_offsets;
 

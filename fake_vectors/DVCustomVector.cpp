@@ -38,12 +38,6 @@ DVCustomVector::DVCustomVector(const std::vector<CapturedDeviceViewable>& arg_ma
 	TRTC_Query_Struct(m_name_view_cls.c_str(), { "_size", "_op" }, m_offsets);
 }
 
-
-std::string DVCustomVector::name_view_cls() const
-{
-	return m_name_view_cls;
-}
-
 ViewBuf DVCustomVector::view() const
 {
 	ViewBuf view_op(m_arg_offsets[m_arg_offsets.size() - 1]);

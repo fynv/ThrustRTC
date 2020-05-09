@@ -12,14 +12,10 @@ DVRange::DVRange(const DVVectorLike& vec_value, size_t begin, size_t end)
 	m_begin = begin;
 	m_end = end;
 
-	std::string name_struct = name_view_cls();
-	TRTC_Query_Struct(name_struct.c_str(), { "_view_vec_value", "_begin", "_end" }, m_offsets);
+	m_name_view_cls = std::string("RangeView<") + m_cls_value + ">";
+	TRTC_Query_Struct(m_name_view_cls.c_str(), { "_view_vec_value", "_begin", "_end" }, m_offsets);
 }
 
-std::string DVRange::name_view_cls() const
-{
-	return std::string("RangeView<") + m_cls_value + ">";
-}
 
 ViewBuf DVRange::view() const
 {

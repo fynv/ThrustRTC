@@ -9,11 +9,9 @@ public:
 	Functor(const std::vector<CapturedDeviceViewable>& arg_map, const std::vector<const char*>& functor_params, const char* code_body);
 	Functor(const char* name_built_in_view_cls);
 
-	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 
 private:
-	std::string m_name_view_cls;
 	std::vector<ViewBuf> m_view_args;
 	std::vector<size_t> m_offsets;
 };

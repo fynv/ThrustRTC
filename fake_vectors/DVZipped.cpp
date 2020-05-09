@@ -74,16 +74,8 @@ DVZipped::DVZipped(const std::vector<DVVectorLike*>& vecs, const std::vector<con
 	struct_body += "};\n    }\n";
 
 	m_name_view_cls = TRTC_Add_Struct(struct_body.c_str());
-
 	m_offsets.resize(vecs.size() + 1);
-	std::string name_struct = name_view_cls();
-	TRTC_Query_Struct(name_struct.c_str(), elem_names, m_offsets.data());
-}
-
-
-std::string DVZipped::name_view_cls() const
-{
-	return m_name_view_cls;
+	TRTC_Query_Struct(m_name_view_cls.c_str(), elem_names, m_offsets.data());
 }
 
 ViewBuf DVZipped::view() const

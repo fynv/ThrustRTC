@@ -11,13 +11,11 @@ public:
 	DVCustomVector(const std::vector<CapturedDeviceViewable>& arg_map, const char* name_idx, const char* code_body,
 		const char* elem_cls, size_t size = (size_t)(-1), bool read_only = true);
 
-	virtual std::string name_view_cls() const;
 	virtual ViewBuf view() const;
 
 	virtual bool is_writable() const { return !m_read_only; }
 	   
 private:
-	std::string m_name_view_cls;
 	size_t m_size;
 	bool m_read_only;
 	std::vector<ViewBuf> m_view_args;

@@ -5,15 +5,10 @@
 DVTransform::DVTransform(const DVVectorLike& vec_in, const char* elem_cls, const Functor& op)
 	: DVVectorLike(elem_cls, elem_cls, vec_in.size())
 {
-	m_name_view_cls = std::string("TransformView<") + elem_cls + "," + vec_in.name_view_cls() + "," + op.name_view_cls() + ">";
 	m_view_in = vec_in.view();
 	m_view_op = op.view();
+	m_name_view_cls = std::string("TransformView<") + elem_cls + "," + vec_in.name_view_cls() + "," + op.name_view_cls() + ">";
 	TRTC_Query_Struct(m_name_view_cls.c_str(), { "_view_vec_in", "_view_op" }, m_offsets);
-}
-
-std::string DVTransform::name_view_cls() const
-{
-	return m_name_view_cls;
 }
 
 ViewBuf DVTransform::view() const

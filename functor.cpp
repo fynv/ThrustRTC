@@ -51,11 +51,6 @@ Functor::Functor(const char* name_built_in_view_cls)
 	m_offsets[0] = 1;
 }
 
-std::string Functor::name_view_cls() const
-{
-	return m_name_view_cls;
-}
-
 ViewBuf Functor::view() const
 {
 	ViewBuf ret(m_offsets[m_offsets.size()-1]);

@@ -1,70 +1,78 @@
-import PyThrustRTC as native
+from .Native import ffi, native
 from .DeviceViewable import DeviceViewable
+from .utils import *
 
 class Functor(DeviceViewable):
 	def __init__(self, arg_map, functor_params, code_body):
 		self.m_arg_map = arg_map
+		param_names = [param_name for param_name, elem in arg_map.items()]
+		o_param_names = StrArray(param_names)
+		elems = [elem for param_name, elem in arg_map.items()]
+		o_elems = ObjArray(elems)
+		o_functor_params =  StrArray(functor_params)
+
 		self.m_cptr = native.n_functor_create(			 
-			[ (param_name, arg.m_cptr) for param_name, arg in arg_map.items()],
-			functor_params,
-			code_body)
+			o_elems.m_cptr, o_param_names.m_cptr,
+			o_functor_params.m_cptr,
+			code_body.encode('utf-8'))
 
 class Identity(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Identity")
+		self.m_cptr = native.n_built_in_functor_create(b"Identity")
 
 class Maximum(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Maximum")
+		self.m_cptr = native.n_built_in_functor_create(b"Maximum")
 
 class Minimum(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Minimum")
+		self.m_cptr = native.n_built_in_functor_create(b"Minimum")
+
 
 class EqualTo(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("EqualTo")
+		self.m_cptr = native.n_built_in_functor_create(b"EqualTo")
 
 class NotEqualTo(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("NotEqualTo")
+		self.m_cptr = native.n_built_in_functor_create(b"NotEqualTo")
 
 class Greater(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Greater")
+		self.m_cptr = native.n_built_in_functor_create(b"Greater")
 
 class Less(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Less")
+		self.m_cptr = native.n_built_in_functor_create(b"Less")
 
 class GreaterEqual(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("GreaterEqual")
+		self.m_cptr = native.n_built_in_functor_create(b"GreaterEqual")
 
 class LessEqual(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("LessEqual")
+		self.m_cptr = native.n_built_in_functor_create(b"LessEqual")
 
 class Plus(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Plus")
+		self.m_cptr = native.n_built_in_functor_create(b"Plus")
 
 class Minus(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Minus")
+		self.m_cptr = native.n_built_in_functor_create(b"Minus")
 
 class Multiplies(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Multiplies")
+		self.m_cptr = native.n_built_in_functor_create(b"Multiplies")
 
 class Divides(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Divides")
+		self.m_cptr = native.n_built_in_functor_create(b"Divides")
 
 class Modulus(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Modulus")
+		self.m_cptr = native.n_built_in_functor_create(b"Modulus")
 
 class Negate(DeviceViewable):
 	def __init__(self):
-		self.m_cptr = native.n_built_in_functor_create("Negate")
+		self.m_cptr = native.n_built_in_functor_create(b"Negate")

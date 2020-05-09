@@ -4,15 +4,9 @@
 DVConstant::DVConstant(const DeviceViewable& dvobj, size_t size) :
 	DVVectorLike(dvobj.name_view_cls().c_str(), (std::string("const ") + dvobj.name_view_cls() + "&").c_str(), size)
 {
-	m_value = dvobj.view();
-	
-	std::string name_struct = name_view_cls();
-	TRTC_Query_Struct(name_struct.c_str(), { "_size", "_value" }, m_offsets);
-}
-
-std::string DVConstant::name_view_cls() const
-{
-	return std::string("ConstantView<") + m_elem_cls + ">";
+	m_value = dvobj.view();	
+	m_name_view_cls = std::string("ConstantView<") + m_elem_cls + ">";
+	TRTC_Query_Struct(m_name_view_cls.c_str(), { "_size", "_value" }, m_offsets);
 }
 
 ViewBuf DVConstant::view() const

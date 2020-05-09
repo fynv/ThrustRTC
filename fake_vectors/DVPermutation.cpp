@@ -11,13 +11,9 @@ DVPermutation::DVPermutation(const DVVectorLike& vec_value, const DVVectorLike& 
 	m_cls_index = vec_index.name_view_cls();
 	m_view_index = vec_index.view();
 
-	std::string name_struct = name_view_cls();
-	TRTC_Query_Struct(name_struct.c_str(), { "_view_vec_value", "_view_vec_index" }, m_offsets);
-}
+	m_name_view_cls = std::string("PermutationView<") + m_cls_value + ", " + m_cls_index + ">";
+	TRTC_Query_Struct(m_name_view_cls.c_str(), { "_view_vec_value", "_view_vec_index" }, m_offsets);
 
-std::string DVPermutation::name_view_cls() const
-{
-	return std::string("PermutationView<") + m_cls_value + ", "+ m_cls_index+">";
 }
 
 ViewBuf DVPermutation::view() const

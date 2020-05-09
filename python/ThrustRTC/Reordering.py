@@ -1,4 +1,4 @@
-import PyThrustRTC as native
+from .Native import ffi, native
 
 def Copy_If(vec_in, vec_out, pred):
 	return native.n_copy_if(vec_in.m_cptr, vec_out.m_cptr, pred.m_cptr)
@@ -25,25 +25,25 @@ def Remove_Copy_If_Stencil(vec_in, stencil, vec_out, pred):
 	return native.n_remove_copy_if_stencil(vec_in.m_cptr, stencil.m_cptr, vec_out.m_cptr, pred.m_cptr)
 
 def Unique(vec, binary_pred = None):
-	cptr_binary_pred = None
+	cptr_binary_pred = ffi.NULL
 	if binary_pred!=None:
 		cptr_binary_pred = binary_pred.m_cptr
 	return native.n_unique(vec.m_cptr, cptr_binary_pred)
 
 def Unique_Copy(vec_in, vec_out, binary_pred = None):
-	cptr_binary_pred = None
+	cptr_binary_pred = ffi.NULL
 	if binary_pred!=None:
 		cptr_binary_pred = binary_pred.m_cptr
 	return native.n_unique_copy(vec_in.m_cptr, vec_out.m_cptr, cptr_binary_pred)
 
 def Unique_By_Key(keys, values, binary_pred = None):
-	cptr_binary_pred = None
+	cptr_binary_pred = ffi.NULL
 	if binary_pred!=None:
 		cptr_binary_pred = binary_pred.m_cptr
 	return native.n_unique_by_key(keys.m_cptr, values.m_cptr, cptr_binary_pred)
 
 def Unique_By_Key_Copy(keys_in, values_in, keys_out, values_out, binary_pred = None):
-	cptr_binary_pred = None
+	cptr_binary_pred = ffi.NULL
 	if binary_pred!=None:
 		cptr_binary_pred = binary_pred.m_cptr	
 	return native.n_unique_by_key_copy(keys_in.m_cptr, values_in.m_cptr, keys_out.m_cptr, values_out.m_cptr, cptr_binary_pred)

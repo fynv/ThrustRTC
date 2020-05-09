@@ -14,8 +14,11 @@ class DeviceViewable
 public:
 	DeviceViewable(){}
 	virtual ~DeviceViewable(){}
-	virtual std::string name_view_cls() const = 0;
 	virtual ViewBuf view() const = 0;
+	const std::string& name_view_cls() const { return m_name_view_cls; }
+
+protected:
+	std::string m_name_view_cls;
 };
 
 
@@ -36,18 +39,12 @@ public:
 		memcpy(m_view_buf.data(), data_view, size_view);
 	}
 
-	virtual std::string name_view_cls() const
-	{
-		return m_name_view_cls;
-	}
-
 	virtual ViewBuf view() const
 	{
 		return m_view_buf;
 	}
 
 private:
-	std::string m_name_view_cls;
 	ViewBuf m_view_buf;
 };
 
@@ -83,5 +80,52 @@ DECLAR_DV_BASIC(DVInt64, int64_t)
 DECLAR_DV_BASIC(DVUInt64, uint64_t)
 
 DECLAR_DV_BASIC(DVSizeT, size_t)
+
+
+class SomeDeviceViewable : public DeviceViewable
+{
+public:
+	SomeDeviceViewable(const ViewBuf& buf, const char* type)
+	{
+		m_buf = buf;
+		m_name_view_cls = type;
+
+	}
+	virtual ViewBuf view() const
+	{
+		return m_buf;
+	}
+private:
+	ViewBuf m_buf;
+};
+
+inline DeviceViewable* dv_from_viewbuf(const ViewBuf& buf, const char* type)
+{
+	std::string s_type = type;
+	if (s_type == "int8_t")
+		return new DVInt8(*(int8_t*)buf.data());
+	else if (s_type == "uint8_t")
+		return new DVUInt8(*(uint8_t*)buf.data());
+	else if (s_type == "int16_t")
+		return new DVInt16(*(int16_t*)buf.data());
+	else if (s_type == "uint16_t")
+		return new DVUInt16(*(uint16_t*)buf.data());
+	else if (s_type == "int32_t")
+		return new DVInt32(*(int32_t*)buf.data());
+	else if (s_type == "uint32_t")
+		return new DVUInt32(*(uint32_t*)buf.data());
+	else if (s_type == "int64_t")
+		return new DVInt64(*(int64_t*)buf.data());
+	else if (s_type == "uint64_t")
+		return new DVUInt64(*(uint64_t*)buf.data());
+	else if (s_type == "float")
+		return new DVFloat(*(float*)buf.data());
+	else if (s_type == "double")
+		return new DVDouble(*(double*)buf.data());
+	else if (s_type == "bool")
+		return new DVBool(*(bool*)buf.data());
+	else
+		return new SomeDeviceViewable(buf, type);
+}
 
 #endif

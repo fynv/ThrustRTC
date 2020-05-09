@@ -5,14 +5,8 @@ DVCounter::DVCounter(const DeviceViewable& dvobj_init, size_t size) :
 	DVVectorLike(dvobj_init.name_view_cls().c_str(), dvobj_init.name_view_cls().c_str(), size)
 {
 	m_value_init = dvobj_init.view();
-
-	std::string name_struct = name_view_cls();
-	TRTC_Query_Struct(name_struct.c_str(), { "_size", "_value_init" }, m_offsets);
-}
-
-std::string DVCounter::name_view_cls() const
-{
-	return std::string("CounterView<") + m_elem_cls + ">";
+	m_name_view_cls = std::string("CounterView<") + m_elem_cls + ">";
+	TRTC_Query_Struct(m_name_view_cls.c_str(), { "_size", "_value_init" }, m_offsets);
 }
 
 ViewBuf DVCounter::view() const

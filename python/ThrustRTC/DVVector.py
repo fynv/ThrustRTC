@@ -1,10 +1,11 @@
-import PyThrustRTC as native
+from .Native import ffi, native
 import numpy as np
 from .DeviceViewable import DeviceViewable
+from .utils import *
 
 class DVVectorLike(DeviceViewable):
 	def name_elem_cls(self):
-		return native.n_dvvectorlike_name_elem_cls(self.m_cptr)
+		return ffi.string(native.n_dvvectorlike_name_elem_cls(self.m_cptr)).decode('utf-8')
 
 	def size(self):
 		return native.n_dvvectorlike_size(self.m_cptr)
@@ -16,7 +17,6 @@ class DVRange(DVVectorLike):
 	def __init__(self, src, begin = 0, end = -1):
 		self.m_src = src
 		self.m_cptr = native.n_dvrange_create(src.m_cptr, begin, end)
-
 
 class DVVector(DVVectorLike):
 	def __init__(self, cptr):
@@ -49,11 +49,14 @@ class DVVector(DVVectorLike):
 		if end == -1:
 			end = self.size()
 		ret = np.empty(end - begin, dtype=nptype)
-		native.n_dvvector_to_host(self.m_cptr, ret.__array_interface__['data'][0], begin, end)
+		native.n_dvvector_to_host(self.m_cptr, ffi.cast("void *", ret.__array_interface__['data'][0]), begin, end)
 		return ret
 
 def device_vector(elem_cls, size, ptr_host_data=None):
-	return DVVector(native.n_dvvector_create(elem_cls, size, ptr_host_data))
+	ffiptr = ffi.NULL
+	if ptr_host_data!=None:
+		ffiptr = ffi.cast("void *", ptr_host_data)
+	return DVVector(native.n_dvvector_create(elem_cls.encode('utf-8'), size, ffiptr))
 
 def device_vector_from_numpy(nparr):
 	if nparr.dtype == np.int8:
@@ -115,7 +118,8 @@ def device_vector_from_list(lst, elem_cls):
 	return device_vector(elem_cls, size, ptr_host_data)
 
 def device_vector_from_dvs(lst_dv):
-	return DVVector(native.n_dvvector_from_dvs([item.m_cptr for item in lst_dv]))
+	dvarr = ObjArray(lst_dv)
+	return DVVector(native.n_dvvector_from_dvs(dvarr.m_cptr))
 
 class DVNumbaVector(DVVectorLike):
 	def __init__(self, nbarr):
@@ -148,5 +152,5 @@ class DVNumbaVector(DVVectorLike):
 			elem_cls = 'bool'
 		size = nbarr.size
 		ptr_device_data = nbarr.device_ctypes_pointer.value
-		self.m_cptr = native.n_dvvectoradaptor_create(elem_cls, size, ptr_device_data)
+		self.m_cptr = native.n_dvvectoradaptor_create(elem_cls.encode('utf-8'), size, ffi.cast("void *", ptr_device_data))
 
