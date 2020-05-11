@@ -2,6 +2,7 @@ from .Native import ffi, native
 import numpy as np
 from .DeviceViewable import DeviceViewable
 from .utils import *
+import ctypes
 
 class DVVectorLike(DeviceViewable):
 	def name_elem_cls(self):
@@ -16,7 +17,7 @@ class DVVectorLike(DeviceViewable):
 class DVRange(DVVectorLike):
 	def __init__(self, src, begin = 0, end = -1):
 		self.m_src = src
-		self.m_cptr = native.n_dvrange_create(src.m_cptr, begin, end)
+		self.m_cptr = native.n_dvrange_create(src.m_cptr, ctypes.c_ulonglong(begin).value, ctypes.c_ulonglong(end).value)
 
 class DVVector(DVVectorLike):
 	def __init__(self, cptr):

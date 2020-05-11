@@ -41,6 +41,8 @@ set(PYTHON_TEST
 	test_zipped.py
 	test_custom_vector.py
 
+	test_range.py
+
 	../demo/histogram.py
 	../demo/k-means.py
 )
