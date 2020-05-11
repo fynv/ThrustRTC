@@ -1,3 +1,7 @@
+import os
+if os.path.exists('ThrustRTC/cffi.py'):
+	os.remove('ThrustRTC/cffi.py')
+	
 import cffi
 
 ffibuilder = cffi.FFI()
