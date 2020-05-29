@@ -29,10 +29,10 @@ struct CapturedDeviceViewable
 };
 
 
-class BuiltIn : public DeviceViewable
+class SomeDeviceViewable : public DeviceViewable
 {
 public:
-	BuiltIn(const char* name_view_cls, const void* data_view = "", size_t size_view = 1)
+	SomeDeviceViewable(const char* name_view_cls, const void* data_view = "", size_t size_view = 1)
 	{
 		m_name_view_cls = name_view_cls;
 		m_view_buf.resize(size_view);
@@ -49,10 +49,10 @@ private:
 };
 
 #define DECLAR_DV_BASIC(clsname, type)\
-class clsname : public BuiltIn\
+class clsname : public SomeDeviceViewable\
 {\
 public:\
-	clsname(type in) : BuiltIn(#type, &in, sizeof(type)) {}\
+	clsname(type in) : SomeDeviceViewable(#type, &in, sizeof(type)) {}\
 };
 
 DECLAR_DV_BASIC(DVChar, char)
@@ -81,24 +81,6 @@ DECLAR_DV_BASIC(DVUInt64, uint64_t)
 
 DECLAR_DV_BASIC(DVSizeT, size_t)
 
-
-class SomeDeviceViewable : public DeviceViewable
-{
-public:
-	SomeDeviceViewable(const ViewBuf& buf, const char* type)
-	{
-		m_buf = buf;
-		m_name_view_cls = type;
-
-	}
-	virtual ViewBuf view() const
-	{
-		return m_buf;
-	}
-private:
-	ViewBuf m_buf;
-};
-
 inline DeviceViewable* dv_from_viewbuf(const ViewBuf& buf, const char* type)
 {
 	std::string s_type = type;
@@ -125,7 +107,7 @@ inline DeviceViewable* dv_from_viewbuf(const ViewBuf& buf, const char* type)
 	else if (s_type == "bool")
 		return new DVBool(*(bool*)buf.data());
 	else
-		return new SomeDeviceViewable(buf, type);
+		return new SomeDeviceViewable(type, buf.data(), buf.size());
 }
 
 #endif
