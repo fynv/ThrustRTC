@@ -17,6 +17,7 @@ class TRTCContext
 {
 public:
 	static void set_libnvrtc_path(const char* path);
+	static bool try_init();
 	static TRTCContext& get_context();
 
 	void set_verbose(bool verbose = true);
@@ -73,6 +74,16 @@ private:
 void set_libnvrtc_path(const char* path)
 {
 	TRTCContext::set_libnvrtc_path(path);
+}
+
+bool TRTC_Try_Init()
+{
+	if (TRTCContext::try_init())
+	{
+		TRTCContext::get_context();
+		return true;
+	}
+	return false;
 }
 
 void TRTC_Set_Verbose(bool verbose)

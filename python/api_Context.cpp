@@ -11,6 +11,11 @@ void n_set_libnvrtc_path(const char* path)
 	set_libnvrtc_path(path);
 }
 
+int n_trtc_try_init()
+{
+	return TRTC_Try_Init() ? 1 : 0;
+}
+
 void n_set_verbose(unsigned verbose)
 {
 	TRTC_Set_Verbose(verbose!=0);

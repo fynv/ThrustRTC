@@ -17,6 +17,8 @@ struct dim_type
 
 void THRUST_RTC_API set_libnvrtc_path(const char* path);
 
+bool THRUST_RTC_API TRTC_Try_Init();
+
 void THRUST_RTC_API TRTC_Set_Verbose(bool verbose = true);
 
 // reflection 

@@ -13,8 +13,8 @@ static bool s_cuda_init(int& cap)
 {
 	if (!init_cuda())
 	{
-		printf("Cannot find CUDA driver. Exiting.\n");
-		exit(0);
+		printf("Cannot find CUDA driver. \n");
+		return false;
 	}
 	cuInit(0);
 
@@ -29,7 +29,11 @@ static bool s_cuda_init(int& cap)
 		int device_count;
 		cuDeviceGetCount(&device_count);
 
-		if (device_count < 1) return false;
+		if (device_count < 1)
+		{
+			printf("Cannot find a CUDA capable device. \n");
+			return false;
+		}
 		for (int current_device = 0; current_device < device_count; current_device++)
 		{
 			CUdevice cuDevice;
@@ -66,22 +70,26 @@ static bool s_cuda_init(int& cap)
 	return true;
 }
 
-static int s_get_compute_capability()
+static int s_get_compute_capability(bool istrying=false)
 {
 	static int cap = -1;
 	if (cap == -1)
 	{
 		if (!s_cuda_init(cap))
 		{
-			printf("CUDA initialization failed. Exiting.\n");
-			exit(0);
+			printf("CUDA initialization failed. \n");
+			if (istrying) return -1;
+			else exit(0);
 		}
 		if (cap < 2 || cap>7) cap = 7;
 	}
 	return cap;
 }
 
-
+bool TRTCContext::try_init()
+{
+	return s_get_compute_capability(true) != -1;
+}
 
 TRTCContext& TRTCContext::get_context()
 {
@@ -168,8 +176,8 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& p
 {
 	if (!init_nvrtc(s_libnvrtc_path))
 	{
-		printf("Loading libnvrtc failed. Exiting.\n");
-		exit(0);
+		printf("Loading libnvrtc failed. \n");
+		return false;
 	}
 
 	int compute_cap = s_get_compute_capability();
