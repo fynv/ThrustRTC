@@ -9,7 +9,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
 	name = 'ThrustRTC',
-	version = '0.3.3',
+	version = '0.3.4',
 	description = 'Thrust for Python based on NVRTC',
 	long_description=long_description,
 	long_description_content_type='text/markdown',  
@@ -19,7 +19,7 @@ setup(
 	author_email='hyangfeih@gmail.com',
 	keywords='GPU CUDA Thrust',
 	packages=['ThrustRTC'],
-	data_files=[("Fei", ["PyThrustRTC.dll", "libPyThrustRTC.so"])],
+	package_data = { 'ThrustRTC': ['*.dll', '*.so']},
 	install_requires = ['cffi','numpy'],	
 )
 

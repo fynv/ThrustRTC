@@ -207,12 +207,12 @@ install(FILES ${LIB_HEADERS_FAKEVECTORS} DESTINATION include/fake_vectors)
 
 if (WIN32) 
 install(TARGETS PyThrustRTC 
-		RUNTIME DESTINATION test_python
+		RUNTIME DESTINATION test_python/ThrustRTC
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib 
 		)
 else()
-install(TARGETS PyThrustRTC DESTINATION test_python)
+install(TARGETS PyThrustRTC DESTINATION test_python/ThrustRTC)
 endif()
 
 set(PYTHON
