@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unqlite.h>
+#include <shared_mutex>
 #include "cuda_wrapper.h"
 #include "nvtrc_wrapper.h"
 #include "launch_calc.h"
@@ -42,7 +43,7 @@ private:
 	TRTCContext();
 	~TRTCContext();
 
-	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size) const;
+	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size);
 	KernelId_t _build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body);
 	int _launch_calc(KernelId_t kid, unsigned sharedMemBytes);
 	int _persist_calc(KernelId_t kid, int numBlocks, unsigned sharedMemBytes);
@@ -60,13 +61,18 @@ private:
 	std::string m_header_of_structs;
 	std::string m_name_header_of_structs;
 	std::unordered_set<int64_t> m_known_structs;
+	std::shared_mutex m_mutex_structs;
 
 	std::unordered_map<std::string, size_t> m_size_of_types;
+	std::shared_mutex m_mutex_sizes;
+
 	std::unordered_map<std::string, std::vector<size_t>> m_offsets_of_structs;
+	std::shared_mutex m_mutex_offsets;
 
 	struct Kernel;
 	std::vector<Kernel*> m_kernel_cache;
 	std::unordered_map<int64_t, KernelId_t> m_kernel_id_map;
+	std::shared_mutex m_mutex_kernels;
 };
 
 #include "impl_context.inl"

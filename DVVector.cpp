@@ -13,6 +13,8 @@ DVVectorLike::DVVectorLike(const char* elem_cls, const char* ref_type, size_t si
 DVVector::DVVector(const char* elem_cls, size_t size, void* hdata)
 	: DVVectorLike(elem_cls, (std::string(elem_cls)+"&").c_str(), size)
 {
+	TRTC_Try_Init();
+	
 	CUdeviceptr dptr;
 	cuMemAlloc(&dptr, m_elem_size*m_size);
 	m_data = (void*)dptr;

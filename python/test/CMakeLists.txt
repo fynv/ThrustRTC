@@ -43,6 +43,8 @@ set(PYTHON_TEST
 
 	test_range.py
 
+	test_multithread.py
+
 	../demo/histogram.py
 	../demo/k-means.py
 )

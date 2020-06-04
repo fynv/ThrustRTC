@@ -174,7 +174,7 @@ set (DEFINES  ${DEFINES}
 -D"_CRT_SECURE_NO_WARNINGS"
 )
 else()
-add_definitions(-std=c++14)
+add_definitions(-std=c++17)
 add_compile_options(-fPIC)
 endif()
 
@@ -185,6 +185,11 @@ add_library(unqlite STATIC ../thirdparty/unqlite/unqlite.h ../thirdparty/unqlite
 add_library(PyThrustRTC SHARED ${LIB_SOURCES} ${LIB_HEADERS} ${LIB_HEADERS_FAKEVECTORS} ${INTERNAL_HEADERS} ${SRC})
 
 target_link_libraries(PyThrustRTC unqlite)
+
+if (WIN32) 
+else()
+target_link_libraries(PyThrustRTC dl pthread)
+endif()
 
 add_dependencies(Run_PackHeaders PackHeaders)
 add_dependencies(PyThrustRTC Run_PackHeaders)
