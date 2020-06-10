@@ -111,7 +111,7 @@ struct TRTCContext::Kernel
 	unsigned sharedMemBytes_cached = -1;
 	int sizeBlock = -1;
 	int numBlocks = -1;
-	std::shared_mutex mutex;
+	std::mutex mutex;
 };
 
 
@@ -247,16 +247,14 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& p
 
 size_t TRTCContext::size_of(const char* cls)
 {
+	std::unique_lock<std::mutex> lock(m_mutex_sizes);
 	// try to find in the context cache first
+	decltype(m_size_of_types)::iterator it = m_size_of_types.find(cls);
+	if (it != m_size_of_types.end())
 	{
-		std::shared_lock<std::shared_mutex> lock(m_mutex_sizes);
-		decltype(m_size_of_types)::iterator it = m_size_of_types.find(cls);
-		if (it != m_size_of_types.end())
-		{
-			size_t size = it->second;
-			return size;
-		}
-	}	
+		size_t size = it->second;
+		return size;
+	}
 
 	// reflect from device code
 	std::string saxpy;
@@ -317,10 +315,7 @@ size_t TRTCContext::size_of(const char* cls)
 	}
 
 	// cache the result
-	{
-		std::unique_lock<std::shared_mutex> lock(m_mutex_sizes);
-		m_size_of_types[cls] = size;
-	} 
+	m_size_of_types[cls] = size;
 
 	return size;
 }
@@ -340,15 +335,14 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 		return offsets[1] != (size_t)(-1);
 	}
 
+	std::unique_lock<std::mutex> lock(m_mutex_offsets);
+
 	// try to find in the context cache first
+	decltype(m_offsets_of_structs)::iterator it = m_offsets_of_structs.find(name_struct);
+	if (it != m_offsets_of_structs.end())
 	{
-		std::shared_lock<std::shared_mutex> lock(m_mutex_offsets);
-		decltype(m_offsets_of_structs)::iterator it = m_offsets_of_structs.find(name_struct);
-		if (it != m_offsets_of_structs.end())
-		{
-			memcpy(offsets, it->second.data(), sizeof(size_t)*it->second.size());
-			return true;
-		}
+		memcpy(offsets, it->second.data(), sizeof(size_t)*it->second.size());
+		return true;
 	}
 
 	// reflect from device code
@@ -427,10 +421,8 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 	}
 
 	// cache the result
-	{
-		std::unique_lock<std::shared_mutex> lock(m_mutex_offsets);
-		m_offsets_of_structs[name_struct] = res;
-	}
+	m_offsets_of_structs[name_struct] = res;
+
 	memcpy(offsets, res.data(), sizeof(size_t)*res.size());
 	return true;
 }
@@ -481,14 +473,13 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<CapturedDeviceViewable>&
 	unsigned long long hash = s_get_hash(saxpy.c_str());
 	KernelId_t kid = (KernelId_t)(-1);
 
+	std::unique_lock<std::shared_mutex> lock(m_mutex_kernels);
+
+	decltype(m_kernel_id_map)::iterator it = m_kernel_id_map.find(hash);
+	if (it != m_kernel_id_map.end())
 	{
-		std::shared_lock<std::shared_mutex> lock(m_mutex_kernels);
-		decltype(m_kernel_id_map)::iterator it = m_kernel_id_map.find(hash);
-		if (it != m_kernel_id_map.end())
-		{
-			kid = it->second;
-			return kid;
-		}
+		kid = it->second;
+		return kid;
 	}
 
 	std::vector<char> ptx;
@@ -546,12 +537,10 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<CapturedDeviceViewable>&
 		cuMemcpyHtoD(dptr, m_constants[i].second.data(), size);
 	}
 
-	{
-		std::unique_lock<std::shared_mutex> lock(m_mutex_kernels);
-		m_kernel_cache.push_back(kernel);
-		kid = (unsigned)m_kernel_cache.size() - 1;
-		m_kernel_id_map[hash] = kid;
-	}
+	m_kernel_cache.push_back(kernel);
+	kid = (unsigned)m_kernel_cache.size() - 1;
+	m_kernel_id_map[hash] = kid;
+
 	return kid;
 }
 
@@ -565,16 +554,13 @@ int TRTCContext::_launch_calc(KernelId_t kid, unsigned sharedMemBytes)
 
 	int size;
 	{
-		std::shared_lock<std::shared_mutex> lock(kernel->mutex);
+		std::unique_lock<std::mutex> lock(kernel->mutex);
 		if (sharedMemBytes == kernel->sharedMemBytes_cached)
 		{
 			size = kernel->sizeBlock;
 			return size;
 		}
-	}
-
-	{
-		std::unique_lock<std::shared_mutex> lock(kernel->mutex);
+	
 		launch_calc(kernel->func, sharedMemBytes, kernel->sizeBlock);
 		kernel->sharedMemBytes_cached = sharedMemBytes;
 		size = kernel->sizeBlock;
@@ -592,16 +578,13 @@ int TRTCContext::_persist_calc(KernelId_t kid, int sizeBlock, unsigned sharedMem
 
 	int num;
 	{
-		std::shared_lock<std::shared_mutex> lock(kernel->mutex);
+		std::unique_lock<std::mutex> lock(kernel->mutex);
 		if (sharedMemBytes == kernel->sharedMemBytes_cached && sizeBlock == kernel->sizeBlock)
 		{
 			num = kernel->numBlocks;
 			return num;
 		}
-	}
-
-	{
-		std::unique_lock<std::shared_mutex> lock(kernel->mutex);
+	
 		persist_calc(kernel->func, sharedMemBytes, sizeBlock, kernel->numBlocks);
 		kernel->sharedMemBytes_cached = sharedMemBytes;
 		kernel->sizeBlock = sizeBlock;
@@ -724,23 +707,19 @@ std::string TRTCContext::add_struct(const char* struct_body)
 	char name[32];
 	sprintf(name, "_S_%016llx", hash);
 
-	{
-		std::shared_lock<std::shared_mutex> lock(m_mutex_structs);
-		decltype(m_known_structs)::iterator it = m_known_structs.find(hash);
-		if (it != m_known_structs.end())
-			return name;
-	}
+	std::unique_lock<std::shared_mutex> lock(m_mutex_structs);
+	decltype(m_known_structs)::iterator it = m_known_structs.find(hash);
+	if (it != m_known_structs.end())
+		return name;
+	
 
 	std::string struct_def = std::string("struct ") + name + "\n{\n"
 		"    typedef " + name + " CurType;\n" +
 		struct_body + "};\n";
-
-	{
-		std::unique_lock<std::shared_mutex> lock(m_mutex_structs);
-		m_header_of_structs += struct_def;
-		m_content_built_in_headers[0] = m_header_of_structs.c_str();
-		m_known_structs.insert(hash);
-	}
+	
+	m_header_of_structs += struct_def;
+	m_content_built_in_headers[0] = m_header_of_structs.c_str();
+	m_known_structs.insert(hash);
 
 	return name;
 }
