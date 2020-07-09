@@ -184,13 +184,17 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& p
 
 	int compute_cap = s_get_compute_capability();
 
+	int num_headers = (int)m_name_built_in_headers.size();
+	std::vector<const char*> p_name_built_in_headers(num_headers);
+	std::vector<const char*> p_content_built_in_headers(num_headers);
+	for (int i = 0; i < num_headers; i++)
+	{
+		p_name_built_in_headers[i] = m_name_built_in_headers[i].c_str();
+		p_content_built_in_headers[i] = m_content_built_in_headers[i].c_str();
+	}
+
 	nvrtcProgram prog;
-	nvrtcCreateProgram(&prog,         // prog
-		src,         // buffer
-		"saxpy.cu",    // name
-		(int)m_name_built_in_headers.size(),             // numHeaders
-		m_content_built_in_headers.data(),          // headers
-		m_name_built_in_headers.data());         // includeNames
+	nvrtcCreateProgram(&prog, src, "saxpy.cu", num_headers, p_content_built_in_headers.data(), p_name_built_in_headers.data());
 
 	std::vector<std::string> opt_bufs;
 	char opt[1024];

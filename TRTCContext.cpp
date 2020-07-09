@@ -54,8 +54,8 @@ private:
 
 	bool m_verbose;
 	std::vector<std::string> m_include_dirs;
-	std::vector<const char*> m_name_built_in_headers;
-	std::vector<const char*> m_content_built_in_headers;
+	std::vector<std::string> m_name_built_in_headers;
+	std::vector<std::string> m_content_built_in_headers;
 	std::vector<std::string> m_code_blocks;
 	std::vector<std::pair<std::string, ViewBuf>> m_constants;
 
