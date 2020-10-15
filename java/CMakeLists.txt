@@ -231,6 +231,7 @@ DVDouble.java
 DVVectorLike.java
 DVRange.java
 DVVector.java
+DVVectorAdaptor.java
 Kernel.java
 For.java
 DVTuple.java

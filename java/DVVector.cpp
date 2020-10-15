@@ -133,3 +133,37 @@ JNIEXPORT void JNICALL Java_JThrustRTC_Native_dvvector_1to_1host__J_3DII(JNIEnv 
 	dvvec->to_host(p_hdata, (size_t)begin, (size_t)end);
 	env->ReleaseDoubleArrayElements(hdata, p_hdata, 0);
 }
+
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvector_1native_1pointer(JNIEnv *, jclass, jlong p_dvvec)
+{
+	DVVector* dvvec = (DVVector*)p_dvvec;
+	return (jlong)dvvec->data();
+}
+
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvectoradaptor_1create(JNIEnv * env, jclass, jstring j_elem_cls, jint size, jlong native_pointer)
+{
+	const char *elem_cls = env->GetStringUTFChars(j_elem_cls, nullptr);
+	DVVectorAdaptor* cptr = new DVVectorAdaptor(elem_cls, (size_t)size, (void*)native_pointer);
+	env->ReleaseStringUTFChars(j_elem_cls, elem_cls);
+	return (jlong)cptr;
+}
+
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvectoradaptor_1create_1from_1dvvector(JNIEnv *, jclass, jlong p_dvvec, jint begin, jint end)
+{
+	DVVector* dvvec = (DVVector*)p_dvvec;
+	DVVectorAdaptor* cptr = new DVVectorAdaptor(*dvvec, (size_t)begin, (size_t)end);
+	return (jlong)cptr;
+}
+
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvectoradaptor_1create_1from_1dvvectoradaptor(JNIEnv *, jclass, jlong p_dvvec, jint begin, jint end)
+{
+	DVVectorAdaptor* dvvec = (DVVectorAdaptor*)p_dvvec;
+	DVVectorAdaptor* cptr = new DVVectorAdaptor(*dvvec, (size_t)begin, (size_t)end);
+	return (jlong)cptr;
+}
+
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvectoradaptor_1native_1pointer(JNIEnv *, jclass, jlong p_dvvec)
+{
+	DVVectorAdaptor* dvvec = (DVVectorAdaptor*)p_dvvec;
+	return (jlong)dvvec->data();
+}

@@ -37,6 +37,11 @@ public class DVVector extends DVVectorLike
 		super( Native.dvvector_create(hdata) );
 	}
 
+    public long native_pointer()
+    {
+        return Native.dvvector_native_pointer(cptr());
+    }
+
 	public Object to_host(int begin, int end)
 	{
 		String type = name_elem_cls();

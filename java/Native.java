@@ -63,6 +63,11 @@ class Native
 	public static native void dvvector_to_host(long p_dvvec, long[] hdata, int begin, int end);
 	public static native void dvvector_to_host(long p_dvvec, float[] hdata, int begin, int end);
 	public static native void dvvector_to_host(long p_dvvec, double[] hdata, int begin, int end);
+	public static native long dvvector_native_pointer(long p_dvvec);
+	public static native long dvvectoradaptor_create(String elem_cls, int size, long native_pointer);
+	public static native long dvvectoradaptor_create_from_dvvector(long p_dvvec, int begin, int end);
+	public static native long dvvectoradaptor_create_from_dvvectoradaptor(long p_dvvec, int begin, int end);
+	public static native long dvvectoradaptor_native_pointer(long p_dvvec);
 
 	// Tuple
 	public static native long dvtuple_create(long[] p_objs, String[] name_objs);

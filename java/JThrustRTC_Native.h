@@ -393,6 +393,46 @@ JNIEXPORT void JNICALL Java_JThrustRTC_Native_dvvector_1to_1host__J_3DII
 
 /*
  * Class:     JThrustRTC_Native
+ * Method:    dvvector_native_pointer
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvector_1native_1pointer
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvvectoradaptor_create
+ * Signature: (Ljava/lang/String;IJ)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvectoradaptor_1create
+  (JNIEnv *, jclass, jstring, jint, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvvectoradaptor_create_from_dvvector
+ * Signature: (JII)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvectoradaptor_1create_1from_1dvvector
+  (JNIEnv *, jclass, jlong, jint, jint);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvvectoradaptor_create_from_dvvectoradaptor
+ * Signature: (JII)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvectoradaptor_1create_1from_1dvvectoradaptor
+  (JNIEnv *, jclass, jlong, jint, jint);
+
+/*
+ * Class:     JThrustRTC_Native
+ * Method:    dvvectoradaptor_native_pointer
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_JThrustRTC_Native_dvvectoradaptor_1native_1pointer
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     JThrustRTC_Native
  * Method:    dvtuple_create
  * Signature: ([J[Ljava/lang/String;)J
  */
