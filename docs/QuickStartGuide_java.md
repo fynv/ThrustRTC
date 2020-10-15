@@ -353,6 +353,29 @@ float[] hvec = (float[]) dvec.to_host();
 
 There are optional parameters *begin* and *end* which can be used to specify a range to copy.
 
+### DVVectorAdaptor
+
+DVVectorAdaptor objects are device Vectors with externally managed storage.
+
+In C++ code, user can create a DVVectorAdaptor object just like creating a DVVector, 
+passing in pointer of device memory instead of host memory to initialize the object.
+The device memory should not be freed while the DVVectorAdaptor object is still being
+used.
+
+Alternatively, user can create a DVVectorAdaptor object using an existing DVVector or 
+DVVectorAdaptor object and a range specified by a *begin/end* pair.
+
+```cpp
+// C++
+float hvalues[8] = { 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f };
+DVVector dvalues("float", 8, hvalues);
+DVVectorAdaptor drange(dvvalue, 2, 5);
+// drange maps to { 30.0f, 40.0f, 50.0f }
+```
+
+In JAVA, DVVectorAdaptor can be used similarly. 
+An native pointer expressed by a "long" value from an external library can be used to initialize a DVVectorAdaptor object.
+
 ### DVRange
 
 DVRange objects can be used to map to a range of an abitary Vector object.
