@@ -16,6 +16,8 @@ def Reduce(vec, value_init=None, binary_op=None):
 	if binary_op!=None:
 		cptr_binary_op = binary_op.m_cptr
 	dvptr = native.n_reduce(vec.m_cptr, cptr_init, cptr_binary_op)
+	if dvptr == ffi.NULL:
+		return None
 	ret = ValueFromDVPtr(dvptr)
 	native.n_dv_destroy(dvptr)
 	return ret
@@ -57,6 +59,8 @@ def Inner_Product(vec1, vec2, value_init, binary_op1 = None, binary_op2 = None):
 	if binary_op2!=None:
 		cptr_binary_op2 = binary_op2.m_cptr
 	dvptr = native.n_inner_product(vec1.m_cptr, vec2.m_cptr, value_init.m_cptr, cptr_binary_op1, cptr_binary_op2,)
+	if dvptr == ffi.NULL:
+		return None
 	ret = ValueFromDVPtr(dvptr)
 	native.n_dv_destroy(dvptr)
 	return ret
@@ -69,6 +73,8 @@ def Transform_Reduce(vec, unary_op, value_init, binary_op):
 	if unary_op!=None:
 		cptr_unary_op = unary_op.m_cptr
 	dvptr =  native.n_transform_reduce(vec.m_cptr, cptr_unary_op, value_init.m_cptr, cptr_binary_op)
+	if dvptr == ffi.NULL:
+		return None
 	ret = ValueFromDVPtr(dvptr)
 	native.n_dv_destroy(dvptr)
 	return ret
