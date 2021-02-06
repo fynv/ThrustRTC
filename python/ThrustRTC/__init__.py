@@ -1,6 +1,6 @@
-from .Native import native
-if native.n_trtc_try_init()==0:
-	raise ImportError('cannot import ThrustRTC')
+from .Native import native, check_i
+
+check_i(native.n_trtc_try_init())
 
 from .Context import *
 from .DeviceViewable import *

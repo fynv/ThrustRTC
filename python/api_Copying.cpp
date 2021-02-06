@@ -82,7 +82,7 @@ int n_copy(void* ptr_in, void* ptr_out)
 	if (TRTC_Copy(*vec_in, *vec_out))
 		return 0;
 	else
-		return 1;
+		return -1;
 }
 
 int n_swap(void* ptr_vec1, void* ptr_vec2)

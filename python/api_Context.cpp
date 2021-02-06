@@ -13,7 +13,7 @@ void n_set_libnvrtc_path(const char* path)
 
 int n_trtc_try_init()
 {
-	return TRTC_Try_Init() ? 1 : 0;
+	return TRTC_Try_Init() ? 0 : -100;
 }
 
 void n_set_verbose(unsigned verbose)
@@ -86,7 +86,7 @@ int n_kernel_calc_optimal_block_size(void* ptr_kernel, void* ptr_arg_list, unsig
 	if (num_params != size)
 	{
 		printf("Wrong number of arguments received. %d required, %d received.", (int)num_params, (int)size);
-		return -1;
+		return -2;
 	}
 	
 	int sizeBlock;
@@ -107,7 +107,7 @@ int n_kernel_calc_number_blocks(void* ptr_kernel, void* ptr_arg_list, int sizeBl
 	if (num_params != size)
 	{
 		printf("Wrong number of arguments received. %d required, %d received.", (int)num_params, (int)size);
-		return -1;
+		return -2;
 	}
 	
 	int numBlocks;
@@ -131,7 +131,7 @@ int n_kernel_launch(void* ptr_kernel, void* ptr_gridDim, void* ptr_blockDim, voi
 	if (num_params != size)
 	{
 		printf("Wrong number of arguments received. %d required, %d received.", (int)num_params, (int)size);
-		return -1;
+		return -2;
 	}
 
 	if (kernel->launch(*gridDim, *blockDim, arg_list->data(), sharedMemBytes))
@@ -175,7 +175,7 @@ int n_for_launch(void* cptr, int begin, int end, void* ptr_arg_list)
 	if (num_params != size)
 	{
 		printf("Wrong number of arguments received. %d required, %d received.", (int)num_params, (int)size);
-		return -1;
+		return -2;
 	}
 
 	if (p_for->launch(begin, end, arg_list->data()))
@@ -195,7 +195,7 @@ int n_for_launch_n(void* cptr, int n, void* ptr_arg_list)
 	if (num_params != size)
 	{
 		printf("Wrong number of arguments received. %d required, %d received.", (int)num_params, (int)size);
-		return -1;
+		return -2;
 	}
 
 	if (p_for->launch_n(n, arg_list->data()))

@@ -12,9 +12,15 @@ long long n_find(void* ptr_vec, void* ptr_value)
 	DeviceViewable* value = (DeviceViewable*)ptr_value;
 	size_t res;
 	if (TRTC_Find(*vec, *value, res))
+	{
+		if (res == (size_t)(-1))
+			return (long long)(vec->size());
 		return (long long)res;
+	}
 	else
+	{
 		return -1;
+	}
 }
 
 long long n_find_if(void* ptr_vec, void* ptr_pred)
@@ -23,9 +29,15 @@ long long n_find_if(void* ptr_vec, void* ptr_pred)
 	Functor* pred = (Functor*)ptr_pred;
 	size_t res;
 	if (TRTC_Find_If(*vec, *pred, res))
+	{
+		if (res == (size_t)(-1))
+			return (long long)(vec->size());
 		return (long long)res;
+	}
 	else
+	{
 		return -1;
+	}
 }
 
 long long n_find_if_not(void* ptr_vec, void* ptr_pred)
@@ -34,9 +46,15 @@ long long n_find_if_not(void* ptr_vec, void* ptr_pred)
 	Functor* pred = (Functor*)ptr_pred;
 	size_t res;
 	if (TRTC_Find_If_Not(*vec, *pred, res))
+	{
+		if (res == (size_t)(-1))
+			return (long long)(vec->size());
 		return (long long)res;
+	}
 	else
+	{
 		return -1;
+	}
 }
 
 long long n_mismatch(void* ptr_vec1, void* ptr_vec2, void* ptr_pred)
@@ -48,16 +66,28 @@ long long n_mismatch(void* ptr_vec1, void* ptr_vec2, void* ptr_pred)
 	if (pred == nullptr)
 	{
 		if (TRTC_Mismatch(*vec1, *vec2, res))
+		{
+			if (res == (size_t)(-1))
+				return (long long)(vec1->size());
 			return (long long)res;
+		}
 		else
+		{
 			return -1;
+		}
 	}
 	else
 	{
 		if (TRTC_Mismatch(*vec1, *vec2, *pred, res))
+		{
+			if (res == (size_t)(-1))
+				return (long long)(vec1->size());
 			return (long long)res;
+		}
 		else
+		{
 			return -1;
+		}
 	}
 }
 
@@ -70,17 +100,25 @@ unsigned long long n_lower_bound(void* ptr_vec, void* ptr_value, void* ptr_comp)
 	{
 		size_t res;
 		if (TRTC_Lower_Bound(*vec, *value, res))
-			return (unsigned long long)res;
+		{			
+			return res;
+		}
 		else
+		{
 			return (unsigned long long)(-1);
+		}
 	}
 	else
 	{
 		size_t res;
 		if (TRTC_Lower_Bound(*vec, *value, *comp, res))
-			return (unsigned long long)res;
+		{
+			return res;
+		}
 		else
+		{
 			return (unsigned long long)(-1);
+		}
 	}
 }
 
@@ -93,17 +131,25 @@ unsigned long long n_upper_bound(void* ptr_vec, void* ptr_value, void* ptr_comp)
 	{
 		size_t res;
 		if (TRTC_Upper_Bound(*vec, *value, res))
-			return (unsigned long long)res;
+		{
+			return res;
+		}
 		else
+		{
 			return (unsigned long long)(-1);
+		}
 	}
 	else
 	{
 		size_t res;
 		if (TRTC_Upper_Bound(*vec, *value, *comp, res))
-			return (unsigned long long)res;
+		{
+			return res;
+		}
 		else
+		{
 			return (unsigned long long)(-1);
+		}
 	}
 }
 
@@ -205,9 +251,14 @@ unsigned long long n_partition_point(void* ptr_vec, void* ptr_pred)
 	Functor* pred = (Functor*)ptr_pred;
 	size_t pp;
 	if (TRTC_Partition_Point(*vec, *pred, pp))
-		return (unsigned long long)pp;
+	{
+		if (pp == (size_t)(-1)) return vec->size();
+		return pp;
+	}
 	else
+	{
 		return (unsigned long long)(-1);
+	}
 }
 
 unsigned long long n_is_sorted_until(void* ptr_vec, void* ptr_comp)
@@ -218,15 +269,23 @@ unsigned long long n_is_sorted_until(void* ptr_vec, void* ptr_comp)
 	if (comp == nullptr)
 	{
 		if (TRTC_Is_Sorted_Until(*vec, res))
-			return (unsigned long long)res;
+		{
+			return res;
+		}
 		else
+		{
 			return (unsigned long long)(-1);
+		}
 	}
 	else
 	{
 		if (TRTC_Is_Sorted_Until(*vec, *comp, res))
-			return (unsigned long long)res;
+		{
+			return res;
+		}
 		else
+		{
 			return (unsigned long long)(-1);
+		}
 	}
 }

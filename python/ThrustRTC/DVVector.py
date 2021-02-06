@@ -1,4 +1,4 @@
-from .Native import ffi, native
+from .Native import ffi, native, check_cptr
 import numpy as np
 from .DeviceViewable import DeviceViewable
 from .utils import *
@@ -57,7 +57,7 @@ def device_vector(elem_cls, size, ptr_host_data=None):
 	ffiptr = ffi.NULL
 	if ptr_host_data!=None:
 		ffiptr = ffi.cast("void *", ptr_host_data)
-	return DVVector(native.n_dvvector_create(elem_cls.encode('utf-8'), size, ffiptr))
+	return DVVector(check_cptr(native.n_dvvector_create(elem_cls.encode('utf-8'), size, ffiptr)))
 
 def device_vector_from_numpy(nparr):
 	if nparr.dtype == np.int8:
@@ -120,7 +120,7 @@ def device_vector_from_list(lst, elem_cls):
 
 def device_vector_from_dvs(lst_dv):
 	dvarr = ObjArray(lst_dv)
-	return DVVector(native.n_dvvector_from_dvs(dvarr.m_cptr))
+	return DVVector(check_cptr(native.n_dvvector_from_dvs(dvarr.m_cptr)))
 
 class DVNumbaVector(DVVectorLike):
 	def __init__(self, nbarr):
@@ -153,5 +153,5 @@ class DVNumbaVector(DVVectorLike):
 			elem_cls = 'bool'
 		size = nbarr.size
 		ptr_device_data = nbarr.device_ctypes_pointer.value
-		self.m_cptr = native.n_dvvectoradaptor_create(elem_cls.encode('utf-8'), size, ffi.cast("void *", ptr_device_data))
+		self.m_cptr = check_cptr(native.n_dvvectoradaptor_create(elem_cls.encode('utf-8'), size, ffi.cast("void *", ptr_device_data)))
 

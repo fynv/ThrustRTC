@@ -1,4 +1,4 @@
-from .Native import ffi, native
+from .Native import ffi, native, check_cptr
 from .DeviceViewable import DeviceViewable
 from .utils import *
 
@@ -9,5 +9,5 @@ class DVTuple(DeviceViewable):
 		o_param_names = StrArray(param_names)
 		elems = [elem for param_name, elem in elem_map.items()]
 		o_elems = ObjArray(elems)
-		self.m_cptr = native.n_dvtuple_create(o_elems.m_cptr, o_param_names.m_cptr)
+		self.m_cptr = check_cptr(native.n_dvtuple_create(o_elems.m_cptr, o_param_names.m_cptr))
 
