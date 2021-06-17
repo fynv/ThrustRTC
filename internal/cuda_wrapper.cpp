@@ -13,6 +13,8 @@
 
 static bool s_cuda_initialized = false;
 
+CUresult(*cuGetErrorString)(CUresult error, const char **pStr);
+CUresult(*cuGetErrorName)(CUresult error, const char **pStr);
 CUresult(*cuInit)(unsigned int Flags);
 CUresult(*cuDeviceGetCount)(int *count);
 CUresult(*cuDeviceGet)(CUdevice *device, int ordinal);
@@ -57,6 +59,8 @@ bool init_cuda()
 		printf("nvcuda.dll not found\n");
 		return false;
 	}
+	cuGetErrorString = (decltype(cuGetErrorString))GetProcAddress(hinstLib, "cuGetErrorString");
+	cuGetErrorName = (decltype(cuGetErrorName))GetProcAddress(hinstLib, "cuGetErrorName");
 	cuInit = (decltype(cuInit))GetProcAddress(hinstLib, "cuInit");
 	cuDeviceGetCount = (decltype(cuDeviceGetCount))GetProcAddress(hinstLib, "cuDeviceGetCount");
 	cuDeviceGet = (decltype(cuDeviceGet))GetProcAddress(hinstLib, "cuDeviceGet");
@@ -85,7 +89,9 @@ bool init_cuda()
 	{
 		printf("libcuda.so not found\n");
 		return false;
-	}
+	}	
+	cuGetErrorString = (decltype(cuGetErrorString))dlsym(handle, "cuGetErrorString");
+	cuGetErrorName = (decltype(cuGetErrorName))dlsym(handle, "cuGetErrorName");
 	cuInit = (decltype(cuInit))dlsym(handle, "cuInit");
 	cuDeviceGetCount = (decltype(cuDeviceGetCount))dlsym(handle, "cuDeviceGetCount");
 	cuDeviceGet = (decltype(cuDeviceGet))dlsym(handle, "cuDeviceGet");

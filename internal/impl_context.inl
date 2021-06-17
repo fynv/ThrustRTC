@@ -7,6 +7,28 @@ void TRTCContext::set_libnvrtc_path(const char* path)
 	s_libnvrtc_path = _libnvrtc_path.c_str();
 }
 
+inline bool CheckCUresult(CUresult res, const char* name_call)
+{
+	if (res != CUDA_SUCCESS)
+	{
+		printf("%s failed with Error code: %u\n", name_call, res);
+		const char *name = nullptr;
+		const char *desc = nullptr;
+		cuGetErrorName(res, &name);
+		cuGetErrorString(res, &desc);
+		if (name != nullptr)
+		{
+			printf("Error Name: %s\n", name);
+		}
+		if (desc != nullptr)
+		{
+			printf("Error Description: %s\n", desc);
+		}
+		return false;
+	}
+	return true;
+}
+
 static char s_name_db[] = "__ptx_cache__.db";
 
 static bool s_cuda_init(int& cap)
@@ -16,10 +38,11 @@ static bool s_cuda_init(int& cap)
 		printf("Cannot find CUDA driver. \n");
 		return false;
 	}
-	cuInit(0);
+
+	if (!CheckCUresult(cuInit(0), "cuInit()")) return false;
 
 	CUcontext cuContext;
-	cuCtxGetCurrent(&cuContext);
+	if (!CheckCUresult(cuCtxGetCurrent(&cuContext), "cuCtxGetCurrent()")) return false;
 
 	if (cuContext == nullptr)
 	{
@@ -27,7 +50,7 @@ static bool s_cuda_init(int& cap)
 		int max_gflops_device = 0;
 
 		int device_count;
-		cuDeviceGetCount(&device_count);
+		if (!CheckCUresult(cuDeviceGetCount(&device_count), "cuDeviceGetCount()")) return false;
 
 		if (device_count < 1)
 		{
@@ -37,15 +60,15 @@ static bool s_cuda_init(int& cap)
 		for (int current_device = 0; current_device < device_count; current_device++)
 		{
 			CUdevice cuDevice;
-			cuDeviceGet(&cuDevice, current_device);
+			if (!CheckCUresult(cuDeviceGet(&cuDevice, current_device), "cuDeviceGet()")) return false;
 			int multiProcessorCount;
-			cuDeviceGetAttribute(&multiProcessorCount, CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT, cuDevice);
+			if (!CheckCUresult(cuDeviceGetAttribute(&multiProcessorCount, CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT, cuDevice), "cuDeviceGetAttribute()")) return false;
 			int	clockRate;
-			cuDeviceGetAttribute(&clockRate, CU_DEVICE_ATTRIBUTE_CLOCK_RATE, cuDevice);
+			if (!CheckCUresult(cuDeviceGetAttribute(&clockRate, CU_DEVICE_ATTRIBUTE_CLOCK_RATE, cuDevice), "cuDeviceGetAttribute()")) return false;
 			int gflops = multiProcessorCount * clockRate;
 			int major, minor;
-			cuDeviceGetAttribute(&major, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevice);
-			cuDeviceGetAttribute(&minor, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR, cuDevice);
+			if (!CheckCUresult(cuDeviceGetAttribute(&major, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevice), "cuDeviceGetAttribute()")) return false;
+			if (!CheckCUresult(cuDeviceGetAttribute(&minor, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR, cuDevice), "cuDeviceGetAttribute()")) return false;
 			if (major != -1 && minor != -1)
 			{
 				if (gflops > max_gflops)
@@ -57,15 +80,15 @@ static bool s_cuda_init(int& cap)
 			}
 		}
 		CUdevice cuDevice;
-		cuDeviceGet(&cuDevice, max_gflops_device);
-		cuDevicePrimaryCtxRetain(&cuContext, cuDevice);
-		cuCtxSetCurrent(cuContext);
+		if (!CheckCUresult(cuDeviceGet(&cuDevice, max_gflops_device), "cuDeviceGet()")) return false;
+		if (!CheckCUresult(cuDevicePrimaryCtxRetain(&cuContext, cuDevice), "cuDevicePrimaryCtxRetain()")) return false;
+		if (!CheckCUresult(cuCtxSetCurrent(cuContext), "cuCtxSetCurrent()")) return false;
 	}
 	else
 	{
 		CUdevice cuDevice;
-		cuCtxGetDevice(&cuDevice);
-		cuDeviceGetAttribute(&cap, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevice);
+		if (!CheckCUresult(cuCtxGetDevice(&cuDevice), "cuCtxGetDevice()")) return false;
+		if (!CheckCUresult(cuDeviceGetAttribute(&cap, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevice), "cuDeviceGetAttribute()")) return false;
 	}
 
 	return true;
@@ -299,12 +322,12 @@ size_t TRTCContext::size_of(const char* cls)
 	{
 		std::vector<char> ptx;
 		size_t ptx_size;
-		if (!_src_to_ptx(saxpy.data(), ptx, ptx_size)) return 0;
+		if (!_src_to_ptx(saxpy.data(), ptx, ptx_size)) return (size_t)(-1);
 		CUmodule module;
-		cuModuleLoadDataEx(&module, ptx.data(), 0, 0, 0);
+		if (!CheckCUresult(cuModuleLoadDataEx(&module, ptx.data(), 0, 0, 0), "cuModuleLoadDataEx()")) return (size_t)(-1);
 		CUdeviceptr dptr;
-		cuModuleGetGlobal(&dptr, &size, module, "_test");
-		cuModuleUnload(module);
+		if (!CheckCUresult(cuModuleGetGlobal(&dptr, &size, module, "_test"), "cuModuleGetGlobal()")) return (size_t)(-1);
+		if (!CheckCUresult(cuModuleUnload(module), "cuModuleUnload()")) return (size_t)(-1);
 
 		{
 			char key[64];
@@ -405,12 +428,12 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 		if (!_src_to_ptx(saxpy.data(), ptx, ptx_size)) return false;
 
 		CUmodule module;
-		cuModuleLoadDataEx(&module, ptx.data(), 0, 0, 0);
+		if (!CheckCUresult(cuModuleLoadDataEx(&module, ptx.data(), 0, 0, 0), "cuModuleLoadDataEx()")) return false;
 		size_t size_res;
 		CUdeviceptr dptr_res;
-		cuModuleGetGlobal(&dptr_res, &size_res, module, "_res");
-		cuMemcpyDtoH(res.data(), dptr_res, size_res);
-		cuModuleUnload(module);
+		if (!CheckCUresult(cuModuleGetGlobal(&dptr_res, &size_res, module, "_res"), "cuModuleGetGlobal()")) return false;
+		if (!CheckCUresult(cuMemcpyDtoH(res.data(), dptr_res, size_res), "cuMemcpyDtoH()")) return false;
+		if (!CheckCUresult(cuModuleUnload(module), "cuModuleUnload()")) return false;
 
 		{
 			char key[64];
@@ -529,16 +552,16 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<CapturedDeviceViewable>&
 	Kernel* kernel = new Kernel;
 
 	{
-		cuModuleLoadDataEx(&kernel->module, ptx.data(), 0, 0, 0);
-		cuModuleGetFunction(&kernel->func, kernel->module, "saxpy");
+		if (!CheckCUresult(cuModuleLoadDataEx(&kernel->module, ptx.data(), 0, 0, 0), "cuModuleLoadDataEx()")) return kid;
+		if (!CheckCUresult(cuModuleGetFunction(&kernel->func, kernel->module, "saxpy"), "cuModuleGetFunction()")) return kid;
 	}
 	for (size_t i = 0; i < m_constants.size(); i++)
 	{
 		CUdeviceptr dptr;
 		size_t size;
-		cuModuleGetGlobal(&dptr, &size, kernel->module, m_constants[i].first.c_str());
+		if (!CheckCUresult(cuModuleGetGlobal(&dptr, &size, kernel->module, m_constants[i].first.c_str()), "cuModuleGetGlobal()")) return kid;
 		if (size > m_constants[i].second.size()) size = m_constants[i].second.size();
-		cuMemcpyHtoD(dptr, m_constants[i].second.data(), size);
+		if (!CheckCUresult(cuMemcpyHtoD(dptr, m_constants[i].second.data(), size), "cuMemcpyHtoD()")) return kid;
 	}
 
 	m_kernel_cache.push_back(kernel);
@@ -565,7 +588,7 @@ int TRTCContext::_launch_calc(KernelId_t kid, unsigned sharedMemBytes)
 			return size;
 		}
 	
-		launch_calc(kernel->func, sharedMemBytes, kernel->sizeBlock);
+		if (!launch_calc(kernel->func, sharedMemBytes, kernel->sizeBlock)) return -1;
 		kernel->sharedMemBytes_cached = sharedMemBytes;
 		size = kernel->sizeBlock;
 	}
@@ -614,15 +637,17 @@ bool TRTCContext::_launch_kernel(KernelId_t kid, dim_type gridDim, dim_type bloc
 		converted_args[i] = argbufs[i].data();
 	}
 	CUresult res = cuLaunchKernel(kernel->func, gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z, sharedMemBytes, 0, converted_args.data(), 0);
-
-	return res == CUDA_SUCCESS;
+	if (!CheckCUresult(res, "cuLaunchKernel()")) return false;
+	return true;
 }
 
 bool TRTCContext::calc_optimal_block_size(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, int& sizeBlock, unsigned sharedMemBytes)
 {
 	KernelId_t kid = _build_kernel(arg_map, code_body);
 	if (kid == (KernelId_t)(-1)) return false;
-	sizeBlock = _launch_calc(kid, sharedMemBytes);
+	int size_block = _launch_calc(kid, sharedMemBytes);
+	if (size_block < 0) return false;	
+	sizeBlock = size_block;
 	return true;
 }
 
@@ -637,7 +662,11 @@ bool TRTCContext::calc_number_blocks(const std::vector<CapturedDeviceViewable>& 
 bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, unsigned sharedMemBytes)
 {
 	KernelId_t kid = _build_kernel(arg_map, code_body);
-	if (kid == (KernelId_t)(-1)) return false;
+	if (kid == (KernelId_t)(-1))
+	{
+		printf("Failed to build kernel\n");
+		return false;
+	}
 	return _launch_kernel(kid, gridDim, blockDim, arg_map, sharedMemBytes);
 }
 
@@ -652,7 +681,9 @@ bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<Capture
 		"    func(tid);\n"
 	);
 	if (kid == (KernelId_t)(-1)) return false;
-	unsigned sizeBlock = (unsigned)_launch_calc(kid, 0);
+	int size_block = _launch_calc(kid, 0);
+	if (size_block < 0) return false;
+	unsigned sizeBlock = (unsigned)size_block;
 	unsigned numBlocks = (unsigned)((end - begin + sizeBlock - 1) / sizeBlock);
 	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
 }
@@ -668,7 +699,9 @@ bool TRTCContext::launch_for_n(size_t n, const std::vector<CapturedDeviceViewabl
 		"    func(tid);\n"
 	);
 	if (kid == (KernelId_t)(-1)) return false;
-	unsigned sizeBlock = (unsigned)_launch_calc(kid, 0);
+	int size_block = _launch_calc(kid, 0);
+	if (size_block < 0) return false;
+	unsigned sizeBlock = (unsigned)size_block;
 	unsigned numBlocks = (unsigned)((n + sizeBlock - 1) / sizeBlock);
 	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
 }

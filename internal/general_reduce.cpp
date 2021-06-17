@@ -3,6 +3,28 @@
 #include <memory.h>
 #include "general_reduce.h"
 
+inline bool CheckCUresult(CUresult res, const char* name_call)
+{
+	if (res != CUDA_SUCCESS)
+	{
+		printf("%s failed with Error code: %u\n", name_call, res);
+		const char *name = nullptr;
+		const char *desc = nullptr;
+		cuGetErrorName(res, &name);
+		cuGetErrorString(res, &desc);
+		if (name != nullptr)
+		{
+			printf("Error Name: %s\n", name);
+		}
+		if (desc != nullptr)
+		{
+			printf("Error Description: %s\n", desc);
+		}
+		return false;
+	}
+	return true;
+}
+
 #define BLOCK_SIZE 256
 
 bool s_reduce(const DVVector& src, DVVector& res, const Functor& binary_op)
@@ -68,6 +90,6 @@ bool general_reduce(size_t n, const char* name_cls, const Functor& src, const Fu
 	}
 
 	ret_buf.resize(res->elem_size());
-	cuMemcpyDtoH(ret_buf.data(), (CUdeviceptr)res->data(), res->elem_size());
+	if (!CheckCUresult(cuMemcpyDtoH(ret_buf.data(), (CUdeviceptr)res->data(), res->elem_size()), " cuMemcpyDtoH()")) return false;
 	return true;
 }

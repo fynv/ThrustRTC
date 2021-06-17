@@ -243,6 +243,8 @@ typedef enum cudaError_enum {
 	CUDA_ERROR_UNKNOWN = 999
 } CUresult;
 
+extern CUresult (*cuGetErrorString)(CUresult error, const char **pStr);
+extern CUresult (*cuGetErrorName)(CUresult error, const char **pStr);
 extern CUresult (*cuInit)(unsigned int Flags);
 extern CUresult (*cuDeviceGetCount)(int *count);
 extern CUresult (*cuDeviceGet)(CUdevice *device, int ordinal);

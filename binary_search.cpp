@@ -1,6 +1,28 @@
 #include "cuda_wrapper.h"
 #include "binary_search.h"
 
+inline bool CheckCUresult(CUresult res, const char* name_call)
+{
+	if (res != CUDA_SUCCESS)
+	{
+		printf("%s failed with Error code: %u\n", name_call, res);
+		const char *name = nullptr;
+		const char *desc = nullptr;
+		cuGetErrorName(res, &name);
+		cuGetErrorString(res, &desc);
+		if (name != nullptr)
+		{
+			printf("Error Name: %s\n", name);
+		}
+		if (desc != nullptr)
+		{
+			printf("Error Description: %s\n", desc);
+		}
+		return false;
+	}
+	return true;
+}
+
 bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, const Functor& comp, size_t& result)
 {
 	if (vec.size()<=0)
@@ -66,7 +88,7 @@ bool TRTC_Lower_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 
 		h_range_out[0] = vec.size();
 		h_range_out[1] = 0;
-		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2);
+		if (!CheckCUresult(cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2), "cuMemcpyHtoD()")) return false;
 
 		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &value, &comp, &dv_range_out, &dv_size_grp, &dv_div_id };
 		if (!s_kernel.launch({ (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;
@@ -150,7 +172,7 @@ bool TRTC_Upper_Bound(const DVVectorLike& vec, const DeviceViewable& value, cons
 
 		h_range_out[0] = vec.size();
 		h_range_out[1] = 0;
-		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2);
+		if (!CheckCUresult(cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2), "cuMemcpyHtoD()")) return false;
 
 		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &value, &comp, &dv_range_out, &dv_size_grp, &dv_div_id };
 		if (!s_kernel.launch({ (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;
@@ -240,7 +262,7 @@ bool TRTC_Binary_Search(const DVVectorLike& vec, const DeviceViewable& value, co
 		h_range_out[0] = (size_t)(-1);
 		h_range_out[1] = 0;
 		h_range_out[2] = 0;
-		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 3);
+		if (!CheckCUresult(cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 3), "cuMemcpyHtoD()")) return false;
 
 		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &value, &comp, &dv_range_out, &dv_size_grp, &dv_div_id };
 		if (!s_kernel.launch({ (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;

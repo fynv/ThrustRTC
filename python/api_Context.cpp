@@ -93,7 +93,10 @@ int n_kernel_calc_optimal_block_size(void* ptr_kernel, void* ptr_arg_list, unsig
 	if (kernel->calc_optimal_block_size(arg_list->data(), sizeBlock, sharedMemBytes))
 		return sizeBlock;
 	else
+	{
+		printf("Failed to calculate optimal block size.\n");
 		return -1;
+	}
 }
 
 
@@ -114,7 +117,10 @@ int n_kernel_calc_number_blocks(void* ptr_kernel, void* ptr_arg_list, int sizeBl
 	if (kernel->calc_number_blocks(arg_list->data(), sizeBlock, numBlocks, sharedMemBytes))
 		return numBlocks;
 	else
+	{
+		printf("Failed to calculate number of persistant blocks.\n");
 		return -1;
+	}
 }
 
 int n_kernel_launch(void* ptr_kernel, void* ptr_gridDim, void* ptr_blockDim, void* ptr_arg_list, int sharedMemBytes)

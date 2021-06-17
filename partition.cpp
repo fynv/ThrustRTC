@@ -4,6 +4,28 @@
 #include "cuda_wrapper.h"
 #include "built_in.h"
 
+inline bool CheckCUresult(CUresult res, const char* name_call)
+{
+	if (res != CUDA_SUCCESS)
+	{
+		printf("%s failed with Error code: %u\n", name_call, res);
+		const char *name = nullptr;
+		const char *desc = nullptr;
+		cuGetErrorName(res, &name);
+		cuGetErrorString(res, &desc);
+		if (name != nullptr)
+		{
+			printf("Error Name: %s\n", name);
+		}
+		if (desc != nullptr)
+		{
+			printf("Error Description: %s\n", desc);
+		}
+		return false;
+	}
+	return true;
+}
+
 uint32_t TRTC_Partition(DVVectorLike& vec, const Functor& pred)
 {
 	DVVector cpy(vec.name_elem_cls().c_str(), vec.size());
@@ -16,7 +38,7 @@ uint32_t TRTC_Partition(DVVectorLike& vec, const Functor& pred)
 		"        return Pair<uint32_t, uint32_t>({x.first + y.first , x.second + y.second });\n");
 	if (!general_scan(vec.size(), src_scan, inds, plus)) return (uint32_t)(-1);
 	Pair<uint32_t, uint32_t> ret;
-	cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + vec.size() - 1), sizeof(Pair<uint32_t, uint32_t>));
+	if (!CheckCUresult(cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + vec.size() - 1), sizeof(Pair<uint32_t, uint32_t>)), " cuMemcpyDtoH()")) return (uint32_t)(-1);
 
 	static TRTC_For s_for_scatter({ "vec_cpy", "inds", "vec", "count" }, "idx",
 		"    if ((idx==0 && inds[idx].first>0) || (idx>0 && inds[idx].first>inds[idx-1].first))\n"
@@ -42,7 +64,7 @@ uint32_t TRTC_Partition_Stencil(DVVectorLike& vec, const DVVectorLike& stencil, 
 		"        return Pair<uint32_t, uint32_t>({x.first + y.first , x.second + y.second });\n");
 	if (!general_scan(vec.size(), src_scan, inds, plus)) return (uint32_t)(-1);
 	Pair<uint32_t, uint32_t> ret;
-	cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + vec.size() - 1), sizeof(Pair<uint32_t, uint32_t>));
+	if (!CheckCUresult(cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + vec.size() - 1), sizeof(Pair<uint32_t, uint32_t>)), " cuMemcpyDtoH()")) return (uint32_t)(-1);
 
 	static TRTC_For s_for_scatter({ "vec_cpy", "inds", "vec", "count" }, "idx",
 		"    if ((idx==0 && inds[idx].first>0) || (idx>0 && inds[idx].first>inds[idx-1].first))\n"
@@ -65,7 +87,7 @@ uint32_t TRTC_Partition_Copy(const DVVectorLike& vec_in, DVVectorLike& vec_true,
 		"        return Pair<uint32_t, uint32_t>({x.first + y.first , x.second + y.second });\n");
 	if (!general_scan(vec_in.size(), src_scan, inds, plus)) return (uint32_t)(-1);
 	Pair<uint32_t, uint32_t> ret;
-	cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + vec_in.size() - 1), sizeof(Pair<uint32_t, uint32_t>));
+	if (!CheckCUresult(cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + vec_in.size() - 1), sizeof(Pair<uint32_t, uint32_t>)), " cuMemcpyDtoH()")) return (uint32_t)(-1);
 
 	static TRTC_For s_for_scatter({ "vec_in", "inds", "vec_true", "vec_false" }, "idx",
 		"    if ((idx==0 && inds[idx].first>0) || (idx>0 && inds[idx].first>inds[idx-1].first))\n"
@@ -88,7 +110,7 @@ uint32_t TRTC_Partition_Copy_Stencil(const DVVectorLike& vec_in, const DVVectorL
 		"        return Pair<uint32_t, uint32_t>({x.first + y.first , x.second + y.second });\n");
 	if (!general_scan(vec_in.size(), src_scan, inds, plus)) return (uint32_t)(-1);
 	Pair<uint32_t, uint32_t> ret;
-	cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + vec_in.size() - 1), sizeof(Pair<uint32_t, uint32_t>));
+	if (!CheckCUresult(cuMemcpyDtoH(&ret, (CUdeviceptr)((Pair<uint32_t, uint32_t>*)inds.data() + vec_in.size() - 1), sizeof(Pair<uint32_t, uint32_t>)), " cuMemcpyDtoH()")) return (uint32_t)(-1);
 	
 	static TRTC_For s_for_scatter({ "vec_in", "inds", "vec_true", "vec_false"}, "idx",
 		"    if ((idx==0 && inds[idx].first>0) || (idx>0 && inds[idx].first>inds[idx-1].first))\n"
@@ -162,7 +184,7 @@ bool TRTC_Partition_Point(const DVVectorLike& vec, const Functor& pred, size_t& 
 
 		h_range_out[0] = vec.size();
 		h_range_out[1] = 0;
-		cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2);
+		if (!CheckCUresult(cuMemcpyHtoD((CUdeviceptr)dv_range_out.data(), h_range_out, sizeof(size_t) * 2), " cuMemcpyHtoD()")) return false;
 
 		const DeviceViewable* args[] = { &dv_num_grps, &vec, &dv_begin, &pred, &dv_range_out, &dv_size_grp, &dv_div_id };
 		if (!s_kernel.launch({ (unsigned)numBlocks, 1,1 }, { 128, 1, 1 }, args)) return false;

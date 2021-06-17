@@ -2,6 +2,28 @@
 #include "DVVector.h"
 #include "built_in.h"
 
+inline bool CheckCUresult(CUresult res, const char* name_call)
+{
+	if (res != CUDA_SUCCESS)
+	{
+		printf("%s failed with Error code: %u\n", name_call, res);
+		const char *name = nullptr;
+		const char *desc = nullptr;
+		cuGetErrorName(res, &name);
+		cuGetErrorString(res, &desc);
+		if (name != nullptr)
+		{
+			printf("Error Name: %s\n", name);
+		}
+		if (desc != nullptr)
+		{
+			printf("Error Description: %s\n", desc);
+		}
+		return false;
+	}
+	return true;
+}
+
 DVVectorLike::DVVectorLike(const char* elem_cls, const char* ref_type, size_t size)
 {
 	m_elem_cls = elem_cls;
@@ -16,12 +38,16 @@ DVVector::DVVector(const char* elem_cls, size_t size, void* hdata)
 	TRTC_Try_Init();
 	
 	CUdeviceptr dptr;
-	cuMemAlloc(&dptr, m_elem_size*m_size);
+	if (!CheckCUresult(cuMemAlloc(&dptr, m_elem_size*m_size), "cuMemAlloc()")) return;
 	m_data = (void*)dptr;
 	if (hdata)
-		cuMemcpyHtoD(dptr, hdata, m_elem_size*m_size);
+	{
+		if (!CheckCUresult(cuMemcpyHtoD(dptr, hdata, m_elem_size*m_size), "cuMemcpyHtoD()")) return;
+	}
 	else
-		cuMemsetD8(dptr, 0, m_elem_size*m_size);
+	{
+		if (!CheckCUresult(cuMemsetD8(dptr, 0, m_elem_size*m_size), "cuMemsetD8()")) return;
+	}
 
 	m_name_view_cls = std::string("VectorView<") + m_elem_cls + ">";
 }
@@ -35,7 +61,7 @@ void DVVector::to_host(void* hdata, size_t begin, size_t end) const
 {
 	if (end == (size_t)(-1) || end > m_size) end = m_size;
 	size_t n = end - begin;
-	cuMemcpyDtoH(hdata, (CUdeviceptr)((char*)m_data + begin* m_elem_size), m_elem_size*n);
+	if (!CheckCUresult(cuMemcpyDtoH(hdata, (CUdeviceptr)((char*)m_data + begin* m_elem_size), m_elem_size*n), "cuMemcpyDtoH()")) return;
 }
 
 ViewBuf DVVector::view() const
