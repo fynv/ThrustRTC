@@ -20,7 +20,7 @@ Thrust, C++:
 
 std::vector<int> hdata({ 1, 2, 3, 1, 2  });
 thrust::device_vector<int> A(hdata);
-thrust::replace_if(A.begin(), A.end(), 1, 99);
+thrust::replace(A.begin(), A.end(), 1, 99);
 
 // A contains { 99, 2, 3, 99, 2}
 ```
@@ -44,7 +44,7 @@ ThrustRTC, in Python:
 import ThrustRTC as trtc
 
 A = trtc.device_vector_from_list([1, 2, 3, 1, 2], 'int32_t')
-trtc.Replace_If(A, trtc.DVInt32(1), trtc.DVInt32(99))
+trtc.Replace(A, trtc.DVInt32(1), trtc.DVInt32(99))
 
 # A contains [99, 2, 3, 99, 2]
 ```
