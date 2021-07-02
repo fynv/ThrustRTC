@@ -4,7 +4,7 @@ check_i(native.n_trtc_try_init())
 
 from .Context import *
 from .DeviceViewable import *
-from .DVVector import device_vector, device_vector_from_numpy, device_vector_from_list, device_vector_from_dvs, DVNumbaVector
+from .DVVector import device_vector, device_vector_from_numpy, device_vector_from_list, device_vector_from_dvs, DVNumbaVector, DVCupyVector
 from .DVTuple import *
 from .FakeVectors import *
 from .Functor import *

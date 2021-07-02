@@ -31,6 +31,7 @@ set(PYTHON_TEST
 	test_merge.py	
 	test_sort.py
 	test_numba.py
+	test_cupy.py
 
 	test_constant.py
 	test_counter.py
