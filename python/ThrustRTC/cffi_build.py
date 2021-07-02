@@ -65,6 +65,12 @@ void* n_dvdouble_create(double v);
 double n_dvdouble_value(void* cptr);
 void* n_dvbool_create(int v);
 int n_dvbool_value(void* cptr);
+void* n_dvcomplex64_create(float real, float imag);
+float n_dvcomplex64_real(void* cptr);
+float n_dvcomplex64_imag(void* cptr);
+void* n_dvcomplex128_create(double real, double imag);
+double n_dvcomplex128_real(void* cptr);
+double n_dvcomplex128_imag(void* cptr);
 
 // DVVector
 const char* n_dvvectorlike_name_elem_cls(void* cptr);

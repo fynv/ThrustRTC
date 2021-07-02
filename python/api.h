@@ -65,6 +65,12 @@ extern "C"
 	PY_THRUSTRTC_API double n_dvdouble_value(void* cptr);
 	PY_THRUSTRTC_API void* n_dvbool_create(int v);
 	PY_THRUSTRTC_API int n_dvbool_value(void* cptr);
+	PY_THRUSTRTC_API void* n_dvcomplex64_create(float real, float imag);
+	PY_THRUSTRTC_API float n_dvcomplex64_real(void* cptr);
+	PY_THRUSTRTC_API float n_dvcomplex64_imag(void* cptr);
+	PY_THRUSTRTC_API void* n_dvcomplex128_create(double real, double imag);
+	PY_THRUSTRTC_API double n_dvcomplex128_real(void* cptr);
+	PY_THRUSTRTC_API double n_dvcomplex128_imag(void* cptr);
 
 	// DVVector
 	PY_THRUSTRTC_API const char* n_dvvectorlike_name_elem_cls(void* cptr);

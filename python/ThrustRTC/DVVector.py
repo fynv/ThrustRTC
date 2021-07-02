@@ -47,6 +47,10 @@ class DVVector(DVVectorLike):
             nptype = np.float64
         elif elem_cls=='bool':
             nptype = np.bool
+        elif elem_cls=='cuFloatComplex':
+            nptype = np.complex64
+        elif elem_cls=='cuDoubleComplex':
+            nptype = np.complex128            
         if end == -1:
             end = self.size()
         ret = np.empty(end - begin, dtype=nptype)
@@ -86,6 +90,10 @@ def device_vector_from_numpy(nparr):
         elem_cls = 'double'
     elif nparr.dtype == np.bool:
         elem_cls = 'bool'
+    elif nparr.dtype == np.complex64:
+        elem_cls = 'cuFloatComplex'
+    elif nparr.dtype == np.complex128:
+        elem_cls = 'cuDoubleComplex'
     size = len(nparr)
     ptr_host_data = nparr.__array_interface__['data'][0]
     return device_vector(elem_cls, size, ptr_host_data)
@@ -113,6 +121,10 @@ def device_vector_from_list(lst, elem_cls):
         nptype = np.float64
     elif elem_cls=='bool':
         nptype = np.bool
+    elif elem_cls=='cuFloatComplex':
+        nptype = np.complex64
+    elif elem_cls=='cuDoubleComplex':
+        nptype = np.complex128
     nparr = np.array(lst, dtype=nptype)
     size = len(lst)
     ptr_host_data = nparr.__array_interface__['data'][0]
@@ -151,6 +163,10 @@ class DVNumbaVector(DVVectorLike):
             elem_cls = 'double'
         elif nbarr.dtype == np.bool:
             elem_cls = 'bool'
+        elif nbarr.dtype == np.complex64:
+            elem_cls = 'cuFloatComplex'
+        elif nbarr.dtype == np.complex128:
+            elem_cls = 'cuDoubleComplex'
         size = nbarr.size
         ptr_device_data = nbarr.device_ctypes_pointer.value
         self.m_cptr = check_cptr(native.n_dvvectoradaptor_create(elem_cls.encode('utf-8'), size, ffi.cast("void *", ptr_device_data)))
@@ -184,6 +200,10 @@ class DVCupyVector(DVVectorLike):
             elem_cls = 'double'
         elif cparr.dtype == np.bool:
             elem_cls = 'bool'
+        elif cparr.dtype == np.complex64:
+            elem_cls = 'cuFloatComplex'
+        elif cparr.dtype == np.complex128:
+            elem_cls = 'cuDoubleComplex'            
         size = cparr.size
         ptr_device_data = cparr.data.ptr
         self.m_cptr = check_cptr(native.n_dvvectoradaptor_create(elem_cls.encode('utf-8'), size, ffi.cast("void *", ptr_device_data)))  

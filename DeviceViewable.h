@@ -81,6 +81,52 @@ DECLAR_DV_BASIC(DVUInt64, uint64_t)
 
 DECLAR_DV_BASIC(DVSizeT, size_t)
 
+class DVComplex64 : public DeviceViewable
+{
+public:
+	DVComplex64(float real, float imag)
+	{
+		m_name_view_cls = "cuFloatComplex";
+		m_real = real;
+		m_imag = imag;
+	}
+
+	virtual ViewBuf view() const
+	{
+		ViewBuf buf(sizeof(float) * 2);
+		*(float*)&buf[0] = m_real;
+		*(float*)&buf[sizeof(float)] = m_imag;
+		return buf;
+	}
+
+private:
+	float m_real;
+	float m_imag;
+};
+
+class DVComplex128 : public DeviceViewable
+{
+public:
+	DVComplex128(double real, double imag)
+	{
+		m_name_view_cls = "cuDoubleComplex";
+		m_real = real;
+		m_imag = imag;
+	}
+
+	virtual ViewBuf view() const
+	{
+		ViewBuf buf(sizeof(double) * 2);
+		*(double*)&buf[0] = m_real;
+		*(double*)&buf[sizeof(double)] = m_imag;
+		return buf;
+	}
+
+private:
+	double m_real;
+	double m_imag;
+};
+
 inline DeviceViewable* dv_from_viewbuf(const ViewBuf& buf, const char* type)
 {
 	std::string s_type = type;

@@ -133,3 +133,37 @@ int n_dvbool_value(void* cptr)
 	DeviceViewable* dv = (DeviceViewable*)cptr;
 	return *(bool*)dv->view().data()?1:0;
 }
+
+void* n_dvcomplex64_create(float real, float imag)
+{
+	return new DVComplex64(real, imag);
+}
+
+float n_dvcomplex64_real(void* cptr)
+{
+	DeviceViewable* dv = (DeviceViewable*)cptr;
+	return *(float*)&dv->view()[0];
+}
+
+float n_dvcomplex64_imag(void* cptr)
+{
+	DeviceViewable* dv = (DeviceViewable*)cptr;
+	return *(float*)&dv->view()[sizeof(float)];
+}
+
+void* n_dvcomplex128_create(double real, double imag)
+{
+	return new DVComplex128(real, imag);
+}
+
+double n_dvcomplex128_real(void* cptr)
+{
+	DeviceViewable* dv = (DeviceViewable*)cptr;
+	return *(double*)&dv->view()[0];
+}
+
+double n_dvcomplex128_imag(void* cptr)
+{
+	DeviceViewable* dv = (DeviceViewable*)cptr;
+	return *(double*)&dv->view()[sizeof(double)];
+}
