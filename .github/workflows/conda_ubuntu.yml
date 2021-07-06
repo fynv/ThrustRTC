@@ -14,8 +14,7 @@ jobs:
         submodules: true
 
     - name: publish-to-conda
-      uses: fcakyon/conda-publish-action@v1.3
+      uses: maxibor/conda-package-publish-action@v1.1
       with:
-        subdir: 'conda_ubuntu'
-        anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
-        platforms: 'linux'
+        subDir: 'conda_ubuntu'
+        AnacondaToken: ${{ secrets.ANACONDA_TOKEN }}
