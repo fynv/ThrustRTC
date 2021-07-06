@@ -87,24 +87,17 @@ jobs:
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
           
-      - name: Install twine
-        run: pip install twine
-        
-      - name: list files
-        run: ls
-        
+      - name: Install dependencies
+        run: pip install setuptools wheel twine    
+       
       - name: run setup.py
         working-directory: ./test_python
         run: python setup.py bdist_wheel
         
       - name: Twine upload
         working-directory: ./test_python/dist
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: twine upload *.whl    
-        
-
-
-
-      
