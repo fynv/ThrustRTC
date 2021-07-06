@@ -12,21 +12,11 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true    
-    
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+        
+    - name: conda build/publish
+      uses: fcakyon/conda-publish-action@v1.3
       with:
-        python-version: 3.8
-        
-    - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v2.1.1
-                    
-    - name: Install dependencies
-      run: conda install cmake conda-build anaconda-client
-        
-    - name: conda build
-      run: conda-build conda_windows
-      
-    - name: publish
-      run: anaconda -t ${{ secrets.ANACONDA_TOKEN }} upload $CONDA\conda-bld\win-64\*
-      
+        subdir: 'conda_windows'
+        anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
+        platforms: 'win'
+    
