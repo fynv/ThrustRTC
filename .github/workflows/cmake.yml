@@ -24,17 +24,14 @@ jobs:
     - name: Create Dir build_python
       run: mkdir build_python
       
-    - name: Enter build_python
-      run: cd build_python
-      
-    - name: List Dir
-      run: ls
-      
     - name: Configure CMake      
+      working-directory: ./build_python
       run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ../python
 
-    - name: Make      
+    - name: Make
+      working-directory: ./build_python    
       run: make
       
     - name: Make Install
+      working-directory: ./build_python
       run: make install      
