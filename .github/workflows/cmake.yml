@@ -20,6 +20,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:    
+        submodules: true
     
     - name: Create Dir build_python
       run: mkdir build_python
