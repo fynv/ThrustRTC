@@ -1,0 +1,27 @@
+package:
+  name: thrustrtc
+  version: 0.3.13
+
+source:
+  path: ..
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - cffi
+    - numpy
+
+  run:
+    - python
+    - cffi    
+    - numpy
+
+test:
+  imports: 
+    - ThrustRTC
+
+about:
+  home: https://github.com/fynv/ThrustRTC
+  license: Anti-996
+  summary: CUDA tool set for Python that provides similar functionality like Thrust, with NVRTC at its core.
