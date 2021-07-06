@@ -28,7 +28,7 @@ jobs:
       run: cd build_python
       
     - name: Configure CMake      
-      run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ./python
+      run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ../python
 
     - name: Make      
       run: make
