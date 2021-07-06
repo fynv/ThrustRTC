@@ -8,14 +8,14 @@ jobs:
   build_ubuntu_latest:
     runs-on: ubuntu-latest
 
-  steps:
+    steps:
     - uses: actions/checkout@v2
       with:    
         submodules: true
 
     - name: publish-to-conda
-        uses: fcakyon/conda-publish-action@v1.3
-        with:
-          subdir: 'conda_ubuntu'
-          anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
-          platforms: 'linux'
+      uses: fcakyon/conda-publish-action@v1.3
+      with:
+        subdir: 'conda_ubuntu'
+        anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
+        platforms: 'linux'
