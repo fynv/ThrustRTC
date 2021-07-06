@@ -70,4 +70,27 @@ jobs:
           name: binary_windows
           path: ./install
       
+  build_wheel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+        
+      - name: run setup.py
+        working-directory: ./test_python
+        run: python setup.py bdist_wheel
+        
+        
+
+
+
       
