@@ -14,9 +14,8 @@ jobs:
         submodules: true    
         
     - name: conda build/publish
-      uses: fcakyon/conda-publish-action@v1.3
+      uses: maxibor/conda-package-publish-action@v1.1
       with:
-        subdir: 'conda_windows'
-        anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
-        platforms: 'win'
+        subDir: 'conda_windows'
+        AnacondaToken: ${{ secrets.ANACONDA_TOKEN }}
     
