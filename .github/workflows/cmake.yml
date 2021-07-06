@@ -97,7 +97,7 @@ jobs:
         run: ls
         
       - name: run setup.py
-        working-directory: ./install/test_python
+        working-directory: ./test_python
         run: python setup.py bdist_wheel
         
         
