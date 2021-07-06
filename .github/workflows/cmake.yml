@@ -32,7 +32,13 @@ jobs:
       
     - name: Make Install
       working-directory: ./build_python
-      run: make install      
+      run: make install
+    
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v2
+      with:
+        name: binary_ubuntu
+        path: ./install
     
   build_windows:
     runs-on: windows-latest
@@ -56,6 +62,12 @@ jobs:
 
       - name: Make Install
         working-directory: ./build_python
-        run: nmake install           
+        run: nmake install        
+        
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: binary_windows
+          path: ./install
       
       
