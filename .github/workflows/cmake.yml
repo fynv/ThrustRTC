@@ -90,8 +90,8 @@ jobs:
         with:
           python-version: 3.8
           
-      - name: Add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
+      - name: Install twine
+        run: pip install twine
         
       - name: list files
         run: ls
@@ -100,6 +100,9 @@ jobs:
         working-directory: ./test_python
         run: python setup.py bdist_wheel
         
+      - name: Twine upload
+        working-directory: ./test_python/dist
+        run: twine upload *.whl    
         
 
 
