@@ -71,6 +71,7 @@ jobs:
           path: ./install
       
   build_wheel:
+    needs: [build_ubuntu_latest, build_windows]
     runs-on: ubuntu-latest
 
     steps:
