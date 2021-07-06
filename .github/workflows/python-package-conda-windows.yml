@@ -19,7 +19,7 @@ jobs:
         python-version: 3.8
         
     - name: Add conda to system path
-      run:  set GITHUB_PATH=%CONDA%\condabin;%GITHUB_PATH%
+      run:  echo $CONDA/condabin >> $GITHUB_PATH
             
     - name: Install dependencies
       run: conda install cmake conda-build anaconda-client
@@ -28,5 +28,5 @@ jobs:
       run: conda-build conda_windows
       
     - name: publish
-      run: anaconda -t ${{ secrets.ANACONDA_TOKEN }} upload %CONDA%\conda-bld\win-64\*
+      run: anaconda -t ${{ secrets.ANACONDA_TOKEN }} upload $CONDA\conda-bld\win-64\*
       
