@@ -19,10 +19,8 @@ jobs:
         python-version: 3.8
         
     - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-        
+      run:  echo $CONDA/bin >> $GITHUB_PATH
+            
     - name: Install dependencies
       run: conda install cmake conda-build anaconda-client
         
