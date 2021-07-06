@@ -99,5 +99,5 @@ jobs:
         working-directory: ./test_python/dist
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ PyPi.PYPI_PASSWORD }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: twine upload *.whl    
