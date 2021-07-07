@@ -7,7 +7,6 @@ source:
 
 requirements:
   build:
-    - cmake
     - python
     - setuptools
     - cffi

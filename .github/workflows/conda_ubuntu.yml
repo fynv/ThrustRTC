@@ -1,0 +1,33 @@
+name: Conda Ubuntu Publishment
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build_ubuntu_latest:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Add conda to system path
+      run: |
+        echo $CONDA/bin >> $GITHUB_PATH
+
+    - name: Set Always Yes
+      run: conda config --set always_yes yes
+
+    - name: Install conda tools
+      run: conda install conda-build anaconda-client
+
+    - name: Set Auto Upload
+      run: conda config --set anaconda_upload yes
+
+    - name: conda build and release
+      run: conda-build conda_ubuntu --user fyplus --token ${{ secrets.ANACONDA_TOKEN }}
