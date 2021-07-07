@@ -3,6 +3,8 @@ name: Conda Windows Publishment
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'conda_windows/meta.yaml'        
 
 jobs:
   build_windows_latest:
