@@ -1,14 +1,12 @@
-name: Conda Ubuntu Publishment
+name: Conda Windows Publishment
 
 on:
   push:
     branches: [ master ]
-    paths:
-      - 'conda_ubuntu/meta.yaml'    
 
 jobs:
-  build_ubuntu_latest:
-    runs-on: ubuntu-latest
+  build_windows_latest:
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -16,13 +14,11 @@ jobs:
         submodules: true    
 
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: conda-incubator/setup-miniconda@v2
       with:
         python-version: 3.8
 
-    - name: Add conda to system path
-      run: |
-        echo $CONDA/bin >> $GITHUB_PATH
+    - uses: ilammy/msvc-dev-cmd@v1        
 
     - name: Set Always Yes
       run: conda config --set always_yes yes
@@ -34,4 +30,4 @@ jobs:
       run: conda config --set anaconda_upload yes
 
     - name: conda build and release
-      run: conda-build conda_ubuntu --no-test --user fyplus --token ${{ secrets.ANACONDA_TOKEN }}
+      run: conda-build conda_windows --no-test --user fyplus --token ${{ secrets.ANACONDA_TOKEN }}
