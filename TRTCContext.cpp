@@ -22,6 +22,7 @@ public:
 	static bool try_init();
 	static TRTCContext& get_context();
 
+	int get_ptx_arch();
 	void set_verbose(bool verbose = true);
 
 	// reflection 
@@ -42,8 +43,8 @@ public:
 
 private:
 	TRTCContext();
-	~TRTCContext();
-
+	~TRTCContext();	
+	
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size);
 	KernelId_t _build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body);
 	int _launch_calc(KernelId_t kid, unsigned sharedMemBytes);
@@ -91,6 +92,13 @@ bool TRTC_Try_Init()
 		return true;
 	}
 	return false;
+}
+
+
+int TRTC_Get_PTX_Arch()
+{
+	TRTCContext& ctx = TRTCContext::get_context();
+	return ctx.get_ptx_arch();
 }
 
 void TRTC_Set_Verbose(bool verbose)

@@ -20,6 +20,9 @@ typedef enum {
 	NVRTC_ERROR_INTERNAL_ERROR = 11
 } nvrtcResult;
 
+extern nvrtcResult (*nvrtcGetNumSupportedArchs)(int* numArchs);
+extern nvrtcResult (*nvrtcGetSupportedArchs)(int* supportedArchs);
+
 extern nvrtcResult (*nvrtcCreateProgram)(nvrtcProgram *prog,
 	const char *src,
 	const char *name,

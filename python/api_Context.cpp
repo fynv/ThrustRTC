@@ -16,6 +16,11 @@ int n_trtc_try_init()
 	return TRTC_Try_Init() ? 0 : -100;
 }
 
+int n_get_ptx_arch()
+{
+	return TRTC_Get_PTX_Arch();
+}
+
 void n_set_verbose(unsigned verbose)
 {
 	TRTC_Set_Verbose(verbose!=0);

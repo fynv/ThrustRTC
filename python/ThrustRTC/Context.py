@@ -7,6 +7,9 @@ def set_libnvrtc_path(path):
 def Set_Verbose(verbose=True):
     native.n_set_verbose(verbose)
 
+def Get_PTX_Arch():
+    return native.n_get_ptx_arch()
+
 def Add_Include_Dir(path):
     native.n_add_include_dir(path.encode('utf-8'))
 

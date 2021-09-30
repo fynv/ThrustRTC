@@ -75,7 +75,7 @@ static bool s_cuda_init(int& cap)
 				{
 					max_gflops = gflops;
 					max_gflops_device = current_device;
-					cap = major;
+					cap = major*10 + minor;
 				}
 			}
 		}
@@ -104,8 +104,7 @@ static int s_get_compute_capability(bool istrying=false)
 			printf("CUDA initialization failed. \n");
 			if (istrying) return -1;
 			else exit(0);
-		}
-		if (cap < 2 || cap>7) cap = 7;
+		}		
 	}
 	return cap;
 }
@@ -198,6 +197,55 @@ static void print_code(const char* name, const char* fullCode)
 	puts("");
 }
 
+int TRTCContext::get_ptx_arch()
+{
+	static thread_local int ptx_arch = -1;
+	if (ptx_arch == -1)
+	{
+		if (!init_nvrtc(s_libnvrtc_path))
+		{
+			printf("Loading libnvrtc failed. \n");
+			return -1;
+		}
+
+		int compute_cap = s_get_compute_capability();
+
+		int numArchs;
+		nvrtcGetNumSupportedArchs(&numArchs);
+		std::vector<int> archs(numArchs);
+		nvrtcGetSupportedArchs(archs.data());
+
+		if (compute_cap <= archs[archs.size() - 1])
+		{
+			size_t i = archs.size() - 1;
+			for (; i != (size_t)(-1); i--)
+			{
+				if (archs[i] == compute_cap) break;
+			}
+
+			if (i == (size_t)(-1))
+			{
+				printf("NVRTC version too high for GPU (compute_%d).\n", compute_cap);
+				return ptx_arch;
+			}
+			ptx_arch = compute_cap;
+		}
+		else
+		{
+			size_t i = archs.size() - 1;
+			for (; i != (size_t)(-1); i--)
+			{
+				if (archs[i] % 10 == 0)
+				{
+					ptx_arch = archs[i];
+					break;
+				}
+			}
+		}
+	}
+	return ptx_arch;
+}
+
 bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size)
 {
 	if (!init_nvrtc(s_libnvrtc_path))
@@ -206,7 +254,12 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& p
 		return false;
 	}
 
-	int compute_cap = s_get_compute_capability();
+	int ptx_arch = get_ptx_arch();
+	if (ptx_arch == -1)
+	{
+		printf("CUDA arch negotiation failed.\n");
+		return false;
+	}
 
 	int num_headers = (int)m_name_built_in_headers.size();
 	std::vector<const char*> p_name_built_in_headers(num_headers);
@@ -222,7 +275,7 @@ bool TRTCContext::_src_to_ptx(const char* src, std::vector<char>& ptx, size_t& p
 
 	std::vector<std::string> opt_bufs;
 	char opt[1024];
-	sprintf(opt, "--gpu-architecture=compute_%d0", compute_cap);
+	sprintf(opt, "--gpu-architecture=compute_%d", ptx_arch);
 	opt_bufs.push_back(opt);
 
 	opt_bufs.push_back("--std=c++14");

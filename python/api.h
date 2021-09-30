@@ -19,6 +19,7 @@ extern "C"
 	// Context
 	PY_THRUSTRTC_API void n_set_libnvrtc_path(const char* path);
 	PY_THRUSTRTC_API int n_trtc_try_init();
+	PY_THRUSTRTC_API int n_get_ptx_arch();
 	PY_THRUSTRTC_API void n_set_verbose(unsigned verbose);
 	PY_THRUSTRTC_API void n_add_include_dir(const char* dir);
 	PY_THRUSTRTC_API void n_add_built_in_header(const char* filename, const char* filecontent);
