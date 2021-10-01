@@ -45,6 +45,7 @@ private:
 	TRTCContext();
 	~TRTCContext();	
 	
+	void _get_nvrtc_archs(int& min_arch, int& max_arch);
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size);
 	KernelId_t _build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body);
 	int _launch_calc(KernelId_t kid, unsigned sharedMemBytes);

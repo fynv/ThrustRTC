@@ -197,6 +197,55 @@ static void print_code(const char* name, const char* fullCode)
 	puts("");
 }
 
+void TRTCContext::_get_nvrtc_archs(int& min_arch, int& max_arch)
+{
+	if (nvrtcGetNumSupportedArchs == nullptr || nvrtcGetSupportedArchs == nullptr)
+	{
+		int nvrtc_major, nvrtc_minor;
+		nvrtcVersion(&nvrtc_major, &nvrtc_minor);
+
+		if (nvrtc_major < 9)
+		{
+			min_arch = 20;
+			max_arch = 53;
+		}
+		else if (nvrtc_major < 10)
+		{
+			min_arch = 30;
+			max_arch = 72;
+		}
+		else if (nvrtc_major < 11 && nvrtc_minor < 1)
+		{
+			min_arch = 30;
+			max_arch = 72;
+		}
+		else if (nvrtc_major < 11)
+		{
+			min_arch = 30;
+			max_arch = 75;
+		}
+		else if (nvrtc_major < 12 && nvrtc_minor < 1)
+		{
+			min_arch = 30;
+			max_arch = 75;
+		}
+		else
+		{
+			min_arch = 35;
+			max_arch = 80;
+		}
+	}
+	else
+	{
+		int numArchs;
+		nvrtcGetNumSupportedArchs(&numArchs);
+		std::vector<int> archs(numArchs);
+		nvrtcGetSupportedArchs(archs.data());
+		min_arch = archs[0];
+		max_arch = archs[archs.size() - 1];
+	}
+}
+
 int TRTCContext::get_ptx_arch()
 {
 	static thread_local int ptx_arch = -1;
@@ -208,22 +257,14 @@ int TRTCContext::get_ptx_arch()
 			return -1;
 		}
 
-		int compute_cap = s_get_compute_capability();
+		int compute_cap = s_get_compute_capability();	
 
-		int numArchs;
-		nvrtcGetNumSupportedArchs(&numArchs);
-		std::vector<int> archs(numArchs);
-		nvrtcGetSupportedArchs(archs.data());
+		int min_arch, max_arch;
+		_get_nvrtc_archs(min_arch, max_arch);
 
-		if (compute_cap <= archs[archs.size() - 1])
+		if (compute_cap <= max_arch)
 		{
-			size_t i = archs.size() - 1;
-			for (; i != (size_t)(-1); i--)
-			{
-				if (archs[i] == compute_cap) break;
-			}
-
-			if (i == (size_t)(-1))
+			if (compute_cap < min_arch)
 			{
 				printf("NVRTC version too high for GPU (compute_%d).\n", compute_cap);
 				return ptx_arch;
@@ -232,16 +273,8 @@ int TRTCContext::get_ptx_arch()
 		}
 		else
 		{
-			size_t i = archs.size() - 1;
-			for (; i != (size_t)(-1); i--)
-			{
-				if (archs[i] % 10 == 0)
-				{
-					ptx_arch = archs[i];
-					break;
-				}
-			}
-		}
+			ptx_arch = (max_arch / 10) * 10;
+		}		
 	}
 	return ptx_arch;
 }

@@ -13,6 +13,7 @@
 
 static bool s_nvrtc_initialized = false;
 
+nvrtcResult (*nvrtcVersion)(int *major, int *minor);
 nvrtcResult(*nvrtcGetNumSupportedArchs)(int* numArchs);
 nvrtcResult(*nvrtcGetSupportedArchs)(int* supportedArchs);
 
@@ -69,6 +70,7 @@ bool init_nvrtc(const char* path_lib)
 		return false;
 	}
 
+	nvrtcVersion = (decltype(nvrtcVersion))GetProcAddress(hinstLib, "nvrtcVersion");
 	nvrtcGetNumSupportedArchs = (decltype(nvrtcGetNumSupportedArchs))GetProcAddress(hinstLib, "nvrtcGetNumSupportedArchs");
 	nvrtcGetSupportedArchs = (decltype(nvrtcGetSupportedArchs))GetProcAddress(hinstLib, "nvrtcGetSupportedArchs");
 	nvrtcCreateProgram = (decltype(nvrtcCreateProgram))GetProcAddress(hinstLib, "nvrtcCreateProgram");
@@ -91,6 +93,7 @@ bool init_nvrtc(const char* path_lib)
 		return false;
 	}
 	
+	nvrtcVersion = (decltype(nvrtcVersion))dlsym(handle, "nvrtcVersion");
 	nvrtcGetNumSupportedArchs = (decltype(nvrtcGetNumSupportedArchs))dlsym(handle, "nvrtcGetNumSupportedArchs");
 	nvrtcGetSupportedArchs = (decltype(nvrtcGetSupportedArchs))dlsym(handle, "nvrtcGetSupportedArchs");
 	nvrtcCreateProgram = (decltype(nvrtcCreateProgram))dlsym(handle, "nvrtcCreateProgram");
