@@ -7,6 +7,9 @@ def set_libnvrtc_path(path):
 def Set_Verbose(verbose=True):
     native.n_set_verbose(verbose)
 
+def Set_Kernel_Debug(kernel_debug=True):
+    native.n_set_kernel_debug(kernel_debug)
+
 def Get_PTX_Arch():
     return native.n_get_ptx_arch()
 

@@ -24,6 +24,7 @@ public:
 
 	int get_ptx_arch();
 	void set_verbose(bool verbose = true);
+	void set_kernel_debug(bool kernel_debug = true);
 
 	// reflection 
 	size_t size_of(const char* cls);
@@ -47,7 +48,7 @@ private:
 	
 	void _get_nvrtc_archs(int& min_arch, int& max_arch);
 	bool _src_to_ptx(const char* src, std::vector<char>& ptx, size_t& ptx_size);
-	KernelId_t _build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body);
+	KernelId_t _build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, std::string* p_saxpy = nullptr);
 	int _launch_calc(KernelId_t kid, unsigned sharedMemBytes);
 	int _persist_calc(KernelId_t kid, int numBlocks, unsigned sharedMemBytes);
 	bool _launch_kernel(KernelId_t kid, dim_type gridDim, dim_type blockDim, const std::vector<CapturedDeviceViewable>& arg_map, unsigned sharedMemBytes);
@@ -55,6 +56,7 @@ private:
 	static const char* s_libnvrtc_path;
 
 	bool m_verbose;
+	bool m_kernel_debug;
 	std::vector<std::string> m_include_dirs;
 	std::vector<std::string> m_name_built_in_headers;
 	std::vector<std::string> m_content_built_in_headers;
@@ -106,6 +108,12 @@ void TRTC_Set_Verbose(bool verbose)
 {
 	TRTCContext& ctx = TRTCContext::get_context();
 	ctx.set_verbose(verbose);
+}
+
+void TRTC_Set_Kernel_Debug(bool kernel_debug)
+{
+	TRTCContext& ctx = TRTCContext::get_context();
+	ctx.set_kernel_debug(kernel_debug);
 }
 
 size_t TRTC_Size_Of(const char* cls)

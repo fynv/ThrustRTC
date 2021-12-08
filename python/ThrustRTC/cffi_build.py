@@ -21,6 +21,7 @@ void n_set_libnvrtc_path(const char* path);
 int n_trtc_try_init();
 int n_get_ptx_arch();
 void n_set_verbose(unsigned verbose);
+void n_set_kernel_debug(unsigned kernel_debug);
 void n_add_include_dir(const char* dir);
 void n_add_built_in_header(const char* filename, const char* filecontent);
 void n_add_inlcude_filename(const char* fn);

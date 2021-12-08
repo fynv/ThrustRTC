@@ -145,6 +145,7 @@ TRTCContext::TRTCContext()
 	this->add_built_in_header(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
 
 	m_verbose = false;
+	m_kernel_debug = false;
 	for (int i = 0; i < s_num_headers; i++)
 		this->add_built_in_header(s_name_headers[i], s_content_headers[i]);
 
@@ -171,6 +172,11 @@ TRTCContext::~TRTCContext()
 void TRTCContext::set_verbose(bool verbose)
 {
 	m_verbose = verbose;
+}
+
+void TRTCContext::set_kernel_debug(bool kernel_debug)
+{
+	m_kernel_debug = kernel_debug;
 }
 
 static void print_code(const char* name, const char* fullCode)
@@ -541,7 +547,7 @@ bool TRTCContext::query_struct(const char* name_struct, const std::vector<const 
 	return true;
 }
 
-KernelId_t TRTCContext::_build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body)
+KernelId_t TRTCContext::_build_kernel(const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, std::string* p_saxpy)
 {
 	std::string saxpy;
 	for (size_t i = 0; i < m_code_blocks.size(); i++)
@@ -582,6 +588,11 @@ KernelId_t TRTCContext::_build_kernel(const std::vector<CapturedDeviceViewable>&
 			print_code(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
 		}
 		print_code("saxpy.cu", saxpy.c_str());
+	}
+
+	if (p_saxpy != nullptr)
+	{
+		*p_saxpy = saxpy;
 	}
 
 	unsigned long long hash = s_get_hash(saxpy.c_str());
@@ -748,13 +759,39 @@ bool TRTCContext::calc_number_blocks(const std::vector<CapturedDeviceViewable>& 
 
 bool TRTCContext::launch_kernel(dim_type gridDim, dim_type blockDim, const std::vector<CapturedDeviceViewable>& arg_map, const char* code_body, unsigned sharedMemBytes)
 {
-	KernelId_t kid = _build_kernel(arg_map, code_body);
+	KernelId_t kid;
+	std::string saxpy;
+	if (m_kernel_debug)
+	{
+		kid = _build_kernel(arg_map, code_body, &saxpy);
+	}
+	else
+	{
+		kid = _build_kernel(arg_map, code_body);
+	}
 	if (kid == (KernelId_t)(-1))
 	{
 		printf("Failed to build kernel\n");
 		return false;
 	}
-	return _launch_kernel(kid, gridDim, blockDim, arg_map, sharedMemBytes);
+
+	if (!_launch_kernel(kid, gridDim, blockDim, arg_map, sharedMemBytes)) return false;
+	if (m_kernel_debug)
+	{
+		if (!CheckCUresult(cuCtxSynchronize(), "cuCtxSynchronize()"))
+		{
+			if (!m_verbose)
+			{
+				{
+					std::shared_lock<std::shared_mutex> lock(m_mutex_structs);
+					print_code(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
+				}
+				print_code("saxpy.cu", saxpy.c_str());
+			}
+			return false;
+		}
+	}
+	return true;
 }
 
 bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<CapturedDeviceViewable>& _arg_map, const char* name_iter, const char* _body)
@@ -762,17 +799,49 @@ bool TRTCContext::launch_for(size_t begin, size_t end, const std::vector<Capture
 	DVSizeT dvbegin(begin), dvend(end);
 	Functor func(_arg_map, { name_iter }, _body);
 	std::vector<CapturedDeviceViewable> arg_map = { {"begin", &dvbegin}, {"end", &dvend}, {"func", &func} };
-	KernelId_t kid = _build_kernel(arg_map,
+	std::string code_body =
 		"    size_t tid =  threadIdx.x + blockIdx.x*blockDim.x + begin;\n"
 		"    if(tid>=end) return;\n"
-		"    func(tid);\n"
-	);
-	if (kid == (KernelId_t)(-1)) return false;
+		"    func(tid);\n";
+
+	KernelId_t kid;
+	std::string saxpy;
+	if (m_kernel_debug)
+	{
+		kid = _build_kernel(arg_map, code_body.c_str(), &saxpy);
+	}
+	else
+	{
+		kid = _build_kernel(arg_map, code_body.c_str());
+	}
+
+	if (kid == (KernelId_t)(-1))
+	{
+		printf("Failed to build kernel\n");
+		return false;
+	}
 	int size_block = _launch_calc(kid, 0);
 	if (size_block < 0) return false;
 	unsigned sizeBlock = (unsigned)size_block;
 	unsigned numBlocks = (unsigned)((end - begin + sizeBlock - 1) / sizeBlock);
-	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
+
+	if (!_launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0)) return false;
+	if (m_kernel_debug)
+	{
+		if (!CheckCUresult(cuCtxSynchronize(), "cuCtxSynchronize()"))
+		{
+			if (!m_verbose)
+			{
+				{
+					std::shared_lock<std::shared_mutex> lock(m_mutex_structs);
+					print_code(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
+				}
+				print_code("saxpy.cu", saxpy.c_str());
+			}
+			return false;
+		}
+	}
+	return true;
 }
 
 bool TRTCContext::launch_for_n(size_t n, const std::vector<CapturedDeviceViewable>& _arg_map, const char* name_iter, const char* _body)
@@ -780,17 +849,48 @@ bool TRTCContext::launch_for_n(size_t n, const std::vector<CapturedDeviceViewabl
 	DVSizeT dv_n(n);
 	Functor func(_arg_map, { name_iter }, _body);
 	std::vector<CapturedDeviceViewable> arg_map = { {"n", &dv_n}, {"func", &func} };
-	KernelId_t kid = _build_kernel(arg_map,
+	std::string code_body =
 		"    size_t tid =  threadIdx.x + blockIdx.x*blockDim.x;\n"
 		"    if(tid>=n) return;\n"
-		"    func(tid);\n"
-	);
-	if (kid == (KernelId_t)(-1)) return false;
+		"    func(tid);\n";
+
+	KernelId_t kid;
+	std::string saxpy;
+	if (m_kernel_debug)
+	{
+		kid = _build_kernel(arg_map, code_body.c_str(), &saxpy);
+	}
+	else
+	{
+		kid = _build_kernel(arg_map, code_body.c_str());
+	}
+
+	if (kid == (KernelId_t)(-1))
+	{
+		printf("Failed to build kernel\n");
+		return false;
+	}
 	int size_block = _launch_calc(kid, 0);
 	if (size_block < 0) return false;
 	unsigned sizeBlock = (unsigned)size_block;
 	unsigned numBlocks = (unsigned)((n + sizeBlock - 1) / sizeBlock);
-	return _launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0);
+	if (!_launch_kernel(kid, { numBlocks, 1, 1 }, { sizeBlock, 1, 1 }, arg_map, 0)) return false;
+	if (m_kernel_debug)
+	{
+		if (!CheckCUresult(cuCtxSynchronize(), "cuCtxSynchronize()"))
+		{
+			if (!m_verbose)
+			{
+				{
+					std::shared_lock<std::shared_mutex> lock(m_mutex_structs);
+					print_code(m_name_header_of_structs.c_str(), m_header_of_structs.c_str());
+				}
+				print_code("saxpy.cu", saxpy.c_str());
+			}
+			return false;
+		}
+	}
+	return true;
 }
 
 void TRTCContext::add_include_dir(const char* path)

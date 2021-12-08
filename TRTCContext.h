@@ -22,6 +22,7 @@ bool THRUST_RTC_API TRTC_Try_Init();
 int THRUST_RTC_API TRTC_Get_PTX_Arch();
 
 void THRUST_RTC_API TRTC_Set_Verbose(bool verbose = true);
+void THRUST_RTC_API TRTC_Set_Kernel_Debug(bool kernel_debug = true);
 
 // reflection 
 size_t THRUST_RTC_API TRTC_Size_Of(const char* cls);

@@ -26,6 +26,11 @@ void n_set_verbose(unsigned verbose)
 	TRTC_Set_Verbose(verbose!=0);
 }
 
+void n_set_kernel_debug(unsigned kernel_debug)
+{
+	TRTC_Set_Kernel_Debug(kernel_debug != 0);
+}
+
 void n_add_include_dir(const char* dir)
 {
 	TRTC_Add_Include_Dir(dir);
