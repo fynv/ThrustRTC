@@ -2,7 +2,7 @@ from .Native import ffi,native
 
 class StrArray:
     def __init__(self, arr):
-        c_strs = [ffi.from_buffer('char[]', s.encode('utf-8')) for s in arr]
+        c_strs = tuple(ffi.from_buffer('char[]', s.encode('utf-8')) for s in arr)
         self.m_cptr = native.n_string_array_create(len(c_strs), c_strs)
 
     def __del__(self):
@@ -10,7 +10,7 @@ class StrArray:
 
 class ObjArray:
     def __init__(self, arr):
-        c_ptrs = [obj.m_cptr for obj in arr]
+        c_ptrs = tuple(obj.m_cptr for obj in arr)
         self.m_cptr = native.n_pointer_array_create(len(c_ptrs), c_ptrs)
             
     def __del__(self):
