@@ -58,6 +58,8 @@ class DVVector(DVVectorLike):
         return ret
 
 def device_vector(elem_cls, size, ptr_host_data=None):
+    if size<1:
+        raise ValueError("0-size vector not allowed")
     ffiptr = ffi.NULL
     if ptr_host_data!=None:
         ffiptr = ffi.cast("void *", ptr_host_data)
@@ -131,6 +133,8 @@ def device_vector_from_list(lst, elem_cls):
     return device_vector(elem_cls, size, ptr_host_data)
 
 def device_vector_from_dvs(lst_dv):
+    if len(lst_dv)<1:
+        raise ValueError("0-size vector not allowed")
     dvarr = ObjArray(lst_dv)
     return DVVector(check_cptr(native.n_dvvector_from_dvs(dvarr.m_cptr)))
 
