@@ -55,6 +55,7 @@
  *   cudaOccMaxActiveBlocksPerMultiprocessor,
  *   cudaOccMaxPotentialOccupancyBlockSize,
  *   cudaOccMaxPotentialOccupancyBlockSizeVariableSMem
+ *   cudaOccAvailableDynamicSMemPerBlock
  *
  * DESCRIPTION
  *
@@ -91,6 +92,7 @@
 #include <stddef.h>
 #include <limits.h>
 #include <string.h>
+
 
 // __OCC_INLINE will be undefined at the end of this header
 //
@@ -231,6 +233,7 @@ cudaOccError cudaOccMaxPotentialOccupancyBlockSize(
  *     current implementation or device is invalid
  *
  */
+
 #if defined(__cplusplus)
 namespace {
 
@@ -255,6 +258,33 @@ cudaOccError cudaOccMaxPotentialOccupancyBlockSizeVariableSMem(
 
 } // namespace anonymous
 #endif // defined(__cplusplus)
+
+/**
+ *
+ * The CUDA dynamic shared memory calculator computes the maximum size of 
+ * per-block dynamic shared memory if we want to place numBlocks blocks
+ * on an SM.
+ *
+ * RETURN VALUE
+ *
+ * Returns in *dynamicSmemSize the maximum size of dynamic shared memory to allow 
+ * numBlocks blocks per SM.
+ *
+ * ERRORS
+ *
+ *     CUDA_OCC_ERROR_INVALID_INPUT   input parameter is invalid.
+ *     CUDA_OCC_ERROR_UNKNOWN_DEVICE  requested device is not supported in
+ *     current implementation or device is invalid
+ *
+ */
+static __OCC_INLINE
+cudaOccError cudaOccAvailableDynamicSMemPerBlock(
+    size_t                      *dynamicSmemSize,
+    const cudaOccDeviceProp     *properties,
+    const cudaOccFuncAttributes *attributes,
+    const cudaOccDeviceState    *state,
+    int                         numBlocks,
+    int                         blockSize);
 
 /**
  * Data structures
@@ -285,6 +315,7 @@ struct cudaOccDeviceProp {
     size_t sharedMemPerMultiprocessor;  // Maximum shared memory size per SM
     int    numSms;                      // Number of SMs available
     size_t sharedMemPerBlockOptin;      // Maximum optin shared memory size per block
+    size_t reservedSharedMemPerBlock;   // Shared memory per block reserved by driver
 
 #ifdef __cplusplus
     // This structure can be converted from a cudaDeviceProp structure for users
@@ -323,7 +354,8 @@ struct cudaOccDeviceProp {
         sharedMemPerBlock           (props.sharedMemPerBlock),
         sharedMemPerMultiprocessor  (props.sharedMemPerMultiprocessor),
         numSms                      (props.multiProcessorCount),
-        sharedMemPerBlockOptin      (props.sharedMemPerBlockOptin)
+        sharedMemPerBlockOptin      (props.sharedMemPerBlockOptin),
+        reservedSharedMemPerBlock   (props.reservedSharedMemPerBlock)
     {}
 
     __OCC_INLINE
@@ -338,7 +370,8 @@ struct cudaOccDeviceProp {
         sharedMemPerBlock           (0),
         sharedMemPerMultiprocessor  (0),
         numSms                      (0),
-        sharedMemPerBlockOptin      (0)
+        sharedMemPerBlockOptin      (0),
+        reservedSharedMemPerBlock   (0)
     {}
 #endif // __cplusplus
 };
@@ -541,8 +574,16 @@ typedef enum cudaOccPartitionedGCSupport_enum {
 /**
  * Max compute capability supported
  */
-#define __CUDA_OCC_MAJOR__ 7
-#define __CUDA_OCC_MINOR__ 0
+
+
+
+
+
+
+
+#define __CUDA_OCC_MAJOR__ 8
+#define __CUDA_OCC_MINOR__ 6
+
 
 //////////////////////////////////////////
 //    Mathematical Helper Functions     //
@@ -581,6 +622,12 @@ static __OCC_INLINE cudaOccError cudaOccSMemAllocationGranularity(int *limit, co
         case 7:
             value = 256;
             break;
+        case 8:
+
+
+
+            value = 128;
+            break;
         default:
             return CUDA_OCC_ERROR_UNKNOWN_DEVICE;
     }
@@ -602,8 +649,12 @@ static __OCC_INLINE cudaOccError cudaOccRegAllocationMaxPerThread(int *limit, co
         case 5:
         case 6:
             value = 255;
+            break;
         case 7:
         case 8:
+
+
+
             value = 256;
             break;
         default:
@@ -627,6 +678,10 @@ static __OCC_INLINE cudaOccError cudaOccRegAllocationGranularity(int *limit, con
         case 5:
         case 6:
         case 7:
+        case 8:
+
+
+
             value = 256;
             break;
         default:
@@ -649,6 +704,10 @@ static __OCC_INLINE cudaOccError cudaOccSubPartitionsPerMultiprocessor(int *limi
         case 3:
         case 5:
         case 7:
+        case 8:
+
+
+
             value = 4;
             break;
         case 6:
@@ -684,6 +743,25 @@ static __OCC_INLINE cudaOccError cudaOccMaxBlocksPerMultiprocessor(int* limit, c
             value = (isTuring) ? 16 : 32;
             break;
         }
+        case 8:
+            if (properties->computeMinor == 0) {
+                value = 32;
+            }
+
+
+
+
+
+
+            else {
+                value = 16;
+            }
+            break;
+
+
+
+
+
         default:
             return CUDA_OCC_ERROR_UNKNOWN_DEVICE;
     }
@@ -708,36 +786,134 @@ static __OCC_INLINE cudaOccError cudaOccAlignUpShmemSizeVoltaPlus(size_t *shMemS
         // Turing supports 32KB and 64KB shared mem.
         int isTuring = properties->computeMinor == 5;
         if (isTuring) {
-            if (size <= 32768) {
-                *shMemSize = 32768;
+            if      (size <= 32 * 1024) {
+                *shMemSize = 32 * 1024;
+            }
+            else if (size <= 64 * 1024) {
+                *shMemSize = 64 * 1024;
             }
             else {
-                *shMemSize = properties->sharedMemPerMultiprocessor;
+                return CUDA_OCC_ERROR_INVALID_INPUT;
             }
         }
         // Volta supports 0KB, 8KB, 16KB, 32KB, 64KB, and 96KB shared mem.
         else {
-            if (size == 0) {
+            if      (size == 0) {
                 *shMemSize = 0;
             }
-            else if (size <= 8192) {
-                *shMemSize = 8192;
+            else if (size <= 8 * 1024) {
+                *shMemSize = 8 * 1024;
             }
-            else if (size <= 16384) {
-                *shMemSize = 16384;
+            else if (size <= 16 * 1024) {
+                *shMemSize = 16 * 1024;
             }
-            else if (size <= 32768) {
-                *shMemSize = 32768;
+            else if (size <= 32 * 1024) {
+                *shMemSize = 32 * 1024;
             }
-            else if (size <= 65536) {
-                *shMemSize = 65536;
+            else if (size <= 64 * 1024) {
+                *shMemSize = 64 * 1024;
+            }
+            else if (size <= 96 * 1024) {
+                *shMemSize = 96 * 1024;
             }
             else {
-                *shMemSize = properties->sharedMemPerMultiprocessor;
+                return CUDA_OCC_ERROR_INVALID_INPUT;
             }
         }
         break;
     }
+    case 8:
+        if (properties->computeMinor == 0 || properties->computeMinor == 7) {
+            if      (size == 0) {
+                *shMemSize = 0;
+            }
+            else if (size <= 8 * 1024) {
+                *shMemSize = 8 * 1024;
+            }
+            else if (size <= 16 * 1024) {
+                *shMemSize = 16 * 1024;
+            }
+            else if (size <= 32 * 1024) {
+                *shMemSize = 32 * 1024;
+            }
+            else if (size <= 64 * 1024) {
+                *shMemSize = 64 * 1024;
+            }
+            else if (size <= 100 * 1024) {
+                *shMemSize = 100 * 1024;
+            }
+            else if (size <= 132 * 1024) {
+                *shMemSize = 132 * 1024;
+            }
+            else if (size <= 164 * 1024) {
+                *shMemSize = 164 * 1024;
+            }
+            else {
+                return CUDA_OCC_ERROR_INVALID_INPUT;
+            }
+        }
+        else {
+            if      (size == 0) {
+                *shMemSize = 0;
+            }
+            else if (size <= 8 * 1024) {
+                *shMemSize = 8 * 1024;
+            }
+            else if (size <= 16 * 1024) {
+                *shMemSize = 16 * 1024;
+            }
+            else if (size <= 32 * 1024) {
+                *shMemSize = 32 * 1024;
+            }
+            else if (size <= 64 * 1024) {
+                *shMemSize = 64 * 1024;
+            }
+            else if (size <= 100 * 1024) {
+                *shMemSize = 100 * 1024;
+            }
+            else {
+                return CUDA_OCC_ERROR_INVALID_INPUT;
+            }
+        }
+        break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     default:
         return CUDA_OCC_ERROR_UNKNOWN_DEVICE;
     }
@@ -854,7 +1030,7 @@ static __OCC_INLINE cudaOccError cudaOccSMemPerMultiprocessor(size_t *limit, con
 {
     // Volta introduces a new API that allows for shared memory carveout preference. Because it is a shared memory preference,
     // it is handled separately from the cache config preference.
-    if (properties->computeMajor == 7) {
+    if (properties->computeMajor >= 7) {
         return cudaOccSMemPreferenceVoltaPlus(limit, properties, state);
     }
     return cudaOccSMemPreference(limit, properties, state);
@@ -874,6 +1050,10 @@ static __OCC_INLINE cudaOccError cudaOccSMemPerBlock(size_t *limit, const cudaOc
             *limit = properties->sharedMemPerBlock;
             break;
         case 7:
+        case 8:
+
+
+
             switch (shmemLimitConfig) {
                 default:
                 case FUNC_SHMEM_LIMIT_DEFAULT:
@@ -891,6 +1071,11 @@ static __OCC_INLINE cudaOccError cudaOccSMemPerBlock(size_t *limit, const cudaOc
             break;
         default:
             return CUDA_OCC_ERROR_UNKNOWN_DEVICE;
+    }
+
+    // Starting Ampere, CUDA driver reserves additional shared memory per block
+    if (properties->computeMajor >= 8) {
+        *limit += properties->reservedSharedMemPerBlock;
     }
 
     return CUDA_OCC_SUCCESS;
@@ -1078,6 +1263,7 @@ static __OCC_INLINE cudaOccError cudaOccMaxBlocksPerSMSmemLimit(
     size_t totalSmemUsagePerCTA;
     size_t maxSmemUsagePerCTA;
     size_t smemAllocatedPerCTA;
+    size_t staticSmemSize;
     size_t sharedMemPerMultiprocessor;
     size_t smemLimitPerCTA;
     int maxBlocks;
@@ -1098,10 +1284,11 @@ static __OCC_INLINE cudaOccError cudaOccMaxBlocksPerSMSmemLimit(
         return status;
     }
 
-    totalSmemUsagePerCTA = attributes->sharedSizeBytes + dynamicSmemSize;
+    staticSmemSize = attributes->sharedSizeBytes + properties->reservedSharedMemPerBlock;
+    totalSmemUsagePerCTA = staticSmemSize + dynamicSmemSize;
     smemAllocatedPerCTA = __occRoundUp((int)totalSmemUsagePerCTA, (int)allocationGranularity);
 
-    maxSmemUsagePerCTA = attributes->sharedSizeBytes + attributes->maxDynamicSharedSizeBytes;
+    maxSmemUsagePerCTA = staticSmemSize + attributes->maxDynamicSharedSizeBytes;
 
     dynamicSmemSizeExceeded = 0;
     totalSmemSizeExceeded   = 0;
@@ -1137,9 +1324,12 @@ static __OCC_INLINE cudaOccError cudaOccMaxBlocksPerSMSmemLimit(
             // On Volta+, user requested shared memory will limit occupancy
             // if it's less than shared memory per CTA. Otherwise, the
             // maximum shared memory limit is used.
-            if (properties->computeMajor == 7) {
+            if (properties->computeMajor >= 7) {
                 sharedMemPerMultiprocessor = smemAllocatedPerCTA;
-                cudaOccAlignUpShmemSizeVoltaPlus(&sharedMemPerMultiprocessor, properties);
+                status = cudaOccAlignUpShmemSizeVoltaPlus(&sharedMemPerMultiprocessor, properties);
+                if (status != CUDA_OCC_SUCCESS) {
+                    return status;
+                }
             }
             else {
                 sharedMemPerMultiprocessor = properties->sharedMemPerMultiprocessor;
@@ -1416,6 +1606,92 @@ cudaOccError cudaOccMaxActiveBlocksPerMultiprocessor(
     // Final occupancy
     result->activeBlocksPerMultiprocessor = ctaLimit;
 
+    return CUDA_OCC_SUCCESS;
+}
+
+static __OCC_INLINE
+cudaOccError cudaOccAvailableDynamicSMemPerBlock(
+    size_t                      *bytesAvailable,
+    const cudaOccDeviceProp     *properties,
+    const cudaOccFuncAttributes *attributes,
+    const cudaOccDeviceState    *state,
+    int                         numBlocks,
+    int                         blockSize)
+{
+    int allocationGranularity;
+    size_t smemLimitPerBlock;
+    size_t smemAvailableForDynamic;
+    size_t userSmemPreference = 0;
+    size_t sharedMemPerMultiprocessor;
+    cudaOccResult result;
+    cudaOccError status = CUDA_OCC_SUCCESS;
+
+    if (numBlocks <= 0)
+        return CUDA_OCC_ERROR_INVALID_INPUT;
+
+    // First compute occupancy of potential kernel launch.
+    //
+    status = cudaOccMaxActiveBlocksPerMultiprocessor(&result, properties, attributes, state, blockSize, 0);
+    if (status != CUDA_OCC_SUCCESS) {
+        return status;
+    }
+    // Check if occupancy is achievable given user requested number of blocks. 
+    //
+    if (result.activeBlocksPerMultiprocessor < numBlocks) {
+        return CUDA_OCC_ERROR_INVALID_INPUT;
+    }
+
+    status = cudaOccSMemAllocationGranularity(&allocationGranularity, properties);
+    if (status != CUDA_OCC_SUCCESS) {
+        return status;
+    }
+
+    // Return the per block shared memory limit based on function config.
+    //
+    status = cudaOccSMemPerBlock(&smemLimitPerBlock, properties, attributes->shmemLimitConfig, properties->sharedMemPerMultiprocessor);
+    if (status != CUDA_OCC_SUCCESS) {
+        return status;
+    }
+
+    // If there is only a single block needed per SM, then the user preference can be ignored and the fully SW
+    // limit is allowed to be used as shared memory otherwise if more than one block is needed, then the user
+    // preference sets the total limit of available shared memory.
+    //
+    cudaOccSMemPerMultiprocessor(&userSmemPreference, properties, state);
+    if (numBlocks == 1) {
+        sharedMemPerMultiprocessor = smemLimitPerBlock;
+    }
+    else {
+        if (!userSmemPreference) {
+            userSmemPreference = 1 ;
+            status = cudaOccAlignUpShmemSizeVoltaPlus(&userSmemPreference, properties);
+            if (status != CUDA_OCC_SUCCESS) {
+                return status;
+            }
+        }
+        sharedMemPerMultiprocessor = userSmemPreference;
+    }
+
+    // Compute total shared memory available per SM
+    //
+    smemAvailableForDynamic =  sharedMemPerMultiprocessor / numBlocks;
+    smemAvailableForDynamic = (smemAvailableForDynamic / allocationGranularity) * allocationGranularity;
+
+    // Cap shared memory
+    //
+    if (smemAvailableForDynamic > smemLimitPerBlock) {
+        smemAvailableForDynamic = smemLimitPerBlock;
+    }
+
+    // Now compute dynamic shared memory size
+    smemAvailableForDynamic = smemAvailableForDynamic - attributes->sharedSizeBytes; 
+
+    // Cap computed dynamic SM by user requested limit specified via cuFuncSetAttribute()
+    //
+    if (smemAvailableForDynamic > attributes->maxDynamicSharedSizeBytes)
+        smemAvailableForDynamic = attributes->maxDynamicSharedSizeBytes;
+
+    *bytesAvailable = smemAvailableForDynamic;
     return CUDA_OCC_SUCCESS;
 }
 
