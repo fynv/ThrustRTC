@@ -46,7 +46,7 @@ class DVVector(DVVectorLike):
         elif elem_cls=='double':
             nptype = np.float64
         elif elem_cls=='bool':
-            nptype = np.bool
+            nptype = bool
         elif elem_cls=='cuFloatComplex':
             nptype = np.complex64
         elif elem_cls=='cuDoubleComplex':
@@ -90,7 +90,7 @@ def device_vector_from_numpy(nparr):
         elem_cls = 'float'
     elif nparr.dtype == np.float64:
         elem_cls = 'double'
-    elif nparr.dtype == np.bool:
+    elif nparr.dtype == bool:
         elem_cls = 'bool'
     elif nparr.dtype == np.complex64:
         elem_cls = 'cuFloatComplex'
@@ -122,7 +122,7 @@ def device_vector_from_list(lst, elem_cls):
     elif elem_cls=='double':
         nptype = np.float64
     elif elem_cls=='bool':
-        nptype = np.bool
+        nptype = bool
     elif elem_cls=='cuFloatComplex':
         nptype = np.complex64
     elif elem_cls=='cuDoubleComplex':
@@ -165,7 +165,7 @@ class DVNumbaVector(DVVectorLike):
             elem_cls = 'float'
         elif nbarr.dtype == np.float64:
             elem_cls = 'double'
-        elif nbarr.dtype == np.bool:
+        elif nbarr.dtype == bool:
             elem_cls = 'bool'
         elif nbarr.dtype == np.complex64:
             elem_cls = 'cuFloatComplex'
@@ -202,7 +202,7 @@ class DVCupyVector(DVVectorLike):
             elem_cls = 'float'
         elif cparr.dtype == np.float64:
             elem_cls = 'double'
-        elif cparr.dtype == np.bool:
+        elif cparr.dtype == bool:
             elem_cls = 'bool'
         elif cparr.dtype == np.complex64:
             elem_cls = 'cuFloatComplex'
