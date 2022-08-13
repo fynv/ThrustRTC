@@ -88,7 +88,11 @@ static bool s_cuda_init(int& cap)
 	{
 		CUdevice cuDevice;
 		if (!CheckCUresult(cuCtxGetDevice(&cuDevice), "cuCtxGetDevice()")) return false;
-		if (!CheckCUresult(cuDeviceGetAttribute(&cap, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevice), "cuDeviceGetAttribute()")) return false;
+		
+		int major, minor;
+		if (!CheckCUresult(cuDeviceGetAttribute(&major, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevice), "cuDeviceGetAttribute()")) return false;
+		if (!CheckCUresult(cuDeviceGetAttribute(&minor, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR, cuDevice), "cuDeviceGetAttribute()")) return false;
+		cap = major * 10 + minor;
 	}
 
 	return true;
